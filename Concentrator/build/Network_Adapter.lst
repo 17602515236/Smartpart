@@ -1,0 +1,718 @@
+ARM GAS  /tmp/cciWZdkf.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"Network_Adapter.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.__Adapter_Get_Network_Status,"ax",%progbits
+  20              		.align	2
+  21              		.thumb
+  22              		.thumb_func
+  24              	__Adapter_Get_Network_Status:
+  25              	.LFB69:
+  26              		.file 1 "app/Network_Adapter.c"
+   1:app/Network_Adapter.c **** #include "Network_Adapter.h"
+   2:app/Network_Adapter.c **** #include "ESP8266.h"
+   3:app/Network_Adapter.c **** #include "FreeRTOS.h"
+   4:app/Network_Adapter.c **** #include "task.h"
+   5:app/Network_Adapter.c **** static Network_Adapter __Adapter;
+   6:app/Network_Adapter.c **** 
+   7:app/Network_Adapter.c **** static Network_Status_Enum Network_Status;
+   8:app/Network_Adapter.c **** 
+   9:app/Network_Adapter.c **** static Network_Status_Enum __Adapter_Get_Network_Status()
+  10:app/Network_Adapter.c **** {
+  27              		.loc 1 10 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  11:app/Network_Adapter.c ****     return Network_Status;
+  12:app/Network_Adapter.c **** }
+  32              		.loc 1 12 0
+  33 0000 014B     		ldr	r3, .L2
+  34 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+  35 0004 7047     		bx	lr
+  36              	.L3:
+  37 0006 00BF     		.align	2
+  38              	.L2:
+  39 0008 00000000 		.word	.LANCHOR0
+  40              		.cfi_endproc
+  41              	.LFE69:
+  43              		.section	.text.Status_Changed_Callback,"ax",%progbits
+  44              		.align	2
+  45              		.thumb
+  46              		.thumb_func
+  48              	Status_Changed_Callback:
+ARM GAS  /tmp/cciWZdkf.s 			page 2
+
+
+  49              	.LFB70:
+  13:app/Network_Adapter.c **** 
+  14:app/Network_Adapter.c **** static void Status_Changed_Callback(uint8_t New_Satatus)
+  15:app/Network_Adapter.c **** {
+  50              		.loc 1 15 0
+  51              		.cfi_startproc
+  52              		@ args = 0, pretend = 0, frame = 0
+  53              		@ frame_needed = 0, uses_anonymous_args = 0
+  54              		@ link register save eliminated.
+  55              	.LVL0:
+  16:app/Network_Adapter.c ****     if(New_Satatus == CHANGED_WIFI_DISCONNECT)
+  56              		.loc 1 16 0
+  57 0000 10B9     		cbnz	r0, .L4
+  17:app/Network_Adapter.c ****         Network_Status = NOINIT;
+  58              		.loc 1 17 0
+  59 0002 0022     		movs	r2, #0
+  60 0004 014B     		ldr	r3, .L6
+  61 0006 1A70     		strb	r2, [r3]
+  62              	.L4:
+  63 0008 7047     		bx	lr
+  64              	.L7:
+  65 000a 00BF     		.align	2
+  66              	.L6:
+  67 000c 00000000 		.word	.LANCHOR0
+  68              		.cfi_endproc
+  69              	.LFE70:
+  71              		.section	.text.__Adapter_TCP_Connect,"ax",%progbits
+  72              		.align	2
+  73              		.thumb
+  74              		.thumb_func
+  76              	__Adapter_TCP_Connect:
+  77              	.LFB72:
+  18:app/Network_Adapter.c **** }
+  19:app/Network_Adapter.c **** /**
+  20:app/Network_Adapter.c ****  * @brief Init Network Driver
+  21:app/Network_Adapter.c ****  * 
+  22:app/Network_Adapter.c ****  * @return Adapter_Status 
+  23:app/Network_Adapter.c ****  */
+  24:app/Network_Adapter.c **** static Adapter_Status __Adapter_Init()
+  25:app/Network_Adapter.c **** {
+  26:app/Network_Adapter.c ****     ESP8266_Handle *Handle = (ESP8266_Handle *)__Adapter.Device_Handle;
+  27:app/Network_Adapter.c ****     Handle->Status_Changed_Callback = Status_Changed_Callback;
+  28:app/Network_Adapter.c ****     Handle->ReSet();
+  29:app/Network_Adapter.c ****     vTaskDelay(1000);
+  30:app/Network_Adapter.c **** 
+  31:app/Network_Adapter.c ****     //AT
+  32:app/Network_Adapter.c ****     if(Handle->Tran_WaitACK_NoParameter(AT, 100, NULL) == ESP8266_Failed)
+  33:app/Network_Adapter.c ****         return Adapter_Failed;
+  34:app/Network_Adapter.c ****     HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+  35:app/Network_Adapter.c ****     //ATE0
+  36:app/Network_Adapter.c ****     if(Handle->Tran_WaitACK_NoParameter(ATE1,100,NULL) == ESP8266_Failed)
+  37:app/Network_Adapter.c ****         return Adapter_Failed;
+  38:app/Network_Adapter.c ****     HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+  39:app/Network_Adapter.c ****     //Set Mode Station
+  40:app/Network_Adapter.c ****     if(Handle->Tran_WaitACK_NoParameter(CWMODE_CUR_1,100,NULL) == ESP8266_Failed)
+  41:app/Network_Adapter.c ****         return Adapter_Failed;
+  42:app/Network_Adapter.c ****     HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+ARM GAS  /tmp/cciWZdkf.s 			page 3
+
+
+  43:app/Network_Adapter.c ****     //Connect wifi
+  44:app/Network_Adapter.c ****     if(Handle->Connect_wifi("vivo","123456789",15000) == ESP8266_Failed)
+  45:app/Network_Adapter.c ****         return Adapter_Failed;
+  46:app/Network_Adapter.c ****     Network_Status = GOT_IP;
+  47:app/Network_Adapter.c ****     return Adapter_OK;
+  48:app/Network_Adapter.c **** }
+  49:app/Network_Adapter.c **** 
+  50:app/Network_Adapter.c **** static Adapter_Status __Adapter_TCP_Connect(char *IP,
+  51:app/Network_Adapter.c ****                                             uint32_t port,
+  52:app/Network_Adapter.c ****                                             uint32_t timeout)
+  53:app/Network_Adapter.c **** {
+  78              		.loc 1 53 0
+  79              		.cfi_startproc
+  80              		@ args = 0, pretend = 0, frame = 0
+  81              		@ frame_needed = 0, uses_anonymous_args = 0
+  82              	.LVL1:
+  83 0000 10B5     		push	{r4, lr}
+  84              	.LCFI0:
+  85              		.cfi_def_cfa_offset 8
+  86              		.cfi_offset 4, -8
+  87              		.cfi_offset 14, -4
+  88 0002 82B0     		sub	sp, sp, #8
+  89              	.LCFI1:
+  90              		.cfi_def_cfa_offset 16
+  54:app/Network_Adapter.c ****     ESP8266_Handle *Handle = (ESP8266_Handle *)__Adapter.Device_Handle;
+  91              		.loc 1 54 0
+  92 0004 094B     		ldr	r3, .L12
+  93 0006 1B68     		ldr	r3, [r3]
+  94              	.LVL2:
+  55:app/Network_Adapter.c ****     if (Handle->Connect_Server(TCP, IP, port,0, timeout) == ESP8266_Failed)
+  95              		.loc 1 55 0
+  96 0008 1C6A     		ldr	r4, [r3, #32]
+  97 000a 0092     		str	r2, [sp]
+  98 000c 0023     		movs	r3, #0
+  99              	.LVL3:
+ 100 000e 0A46     		mov	r2, r1
+ 101              	.LVL4:
+ 102 0010 0146     		mov	r1, r0
+ 103              	.LVL5:
+ 104 0012 1846     		mov	r0, r3
+ 105              	.LVL6:
+ 106 0014 A047     		blx	r4
+ 107              	.LVL7:
+ 108 0016 0128     		cmp	r0, #1
+ 109 0018 04D1     		bne	.L10
+  56:app/Network_Adapter.c ****     {
+  57:app/Network_Adapter.c ****         Network_Status = CONNECT_SERVER;
+ 110              		.loc 1 57 0
+ 111 001a 0222     		movs	r2, #2
+ 112 001c 044B     		ldr	r3, .L12+4
+ 113 001e 1A70     		strb	r2, [r3]
+  58:app/Network_Adapter.c ****         return Adapter_OK;
+ 114              		.loc 1 58 0
+ 115 0020 0020     		movs	r0, #0
+ 116 0022 00E0     		b	.L9
+ 117              	.L10:
+  59:app/Network_Adapter.c ****     }
+ARM GAS  /tmp/cciWZdkf.s 			page 4
+
+
+  60:app/Network_Adapter.c ****         return Adapter_Failed;
+ 118              		.loc 1 60 0
+ 119 0024 0120     		movs	r0, #1
+ 120              	.L9:
+  61:app/Network_Adapter.c **** }
+ 121              		.loc 1 61 0
+ 122 0026 02B0     		add	sp, sp, #8
+ 123              	.LCFI2:
+ 124              		.cfi_def_cfa_offset 8
+ 125              		@ sp needed
+ 126 0028 10BD     		pop	{r4, pc}
+ 127              	.L13:
+ 128 002a 00BF     		.align	2
+ 129              	.L12:
+ 130 002c 00000000 		.word	.LANCHOR1
+ 131 0030 00000000 		.word	.LANCHOR0
+ 132              		.cfi_endproc
+ 133              	.LFE72:
+ 135              		.section	.text.__Adapter_UDP_Connect,"ax",%progbits
+ 136              		.align	2
+ 137              		.thumb
+ 138              		.thumb_func
+ 140              	__Adapter_UDP_Connect:
+ 141              	.LFB73:
+  62:app/Network_Adapter.c **** 
+  63:app/Network_Adapter.c **** static Adapter_Status __Adapter_UDP_Connect(char *IP,
+  64:app/Network_Adapter.c ****                                             uint32_t port,
+  65:app/Network_Adapter.c ****                                             uint32_t local_port,
+  66:app/Network_Adapter.c ****                                             uint32_t timeout)
+  67:app/Network_Adapter.c **** {
+ 142              		.loc 1 67 0
+ 143              		.cfi_startproc
+ 144              		@ args = 0, pretend = 0, frame = 0
+ 145              		@ frame_needed = 0, uses_anonymous_args = 0
+ 146              	.LVL8:
+ 147 0000 10B5     		push	{r4, lr}
+ 148              	.LCFI3:
+ 149              		.cfi_def_cfa_offset 8
+ 150              		.cfi_offset 4, -8
+ 151              		.cfi_offset 14, -4
+ 152 0002 82B0     		sub	sp, sp, #8
+ 153              	.LCFI4:
+ 154              		.cfi_def_cfa_offset 16
+  68:app/Network_Adapter.c ****     ESP8266_Handle *Handle = (ESP8266_Handle *)__Adapter.Device_Handle;
+ 155              		.loc 1 68 0
+ 156 0004 084C     		ldr	r4, .L18
+ 157 0006 2468     		ldr	r4, [r4]
+ 158              	.LVL9:
+  69:app/Network_Adapter.c ****     if (Handle->Connect_Server(UDP, IP, port,local_port, timeout) == ESP8266_OK)
+ 159              		.loc 1 69 0
+ 160 0008 246A     		ldr	r4, [r4, #32]
+ 161              	.LVL10:
+ 162 000a 0093     		str	r3, [sp]
+ 163 000c 1346     		mov	r3, r2
+ 164              	.LVL11:
+ 165 000e 0A46     		mov	r2, r1
+ 166              	.LVL12:
+ARM GAS  /tmp/cciWZdkf.s 			page 5
+
+
+ 167 0010 0146     		mov	r1, r0
+ 168              	.LVL13:
+ 169 0012 0120     		movs	r0, #1
+ 170              	.LVL14:
+ 171 0014 A047     		blx	r4
+ 172              	.LVL15:
+ 173 0016 18B9     		cbnz	r0, .L16
+  70:app/Network_Adapter.c ****     {
+  71:app/Network_Adapter.c ****         Network_Status = CONNECT_SERVER;
+ 174              		.loc 1 71 0
+ 175 0018 0222     		movs	r2, #2
+ 176 001a 044B     		ldr	r3, .L18+4
+ 177 001c 1A70     		strb	r2, [r3]
+  72:app/Network_Adapter.c ****         return Adapter_OK;
+ 178              		.loc 1 72 0
+ 179 001e 00E0     		b	.L15
+ 180              	.L16:
+  73:app/Network_Adapter.c ****     }
+  74:app/Network_Adapter.c ****         return Adapter_Failed;
+ 181              		.loc 1 74 0
+ 182 0020 0120     		movs	r0, #1
+ 183              	.L15:
+  75:app/Network_Adapter.c **** }
+ 184              		.loc 1 75 0
+ 185 0022 02B0     		add	sp, sp, #8
+ 186              	.LCFI5:
+ 187              		.cfi_def_cfa_offset 8
+ 188              		@ sp needed
+ 189 0024 10BD     		pop	{r4, pc}
+ 190              	.L19:
+ 191 0026 00BF     		.align	2
+ 192              	.L18:
+ 193 0028 00000000 		.word	.LANCHOR1
+ 194 002c 00000000 		.word	.LANCHOR0
+ 195              		.cfi_endproc
+ 196              	.LFE73:
+ 198              		.section	.text.__Adapter_write,"ax",%progbits
+ 199              		.align	2
+ 200              		.thumb
+ 201              		.thumb_func
+ 203              	__Adapter_write:
+ 204              	.LFB74:
+  76:app/Network_Adapter.c **** 
+  77:app/Network_Adapter.c **** static int __Adapter_write(unsigned char *Data,int count)
+  78:app/Network_Adapter.c **** {
+ 205              		.loc 1 78 0
+ 206              		.cfi_startproc
+ 207              		@ args = 0, pretend = 0, frame = 0
+ 208              		@ frame_needed = 0, uses_anonymous_args = 0
+ 209              	.LVL16:
+ 210 0000 08B5     		push	{r3, lr}
+ 211              	.LCFI6:
+ 212              		.cfi_def_cfa_offset 8
+ 213              		.cfi_offset 3, -8
+ 214              		.cfi_offset 14, -4
+  79:app/Network_Adapter.c ****     ESP8266_Handle *Handle = (ESP8266_Handle *)__Adapter.Device_Handle;
+ 215              		.loc 1 79 0
+ARM GAS  /tmp/cciWZdkf.s 			page 6
+
+
+ 216 0002 024B     		ldr	r3, .L22
+ 217 0004 1B68     		ldr	r3, [r3]
+ 218              	.LVL17:
+  80:app/Network_Adapter.c ****     return Handle->Transmit_Data(Data,count);
+ 219              		.loc 1 80 0
+ 220 0006 5B6A     		ldr	r3, [r3, #36]
+ 221              	.LVL18:
+ 222 0008 9847     		blx	r3
+ 223              	.LVL19:
+  81:app/Network_Adapter.c **** }
+ 224              		.loc 1 81 0
+ 225 000a 08BD     		pop	{r3, pc}
+ 226              	.L23:
+ 227              		.align	2
+ 228              	.L22:
+ 229 000c 00000000 		.word	.LANCHOR1
+ 230              		.cfi_endproc
+ 231              	.LFE74:
+ 233              		.section	.text.__read_nb,"ax",%progbits
+ 234              		.align	2
+ 235              		.thumb
+ 236              		.thumb_func
+ 238              	__read_nb:
+ 239              	.LFB75:
+  82:app/Network_Adapter.c **** 
+  83:app/Network_Adapter.c **** 
+  84:app/Network_Adapter.c **** static int __read_nb(unsigned char *output,
+  85:app/Network_Adapter.c ****                      uint32_t bytes)
+  86:app/Network_Adapter.c **** {
+ 240              		.loc 1 86 0
+ 241              		.cfi_startproc
+ 242              		@ args = 0, pretend = 0, frame = 0
+ 243              		@ frame_needed = 0, uses_anonymous_args = 0
+ 244              	.LVL20:
+ 245 0000 08B5     		push	{r3, lr}
+ 246              	.LCFI7:
+ 247              		.cfi_def_cfa_offset 8
+ 248              		.cfi_offset 3, -8
+ 249              		.cfi_offset 14, -4
+  87:app/Network_Adapter.c ****     ESP8266_Handle *Handle = (ESP8266_Handle *)__Adapter.Device_Handle;
+ 250              		.loc 1 87 0
+ 251 0002 024B     		ldr	r3, .L26
+ 252 0004 1B68     		ldr	r3, [r3]
+ 253              	.LVL21:
+  88:app/Network_Adapter.c ****     return Handle->read_nb(output,bytes);
+ 254              		.loc 1 88 0
+ 255 0006 9B6A     		ldr	r3, [r3, #40]
+ 256              	.LVL22:
+ 257 0008 9847     		blx	r3
+ 258              	.LVL23:
+  89:app/Network_Adapter.c **** }
+ 259              		.loc 1 89 0
+ 260 000a 08BD     		pop	{r3, pc}
+ 261              	.L27:
+ 262              		.align	2
+ 263              	.L26:
+ 264 000c 00000000 		.word	.LANCHOR1
+ARM GAS  /tmp/cciWZdkf.s 			page 7
+
+
+ 265              		.cfi_endproc
+ 266              	.LFE75:
+ 268              		.section	.text.__read,"ax",%progbits
+ 269              		.align	2
+ 270              		.thumb
+ 271              		.thumb_func
+ 273              	__read:
+ 274              	.LFB76:
+  90:app/Network_Adapter.c **** static int __read(unsigned char *output,
+  91:app/Network_Adapter.c ****                   uint32_t bytes,
+  92:app/Network_Adapter.c ****                   uint32_t timeout)
+  93:app/Network_Adapter.c **** {
+ 275              		.loc 1 93 0
+ 276              		.cfi_startproc
+ 277              		@ args = 0, pretend = 0, frame = 0
+ 278              		@ frame_needed = 0, uses_anonymous_args = 0
+ 279              	.LVL24:
+ 280 0000 08B5     		push	{r3, lr}
+ 281              	.LCFI8:
+ 282              		.cfi_def_cfa_offset 8
+ 283              		.cfi_offset 3, -8
+ 284              		.cfi_offset 14, -4
+  94:app/Network_Adapter.c ****     ESP8266_Handle *Handle = (ESP8266_Handle *)__Adapter.Device_Handle;
+ 285              		.loc 1 94 0
+ 286 0002 024B     		ldr	r3, .L30
+ 287 0004 1B68     		ldr	r3, [r3]
+ 288              	.LVL25:
+  95:app/Network_Adapter.c ****     return Handle->read(output,bytes,timeout);
+ 289              		.loc 1 95 0
+ 290 0006 DB6A     		ldr	r3, [r3, #44]
+ 291              	.LVL26:
+ 292 0008 9847     		blx	r3
+ 293              	.LVL27:
+  96:app/Network_Adapter.c **** }
+ 294              		.loc 1 96 0
+ 295 000a 08BD     		pop	{r3, pc}
+ 296              	.L31:
+ 297              		.align	2
+ 298              	.L30:
+ 299 000c 00000000 		.word	.LANCHOR1
+ 300              		.cfi_endproc
+ 301              	.LFE76:
+ 303              		.section	.text.__Adapter_Init,"ax",%progbits
+ 304              		.align	2
+ 305              		.thumb
+ 306              		.thumb_func
+ 308              	__Adapter_Init:
+ 309              	.LFB71:
+  25:app/Network_Adapter.c ****     ESP8266_Handle *Handle = (ESP8266_Handle *)__Adapter.Device_Handle;
+ 310              		.loc 1 25 0
+ 311              		.cfi_startproc
+ 312              		@ args = 0, pretend = 0, frame = 0
+ 313              		@ frame_needed = 0, uses_anonymous_args = 0
+ 314 0000 10B5     		push	{r4, lr}
+ 315              	.LCFI9:
+ 316              		.cfi_def_cfa_offset 8
+ 317              		.cfi_offset 4, -8
+ARM GAS  /tmp/cciWZdkf.s 			page 8
+
+
+ 318              		.cfi_offset 14, -4
+  26:app/Network_Adapter.c ****     Handle->Status_Changed_Callback = Status_Changed_Callback;
+ 319              		.loc 1 26 0
+ 320 0002 214B     		ldr	r3, .L39
+ 321 0004 1C68     		ldr	r4, [r3]
+ 322              	.LVL28:
+  27:app/Network_Adapter.c ****     Handle->ReSet();
+ 323              		.loc 1 27 0
+ 324 0006 214B     		ldr	r3, .L39+4
+ 325 0008 E363     		str	r3, [r4, #60]
+  28:app/Network_Adapter.c ****     vTaskDelay(1000);
+ 326              		.loc 1 28 0
+ 327 000a A36B     		ldr	r3, [r4, #56]
+ 328 000c 9847     		blx	r3
+ 329              	.LVL29:
+  29:app/Network_Adapter.c **** 
+ 330              		.loc 1 29 0
+ 331 000e 4FF47A70 		mov	r0, #1000
+ 332 0012 FFF7FEFF 		bl	vTaskDelay
+ 333              	.LVL30:
+  32:app/Network_Adapter.c ****         return Adapter_Failed;
+ 334              		.loc 1 32 0
+ 335 0016 A369     		ldr	r3, [r4, #24]
+ 336 0018 0022     		movs	r2, #0
+ 337 001a 6421     		movs	r1, #100
+ 338 001c 1046     		mov	r0, r2
+ 339 001e 9847     		blx	r3
+ 340              	.LVL31:
+ 341 0020 0128     		cmp	r0, #1
+ 342 0022 29D0     		beq	.L34
+  34:app/Network_Adapter.c ****     //ATE0
+ 343              		.loc 1 34 0
+ 344 0024 4FF40051 		mov	r1, #8192
+ 345 0028 1948     		ldr	r0, .L39+8
+ 346 002a FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 347              	.LVL32:
+  36:app/Network_Adapter.c ****         return Adapter_Failed;
+ 348              		.loc 1 36 0
+ 349 002e A369     		ldr	r3, [r4, #24]
+ 350 0030 0022     		movs	r2, #0
+ 351 0032 6421     		movs	r1, #100
+ 352 0034 0220     		movs	r0, #2
+ 353 0036 9847     		blx	r3
+ 354              	.LVL33:
+ 355 0038 0128     		cmp	r0, #1
+ 356 003a 1FD0     		beq	.L35
+  38:app/Network_Adapter.c ****     //Set Mode Station
+ 357              		.loc 1 38 0
+ 358 003c 4FF40051 		mov	r1, #8192
+ 359 0040 1348     		ldr	r0, .L39+8
+ 360 0042 FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 361              	.LVL34:
+  40:app/Network_Adapter.c ****         return Adapter_Failed;
+ 362              		.loc 1 40 0
+ 363 0046 A369     		ldr	r3, [r4, #24]
+ 364 0048 0022     		movs	r2, #0
+ 365 004a 6421     		movs	r1, #100
+ARM GAS  /tmp/cciWZdkf.s 			page 9
+
+
+ 366 004c 0320     		movs	r0, #3
+ 367 004e 9847     		blx	r3
+ 368              	.LVL35:
+ 369 0050 0128     		cmp	r0, #1
+ 370 0052 15D0     		beq	.L36
+  42:app/Network_Adapter.c ****     //Connect wifi
+ 371              		.loc 1 42 0
+ 372 0054 4FF40051 		mov	r1, #8192
+ 373 0058 0D48     		ldr	r0, .L39+8
+ 374 005a FFF7FEFF 		bl	HAL_GPIO_TogglePin
+ 375              	.LVL36:
+  44:app/Network_Adapter.c ****         return Adapter_Failed;
+ 376              		.loc 1 44 0
+ 377 005e E369     		ldr	r3, [r4, #28]
+ 378 0060 43F69822 		movw	r2, #15000
+ 379 0064 0B49     		ldr	r1, .L39+12
+ 380 0066 0C48     		ldr	r0, .L39+16
+ 381 0068 9847     		blx	r3
+ 382              	.LVL37:
+ 383 006a 0128     		cmp	r0, #1
+ 384 006c 0AD0     		beq	.L37
+  46:app/Network_Adapter.c ****     return Adapter_OK;
+ 385              		.loc 1 46 0
+ 386 006e 0122     		movs	r2, #1
+ 387 0070 0A4B     		ldr	r3, .L39+20
+ 388 0072 1A70     		strb	r2, [r3]
+  47:app/Network_Adapter.c **** }
+ 389              		.loc 1 47 0
+ 390 0074 0020     		movs	r0, #0
+ 391 0076 10BD     		pop	{r4, pc}
+ 392              	.LVL38:
+ 393              	.L34:
+  33:app/Network_Adapter.c ****     HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+ 394              		.loc 1 33 0
+ 395 0078 0120     		movs	r0, #1
+ 396 007a 10BD     		pop	{r4, pc}
+ 397              	.LVL39:
+ 398              	.L35:
+  37:app/Network_Adapter.c ****     HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+ 399              		.loc 1 37 0
+ 400 007c 0120     		movs	r0, #1
+ 401 007e 10BD     		pop	{r4, pc}
+ 402              	.LVL40:
+ 403              	.L36:
+  41:app/Network_Adapter.c ****     HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
+ 404              		.loc 1 41 0
+ 405 0080 0120     		movs	r0, #1
+ 406 0082 10BD     		pop	{r4, pc}
+ 407              	.LVL41:
+ 408              	.L37:
+  45:app/Network_Adapter.c ****     Network_Status = GOT_IP;
+ 409              		.loc 1 45 0
+ 410 0084 0120     		movs	r0, #1
+  48:app/Network_Adapter.c **** 
+ 411              		.loc 1 48 0
+ 412 0086 10BD     		pop	{r4, pc}
+ 413              	.LVL42:
+ARM GAS  /tmp/cciWZdkf.s 			page 10
+
+
+ 414              	.L40:
+ 415              		.align	2
+ 416              	.L39:
+ 417 0088 00000000 		.word	.LANCHOR1
+ 418 008c 00000000 		.word	Status_Changed_Callback
+ 419 0090 00100140 		.word	1073811456
+ 420 0094 00000000 		.word	.LC0
+ 421 0098 0C000000 		.word	.LC1
+ 422 009c 00000000 		.word	.LANCHOR0
+ 423              		.cfi_endproc
+ 424              	.LFE71:
+ 426              		.section	.text.Network_Adapter_Init,"ax",%progbits
+ 427              		.align	2
+ 428              		.global	Network_Adapter_Init
+ 429              		.thumb
+ 430              		.thumb_func
+ 432              	Network_Adapter_Init:
+ 433              	.LFB77:
+  97:app/Network_Adapter.c **** 
+  98:app/Network_Adapter.c **** Network_Adapter* Network_Adapter_Init()
+  99:app/Network_Adapter.c **** {
+ 434              		.loc 1 99 0
+ 435              		.cfi_startproc
+ 436              		@ args = 0, pretend = 0, frame = 0
+ 437              		@ frame_needed = 0, uses_anonymous_args = 0
+ 438 0000 08B5     		push	{r3, lr}
+ 439              	.LCFI10:
+ 440              		.cfi_def_cfa_offset 8
+ 441              		.cfi_offset 3, -8
+ 442              		.cfi_offset 14, -4
+ 100:app/Network_Adapter.c ****     __Adapter.Device_Handle = ESP8266_Handle_Init();
+ 443              		.loc 1 100 0
+ 444 0002 FFF7FEFF 		bl	ESP8266_Handle_Init
+ 445              	.LVL43:
+ 446 0006 0A4B     		ldr	r3, .L43
+ 447 0008 1860     		str	r0, [r3]
+ 101:app/Network_Adapter.c ****     __Adapter.Init = __Adapter_Init;
+ 448              		.loc 1 101 0
+ 449 000a 0A4A     		ldr	r2, .L43+4
+ 450 000c 5A60     		str	r2, [r3, #4]
+ 102:app/Network_Adapter.c ****     __Adapter.TCP_Connect = __Adapter_TCP_Connect;
+ 451              		.loc 1 102 0
+ 452 000e 0A4A     		ldr	r2, .L43+8
+ 453 0010 9A60     		str	r2, [r3, #8]
+ 103:app/Network_Adapter.c ****     __Adapter.UDP_Connect = __Adapter_UDP_Connect;
+ 454              		.loc 1 103 0
+ 455 0012 0A4A     		ldr	r2, .L43+12
+ 456 0014 DA60     		str	r2, [r3, #12]
+ 104:app/Network_Adapter.c ****     __Adapter.read = __read;
+ 457              		.loc 1 104 0
+ 458 0016 0A4A     		ldr	r2, .L43+16
+ 459 0018 9A61     		str	r2, [r3, #24]
+ 105:app/Network_Adapter.c ****     __Adapter.read_nb = __read_nb;
+ 460              		.loc 1 105 0
+ 461 001a 0A4A     		ldr	r2, .L43+20
+ 462 001c 5A61     		str	r2, [r3, #20]
+ 106:app/Network_Adapter.c ****     __Adapter.write = __Adapter_write;
+ARM GAS  /tmp/cciWZdkf.s 			page 11
+
+
+ 463              		.loc 1 106 0
+ 464 001e 0A4A     		ldr	r2, .L43+24
+ 465 0020 1A61     		str	r2, [r3, #16]
+ 107:app/Network_Adapter.c ****     __Adapter.Get_Network_Status = __Adapter_Get_Network_Status;
+ 466              		.loc 1 107 0
+ 467 0022 0A4A     		ldr	r2, .L43+28
+ 468 0024 DA61     		str	r2, [r3, #28]
+ 108:app/Network_Adapter.c **** 
+ 109:app/Network_Adapter.c ****     Network_Status = NOINIT;
+ 469              		.loc 1 109 0
+ 470 0026 0021     		movs	r1, #0
+ 471 0028 094A     		ldr	r2, .L43+32
+ 472 002a 1170     		strb	r1, [r2]
+ 110:app/Network_Adapter.c ****     return &__Adapter;
+ 111:app/Network_Adapter.c **** }
+ 473              		.loc 1 111 0
+ 474 002c 1846     		mov	r0, r3
+ 475 002e 08BD     		pop	{r3, pc}
+ 476              	.L44:
+ 477              		.align	2
+ 478              	.L43:
+ 479 0030 00000000 		.word	.LANCHOR1
+ 480 0034 00000000 		.word	__Adapter_Init
+ 481 0038 00000000 		.word	__Adapter_TCP_Connect
+ 482 003c 00000000 		.word	__Adapter_UDP_Connect
+ 483 0040 00000000 		.word	__read
+ 484 0044 00000000 		.word	__read_nb
+ 485 0048 00000000 		.word	__Adapter_write
+ 486 004c 00000000 		.word	__Adapter_Get_Network_Status
+ 487 0050 00000000 		.word	.LANCHOR0
+ 488              		.cfi_endproc
+ 489              	.LFE77:
+ 491              		.section	.bss.Network_Status,"aw",%nobits
+ 492              		.set	.LANCHOR0,. + 0
+ 495              	Network_Status:
+ 496 0000 00       		.space	1
+ 497              		.section	.bss.__Adapter,"aw",%nobits
+ 498              		.align	2
+ 499              		.set	.LANCHOR1,. + 0
+ 502              	__Adapter:
+ 503 0000 00000000 		.space	32
+ 503      00000000 
+ 503      00000000 
+ 503      00000000 
+ 503      00000000 
+ 504              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 505              		.align	2
+ 506              	.LC0:
+ 507 0000 31323334 		.ascii	"123456789\000"
+ 507      35363738 
+ 507      3900
+ 508 000a 0000     		.space	2
+ 509              	.LC1:
+ 510 000c 7669766F 		.ascii	"vivo\000"
+ 510      00
+ 511              		.text
+ 512              	.Letext0:
+ARM GAS  /tmp/cciWZdkf.s 			page 12
+
+
+ 513              		.file 2 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/machine/_default_types.h"
+ 514              		.file 3 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/sys/_stdint.h"
+ 515              		.file 4 "app/Network_Adapter.h"
+ 516              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 517              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 518              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 519              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 520              		.file 9 "app/Serial.h"
+ 521              		.file 10 "app/ESP8266.h"
+ 522              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 523              		.file 12 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 524              		.file 13 "Drivers/CMSIS/Include/core_cm3.h"
+ARM GAS  /tmp/cciWZdkf.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 Network_Adapter.c
+     /tmp/cciWZdkf.s:20     .text.__Adapter_Get_Network_Status:00000000 $t
+     /tmp/cciWZdkf.s:24     .text.__Adapter_Get_Network_Status:00000000 __Adapter_Get_Network_Status
+     /tmp/cciWZdkf.s:39     .text.__Adapter_Get_Network_Status:00000008 $d
+     /tmp/cciWZdkf.s:44     .text.Status_Changed_Callback:00000000 $t
+     /tmp/cciWZdkf.s:48     .text.Status_Changed_Callback:00000000 Status_Changed_Callback
+     /tmp/cciWZdkf.s:67     .text.Status_Changed_Callback:0000000c $d
+     /tmp/cciWZdkf.s:72     .text.__Adapter_TCP_Connect:00000000 $t
+     /tmp/cciWZdkf.s:76     .text.__Adapter_TCP_Connect:00000000 __Adapter_TCP_Connect
+     /tmp/cciWZdkf.s:130    .text.__Adapter_TCP_Connect:0000002c $d
+     /tmp/cciWZdkf.s:136    .text.__Adapter_UDP_Connect:00000000 $t
+     /tmp/cciWZdkf.s:140    .text.__Adapter_UDP_Connect:00000000 __Adapter_UDP_Connect
+     /tmp/cciWZdkf.s:193    .text.__Adapter_UDP_Connect:00000028 $d
+     /tmp/cciWZdkf.s:199    .text.__Adapter_write:00000000 $t
+     /tmp/cciWZdkf.s:203    .text.__Adapter_write:00000000 __Adapter_write
+     /tmp/cciWZdkf.s:229    .text.__Adapter_write:0000000c $d
+     /tmp/cciWZdkf.s:234    .text.__read_nb:00000000 $t
+     /tmp/cciWZdkf.s:238    .text.__read_nb:00000000 __read_nb
+     /tmp/cciWZdkf.s:264    .text.__read_nb:0000000c $d
+     /tmp/cciWZdkf.s:269    .text.__read:00000000 $t
+     /tmp/cciWZdkf.s:273    .text.__read:00000000 __read
+     /tmp/cciWZdkf.s:299    .text.__read:0000000c $d
+     /tmp/cciWZdkf.s:304    .text.__Adapter_Init:00000000 $t
+     /tmp/cciWZdkf.s:308    .text.__Adapter_Init:00000000 __Adapter_Init
+     /tmp/cciWZdkf.s:417    .text.__Adapter_Init:00000088 $d
+     /tmp/cciWZdkf.s:427    .text.Network_Adapter_Init:00000000 $t
+     /tmp/cciWZdkf.s:432    .text.Network_Adapter_Init:00000000 Network_Adapter_Init
+     /tmp/cciWZdkf.s:479    .text.Network_Adapter_Init:00000030 $d
+     /tmp/cciWZdkf.s:495    .bss.Network_Status:00000000 Network_Status
+     /tmp/cciWZdkf.s:496    .bss.Network_Status:00000000 $d
+     /tmp/cciWZdkf.s:498    .bss.__Adapter:00000000 $d
+     /tmp/cciWZdkf.s:502    .bss.__Adapter:00000000 __Adapter
+     /tmp/cciWZdkf.s:505    .rodata.str1.4:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+vTaskDelay
+HAL_GPIO_TogglePin
+ESP8266_Handle_Init

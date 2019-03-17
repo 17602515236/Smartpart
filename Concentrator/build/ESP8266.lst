@@ -1,0 +1,2157 @@
+ARM GAS  /tmp/ccC0nB2j.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"ESP8266.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Copy_to_ACK_Cache,"ax",%progbits
+  20              		.align	2
+  21              		.thumb
+  22              		.thumb_func
+  24              	Copy_to_ACK_Cache:
+  25              	.LFB69:
+  26              		.file 1 "app/ESP8266.c"
+   1:app/ESP8266.c **** #include "ESP8266.h"
+   2:app/ESP8266.c **** #include "string.h"
+   3:app/ESP8266.c **** #include "FreeRTOS.h"
+   4:app/ESP8266.c **** #include "task.h"
+   5:app/ESP8266.c **** #include "queue.h"
+   6:app/ESP8266.c **** #include "semphr.h"
+   7:app/ESP8266.c **** static ESP8266_Handle __ESP8266;
+   8:app/ESP8266.c **** Serial_Handle ESP8266_Serial;
+   9:app/ESP8266.c **** 
+  10:app/ESP8266.c **** struct Tran_Back{
+  11:app/ESP8266.c ****     char *AT;
+  12:app/ESP8266.c ****     char *Correct_Back;
+  13:app/ESP8266.c ****     uint8_t Retry_times;
+  14:app/ESP8266.c **** };
+  15:app/ESP8266.c **** 
+  16:app/ESP8266.c **** char Temp[128];
+  17:app/ESP8266.c **** 
+  18:app/ESP8266.c **** #define ACK_CACHE_SIZE 64
+  19:app/ESP8266.c **** char ACK_Cache[ACK_CACHE_SIZE];
+  20:app/ESP8266.c **** char ACK_len;
+  21:app/ESP8266.c **** 
+  22:app/ESP8266.c **** SemaphoreHandle_t xSemaphore = NULL;
+  23:app/ESP8266.c **** 
+  24:app/ESP8266.c **** QueueHandle_t Qset;
+  25:app/ESP8266.c **** struct Qset_Item __Qset_Item;
+  26:app/ESP8266.c **** #define QSET_DEPTH 5
+  27:app/ESP8266.c **** #define QSET_ITEM_SIZE 64   
+  28:app/ESP8266.c **** /**
+  29:app/ESP8266.c ****  * @brief The AT Command and Match ACK,Retry Times
+  30:app/ESP8266.c ****  * 
+  31:app/ESP8266.c ****  */
+  32:app/ESP8266.c **** struct Tran_Back TBMatch[]={
+ARM GAS  /tmp/ccC0nB2j.s 			page 2
+
+
+  33:app/ESP8266.c ****     [AT]={.AT="AT\r\n",.Correct_Back="\r\nOK\r\n",.Retry_times=3},
+  34:app/ESP8266.c ****     [ATE0]={.AT="ATE0\r\n",.Correct_Back="\r\nOK\r\n",.Retry_times=3},
+  35:app/ESP8266.c ****     [ATE1]={.AT="ATE1\r\n",.Correct_Back="\r\nOK\r\n",.Retry_times=3},
+  36:app/ESP8266.c ****     [CWMODE_CUR_1]={.AT="AT+CWMODE_CUR=1\r\n",.Correct_Back="\r\nOK\r\n",.Retry_times=3},
+  37:app/ESP8266.c ****     [CWJAP_CUR]={.AT="AT+CWJAP_CUR=\"%s\",\"%s\"\r\n",.Correct_Back="\r\nOK\r\n",.Retry_times=3},
+  38:app/ESP8266.c ****     [CIPSTART]={.AT="AT+CIPSTART=\"%s\",\"%s\",%d\r\n",.Correct_Back="\r\nOK\r\n",.Retry_times=3},
+  39:app/ESP8266.c ****     [CIPSEND_TCP]={.AT="AT+CIPSEND=%d\r\n",.Correct_Back="\r\n>",.Retry_times=3},
+  40:app/ESP8266.c ****     [CIPSEND_UDP]={.AT="AT+CIPSEND=%d\r\n",.Correct_Back="\r\n>",.Retry_times=3},
+  41:app/ESP8266.c **** };
+  42:app/ESP8266.c **** 
+  43:app/ESP8266.c **** const TaskHandle_t Listened_TaskHandle;
+  44:app/ESP8266.c **** 
+  45:app/ESP8266.c **** //Transmit AT Command
+  46:app/ESP8266.c **** #define AT_TRANSMIT(x,y) do{\
+  47:app/ESP8266.c ****     HAL_UART_Transmit(__ESP8266.Serial->huart,(uint8_t *)x,y,0xFFFF); \
+  48:app/ESP8266.c **** }while(0)
+  49:app/ESP8266.c **** 
+  50:app/ESP8266.c **** 
+  51:app/ESP8266.c **** 
+  52:app/ESP8266.c **** // static void Suspend_Listened()
+  53:app/ESP8266.c **** // {
+  54:app/ESP8266.c **** //     if(Listened_TaskHandle != NULL && __ESP8266.Listening_Flags == Listening)
+  55:app/ESP8266.c **** //     {
+  56:app/ESP8266.c **** //         vTaskSuspend(Listened_TaskHandle);
+  57:app/ESP8266.c **** //         __ESP8266.Listening_Flags = Suspending;
+  58:app/ESP8266.c **** //     }
+  59:app/ESP8266.c **** // }
+  60:app/ESP8266.c **** 
+  61:app/ESP8266.c **** // static void Resume_Listened()
+  62:app/ESP8266.c **** // {
+  63:app/ESP8266.c **** //     if(Listened_TaskHandle != NULL && __ESP8266.Listening_Flags == Suspending)
+  64:app/ESP8266.c **** //     {
+  65:app/ESP8266.c **** //         vTaskSuspend(Listened_TaskHandle);
+  66:app/ESP8266.c **** //         __ESP8266.Listening_Flags = Listening;
+  67:app/ESP8266.c **** //     }
+  68:app/ESP8266.c **** // }
+  69:app/ESP8266.c **** 
+  70:app/ESP8266.c **** static int Copy_to_ACK_Cache(uint8_t *pBuff,uint16_t len)
+  71:app/ESP8266.c **** {
+  27              		.loc 1 71 0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              	.LVL0:
+  32 0000 38B5     		push	{r3, r4, r5, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 3, -16
+  36              		.cfi_offset 4, -12
+  37              		.cfi_offset 5, -8
+  38              		.cfi_offset 14, -4
+  39 0002 0546     		mov	r5, r0
+  40 0004 0C46     		mov	r4, r1
+  72:app/ESP8266.c ****     xSemaphoreTake(xSemaphore,portMAX_DELAY);
+  41              		.loc 1 72 0
+  42 0006 0023     		movs	r3, #0
+  43 0008 4FF0FF32 		mov	r2, #-1
+ARM GAS  /tmp/ccC0nB2j.s 			page 3
+
+
+  44 000c 1946     		mov	r1, r3
+  45              	.LVL1:
+  46 000e 0C48     		ldr	r0, .L5
+  47              	.LVL2:
+  48 0010 0068     		ldr	r0, [r0]
+  49 0012 FFF7FEFF 		bl	xQueueGenericReceive
+  50              	.LVL3:
+  73:app/ESP8266.c ****     if (len > ACK_CACHE_SIZE)
+  51              		.loc 1 73 0
+  52 0016 402C     		cmp	r4, #64
+  53 0018 00D9     		bls	.L2
+  74:app/ESP8266.c ****         len = ACK_CACHE_SIZE;
+  54              		.loc 1 74 0
+  55 001a 4024     		movs	r4, #64
+  56              	.L2:
+  57              	.LVL4:
+  75:app/ESP8266.c ****     memcpy(ACK_Cache, pBuff, len);
+  58              		.loc 1 75 0
+  59 001c 2246     		mov	r2, r4
+  60 001e 2946     		mov	r1, r5
+  61 0020 0848     		ldr	r0, .L5+4
+  62 0022 FFF7FEFF 		bl	memcpy
+  63              	.LVL5:
+  76:app/ESP8266.c ****     ACK_len = len;
+  64              		.loc 1 76 0
+  65 0026 084B     		ldr	r3, .L5+8
+  66 0028 1C70     		strb	r4, [r3]
+  77:app/ESP8266.c ****     __ESP8266.Serial_ACK_Flags = Serial_ACK_Received;
+  67              		.loc 1 77 0
+  68 002a 0021     		movs	r1, #0
+  69 002c 074B     		ldr	r3, .L5+12
+  70 002e 1975     		strb	r1, [r3, #20]
+  78:app/ESP8266.c ****     xSemaphoreGive(xSemaphore);
+  71              		.loc 1 78 0
+  72 0030 0B46     		mov	r3, r1
+  73 0032 0A46     		mov	r2, r1
+  74 0034 0248     		ldr	r0, .L5
+  75 0036 0068     		ldr	r0, [r0]
+  76 0038 FFF7FEFF 		bl	xQueueGenericSend
+  77              	.LVL6:
+  79:app/ESP8266.c ****     return len;
+  80:app/ESP8266.c **** }
+  78              		.loc 1 80 0
+  79 003c 2046     		mov	r0, r4
+  80 003e 38BD     		pop	{r3, r4, r5, pc}
+  81              	.LVL7:
+  82              	.L6:
+  83              		.align	2
+  84              	.L5:
+  85 0040 00000000 		.word	.LANCHOR0
+  86 0044 00000000 		.word	ACK_Cache
+  87 0048 00000000 		.word	ACK_len
+  88 004c 00000000 		.word	.LANCHOR1
+  89              		.cfi_endproc
+  90              	.LFE69:
+  92              		.section	.text.__Listen_ESP8266,"ax",%progbits
+  93              		.align	2
+ARM GAS  /tmp/ccC0nB2j.s 			page 4
+
+
+  94              		.global	__Listen_ESP8266
+  95              		.thumb
+  96              		.thumb_func
+  98              	__Listen_ESP8266:
+  99              	.LFB79:
+  81:app/ESP8266.c **** 
+  82:app/ESP8266.c **** static void Command_Process_Over(void)
+  83:app/ESP8266.c **** {
+  84:app/ESP8266.c ****     memset(ACK_Cache,0,ACK_CACHE_SIZE);
+  85:app/ESP8266.c ****     ACK_len = 0;
+  86:app/ESP8266.c ****     __ESP8266.Serial_ACK_Flags = Serial_ACK_None;
+  87:app/ESP8266.c **** }
+  88:app/ESP8266.c **** 
+  89:app/ESP8266.c **** 
+  90:app/ESP8266.c **** 
+  91:app/ESP8266.c **** 
+  92:app/ESP8266.c **** /**
+  93:app/ESP8266.c ****  * @brief   ESP8266<===UART===>STM32,STM32 Transmit an command and wait ACK Back with ESP8266 
+  94:app/ESP8266.c ****  *          until timeout
+  95:app/ESP8266.c ****  * 
+  96:app/ESP8266.c ****  * @param AT            :AT Command STM32 ===> ESP8266
+  97:app/ESP8266.c ****  * @param Correct_ACK   :The Correct ACK from ESP8266(Only receive specify ACK this Function can re
+  98:app/ESP8266.c ****  * @param Data_Output   :output the receive ACK if this param is not NULL
+  99:app/ESP8266.c ****  * @param ACK_timeout   :specify timeout
+ 100:app/ESP8266.c ****  * @param Retry_Times   :when timeout or receive ERROR ACK STM32 will retransmit AT command with Re
+ 101:app/ESP8266.c ****  * @return ESP8266_Status 
+ 102:app/ESP8266.c ****  */
+ 103:app/ESP8266.c **** static ESP8266_Status __Trans_WaitACK_UntilTimeout(char *AT,
+ 104:app/ESP8266.c ****                                                    uint32_t len,
+ 105:app/ESP8266.c ****                                                    char *Correct_ACK,
+ 106:app/ESP8266.c ****                                                    uint8_t *Data_Output,
+ 107:app/ESP8266.c ****                                                    uint32_t ACK_timeout,
+ 108:app/ESP8266.c ****                                                    uint8_t Retry_Times)
+ 109:app/ESP8266.c **** {
+ 110:app/ESP8266.c ****     uint32_t Last_Time;
+ 111:app/ESP8266.c ****     uint8_t i = 0;
+ 112:app/ESP8266.c ****     uint8_t ret = ESP8266_Failed;
+ 113:app/ESP8266.c ****     for (i = 0; i < Retry_Times; i++)
+ 114:app/ESP8266.c ****     {
+ 115:app/ESP8266.c ****         //Transmit AT Command
+ 116:app/ESP8266.c ****         xSemaphoreTake(xSemaphore, portMAX_DELAY);
+ 117:app/ESP8266.c ****         Command_Process_Over();
+ 118:app/ESP8266.c ****         xSemaphoreGive(xSemaphore);
+ 119:app/ESP8266.c ****         AT_TRANSMIT(AT, len);
+ 120:app/ESP8266.c ****         Last_Time = HAL_GetTick() + ACK_timeout;
+ 121:app/ESP8266.c ****         while (HAL_GetTick() < Last_Time)
+ 122:app/ESP8266.c ****         {
+ 123:app/ESP8266.c ****             //Check the flag of SerilPort if Data is Ready or not
+ 124:app/ESP8266.c ****             if (__ESP8266.Serial_ACK_Flags == Serial_ACK_Received)
+ 125:app/ESP8266.c ****             {
+ 126:app/ESP8266.c ****                 xSemaphoreTake(xSemaphore, portMAX_DELAY);
+ 127:app/ESP8266.c ****                 if (strstr((const char *)ACK_Cache, (const char *)Correct_ACK) != NULL)
+ 128:app/ESP8266.c ****                 {
+ 129:app/ESP8266.c ****                     if (Data_Output != NULL)
+ 130:app/ESP8266.c ****                         memcpy(Data_Output, ACK_Cache,ACK_len);
+ 131:app/ESP8266.c ****                     ret = ESP8266_OK;
+ 132:app/ESP8266.c ****                 }
+ARM GAS  /tmp/ccC0nB2j.s 			page 5
+
+
+ 133:app/ESP8266.c ****                 // if (strstr((const char *)ACK_Cache, (const char *)"ERROR\r\n") != NULL)
+ 134:app/ESP8266.c ****                 // {
+ 135:app/ESP8266.c ****                 //     __ESP8266.Serial_ACK_Flags = Serial_ACK_None;
+ 136:app/ESP8266.c ****                 //     break;
+ 137:app/ESP8266.c ****                 // }
+ 138:app/ESP8266.c ****                 Command_Process_Over();
+ 139:app/ESP8266.c ****                 xSemaphoreGive(xSemaphore);
+ 140:app/ESP8266.c ****                 if (ret == ESP8266_OK)
+ 141:app/ESP8266.c ****                     return ret;
+ 142:app/ESP8266.c ****             }
+ 143:app/ESP8266.c ****             vTaskDelay(10);
+ 144:app/ESP8266.c ****         }
+ 145:app/ESP8266.c ****     }
+ 146:app/ESP8266.c ****     xSemaphoreTake(xSemaphore, portMAX_DELAY);
+ 147:app/ESP8266.c ****     Command_Process_Over();
+ 148:app/ESP8266.c ****     xSemaphoreGive(xSemaphore);
+ 149:app/ESP8266.c ****     return ESP8266_Failed;
+ 150:app/ESP8266.c **** }
+ 151:app/ESP8266.c **** 
+ 152:app/ESP8266.c **** /**
+ 153:app/ESP8266.c ****  * @brief Transmit Standard AT Command without Parameter  and wwait correct ACK from ESP8266
+ 154:app/ESP8266.c ****  * 
+ 155:app/ESP8266.c ****  * @param Cmd_order     :No parameter AT Command Order(look enum AT_Order)
+ 156:app/ESP8266.c ****  * @param ACK_timeout   :Timeout
+ 157:app/ESP8266.c ****  * @param Data_Output   :Output Receive ACK if this parameter is not NULL
+ 158:app/ESP8266.c ****  * @return ESP8266_Status 
+ 159:app/ESP8266.c ****  */
+ 160:app/ESP8266.c **** static ESP8266_Status __Tran_WaitACK_NoParameter(uint8_t Cmd_order,
+ 161:app/ESP8266.c ****                                                  uint32_t ACK_timeout,
+ 162:app/ESP8266.c ****                                                  uint8_t *Data_Output)
+ 163:app/ESP8266.c **** {
+ 164:app/ESP8266.c ****     return __Trans_WaitACK_UntilTimeout(TBMatch[Cmd_order].AT,
+ 165:app/ESP8266.c ****                                         strlen(TBMatch[Cmd_order].AT),
+ 166:app/ESP8266.c ****                                         TBMatch[Cmd_order].Correct_Back,
+ 167:app/ESP8266.c ****                                         Data_Output,
+ 168:app/ESP8266.c ****                                         ACK_timeout,
+ 169:app/ESP8266.c ****                                         TBMatch[Cmd_order].Retry_times);
+ 170:app/ESP8266.c **** }
+ 171:app/ESP8266.c **** 
+ 172:app/ESP8266.c **** /**
+ 173:app/ESP8266.c ****  * @brief Connect to specify wifi
+ 174:app/ESP8266.c ****  * 
+ 175:app/ESP8266.c ****  * @param SSID              :wifi SSID
+ 176:app/ESP8266.c ****  * @param PASSWD            :wifi password
+ 177:app/ESP8266.c ****  * @param timeout           :COnnect timeout
+ 178:app/ESP8266.c ****  * @return ESP8266_Status 
+ 179:app/ESP8266.c ****  */
+ 180:app/ESP8266.c **** static ESP8266_Status __Connect_wifi(char *SSID,
+ 181:app/ESP8266.c ****                                      char *PASSWD,
+ 182:app/ESP8266.c ****                                      uint32_t timeout)
+ 183:app/ESP8266.c **** {
+ 184:app/ESP8266.c ****     sprintf(Temp, TBMatch[CWJAP_CUR].AT, SSID, PASSWD);
+ 185:app/ESP8266.c ****     //Transmit AT Command and Wait ACK
+ 186:app/ESP8266.c ****     if (__Trans_WaitACK_UntilTimeout(Temp,
+ 187:app/ESP8266.c ****                                      strlen(Temp),
+ 188:app/ESP8266.c ****                                      TBMatch[CWJAP_CUR].Correct_Back,
+ 189:app/ESP8266.c ****                                      NULL,
+ARM GAS  /tmp/ccC0nB2j.s 			page 6
+
+
+ 190:app/ESP8266.c ****                                      timeout,
+ 191:app/ESP8266.c ****                                      TBMatch[CWJAP_CUR].Retry_times) == ESP8266_Failed)
+ 192:app/ESP8266.c ****     {
+ 193:app/ESP8266.c ****         __ESP8266.Wifi_Connect_Flags = WIFI_NoConnect;
+ 194:app/ESP8266.c ****         return ESP8266_Failed;
+ 195:app/ESP8266.c ****     }
+ 196:app/ESP8266.c ****     __ESP8266.Wifi_Connect_Flags = WIFI_Connect;
+ 197:app/ESP8266.c ****     return ESP8266_OK;
+ 198:app/ESP8266.c **** }
+ 199:app/ESP8266.c **** 
+ 200:app/ESP8266.c **** // static Network_Status __Device_Status(void)
+ 201:app/ESP8266.c **** // {
+ 202:app/ESP8266.c **** //     memset(Temp,0,128);
+ 203:app/ESP8266.c **** //     if (__Trans_WaitACK_UntilTimeout("AT+CIPSTATUS\r\n",
+ 204:app/ESP8266.c **** //                                      strlen("AT+CIPSTATUS\r\n"),
+ 205:app/ESP8266.c **** //                                      "\r\nSTATUS:",
+ 206:app/ESP8266.c **** //                                      (uint8_t *)Temp,
+ 207:app/ESP8266.c **** //                                      1000,
+ 208:app/ESP8266.c **** //                                      2) == ESP8266_Failed)
+ 209:app/ESP8266.c **** //     {
+ 210:app/ESP8266.c **** //         return ESP8266_Failed;
+ 211:app/ESP8266.c **** //     }
+ 212:app/ESP8266.c **** //     if (strstr(Temp, "\r\nSTATUS:2") != NULL)
+ 213:app/ESP8266.c **** //         return GOT_IP;
+ 214:app/ESP8266.c **** //     if (strstr(Temp, "\r\nSTATUS:3") != NULL)
+ 215:app/ESP8266.c **** //         return CONNECT_SERVER;
+ 216:app/ESP8266.c **** //     if (strstr(Temp, "\r\nSTATUS:4") != NULL)
+ 217:app/ESP8266.c **** //         return NETWORK_DISCONNECT;
+ 218:app/ESP8266.c **** //     if (strstr(Temp, "\r\nSTATUS:5") != NULL)
+ 219:app/ESP8266.c **** //         return WIFI_DISCONNECT;
+ 220:app/ESP8266.c **** //     return WIFI_DISCONNECT;
+ 221:app/ESP8266.c **** // }
+ 222:app/ESP8266.c **** 
+ 223:app/ESP8266.c **** static ESP8266_Status __Connect_Server(char Type,
+ 224:app/ESP8266.c ****                                        char *Server_IP,
+ 225:app/ESP8266.c ****                                        uint32_t Server_Port,
+ 226:app/ESP8266.c ****                                        uint32_t Local_Port,
+ 227:app/ESP8266.c ****                                        uint32_t timeout)
+ 228:app/ESP8266.c **** {
+ 229:app/ESP8266.c ****     memset(Temp,0,128);
+ 230:app/ESP8266.c ****     if (Type == TCP)
+ 231:app/ESP8266.c ****         sprintf(Temp, "AT+CIPSTART=\"TCP\",\"%s\",%ld\r\n", Server_IP, Server_Port);
+ 232:app/ESP8266.c ****     else
+ 233:app/ESP8266.c ****     {
+ 234:app/ESP8266.c ****         if (Local_Port == 0)
+ 235:app/ESP8266.c ****             sprintf(Temp, "AT+CIPSTART=\"UDP\",\"%s\",%ld\r\n", Server_IP, Server_Port);
+ 236:app/ESP8266.c ****         else
+ 237:app/ESP8266.c ****             sprintf(Temp, "AT+CIPSTART=\"UDP\",\"%s\",%ld,%ld,0\r\n", Server_IP, Server_Port,Local_
+ 238:app/ESP8266.c ****     }
+ 239:app/ESP8266.c **** 
+ 240:app/ESP8266.c ****     if (__Trans_WaitACK_UntilTimeout("AT+CIPCLOSE\r\n",
+ 241:app/ESP8266.c ****                                      strlen("AT+CIPCLOSE\r\n"),
+ 242:app/ESP8266.c ****                                      "\r\nOK\r\n",
+ 243:app/ESP8266.c ****                                      NULL,
+ 244:app/ESP8266.c ****                                      200,
+ 245:app/ESP8266.c ****                                      2) == ESP8266_OK)
+ 246:app/ESP8266.c ****     {
+ARM GAS  /tmp/ccC0nB2j.s 			page 7
+
+
+ 247:app/ESP8266.c ****         __ESP8266.TCP_UDP_Connect_Flags = TCP_UDP_NoConnect;
+ 248:app/ESP8266.c ****     }
+ 249:app/ESP8266.c ****     if (__Trans_WaitACK_UntilTimeout(Temp,
+ 250:app/ESP8266.c ****                                      strlen(Temp),
+ 251:app/ESP8266.c ****                                      "\r\nOK\r\n",
+ 252:app/ESP8266.c ****                                      NULL,
+ 253:app/ESP8266.c ****                                      timeout,
+ 254:app/ESP8266.c ****                                      2) == ESP8266_Failed)
+ 255:app/ESP8266.c ****     {
+ 256:app/ESP8266.c ****         __ESP8266.TCP_UDP_Connect_Flags = TCP_UDP_NoConnect;
+ 257:app/ESP8266.c ****         return ESP8266_Failed;
+ 258:app/ESP8266.c ****     }
+ 259:app/ESP8266.c ****     __ESP8266.TCP_UDP_Connect_Flags = TCP_UDP_Connect;
+ 260:app/ESP8266.c ****     return ESP8266_OK;
+ 261:app/ESP8266.c **** }
+ 262:app/ESP8266.c **** 
+ 263:app/ESP8266.c **** /**
+ 264:app/ESP8266.c ****  * @brief Reset ESP8266
+ 265:app/ESP8266.c ****  * 
+ 266:app/ESP8266.c ****  */
+ 267:app/ESP8266.c **** static void __RST(void)
+ 268:app/ESP8266.c **** {
+ 269:app/ESP8266.c ****     __ESP8266.Wifi_Connect_Flags = WIFI_NoConnect;
+ 270:app/ESP8266.c ****     AT_TRANSMIT("AT+RST\r\n",strlen("AT+RST\r\n"));
+ 271:app/ESP8266.c **** }
+ 272:app/ESP8266.c **** 
+ 273:app/ESP8266.c **** static int __read_nb(unsigned char *output,uint32_t bytes)
+ 274:app/ESP8266.c **** {
+ 275:app/ESP8266.c ****     int count = 0;
+ 276:app/ESP8266.c **** 
+ 277:app/ESP8266.c ****     char Buff[64] = {0};
+ 278:app/ESP8266.c ****     char *p = NULL;
+ 279:app/ESP8266.c ****     if(__ESP8266.Wifi_Connect_Flags != WIFI_Connect)
+ 280:app/ESP8266.c ****         return Err_No_WIFI_Connect;
+ 281:app/ESP8266.c ****     if(__ESP8266.TCP_UDP_Connect_Flags != TCP_UDP_Connect)
+ 282:app/ESP8266.c ****         return Err_No_Server_Connect;
+ 283:app/ESP8266.c ****     if(__ESP8266.Listening_Flags == NoListening)
+ 284:app/ESP8266.c ****         return Err_Listener_Stop;
+ 285:app/ESP8266.c ****     if (xQueueReceive(Qset, Buff, 0) == pdTRUE)
+ 286:app/ESP8266.c ****     {
+ 287:app/ESP8266.c ****         p = strstr((const char *)Buff,":");
+ 288:app/ESP8266.c ****         p++;
+ 289:app/ESP8266.c ****         count = Buff[0] - (uint8_t)(p - Buff);
+ 290:app/ESP8266.c ****         if (bytes > count)
+ 291:app/ESP8266.c ****             bytes = count;
+ 292:app/ESP8266.c ****         memcpy(output,p,bytes);
+ 293:app/ESP8266.c ****         return count;
+ 294:app/ESP8266.c ****     }
+ 295:app/ESP8266.c ****     return 0;
+ 296:app/ESP8266.c **** }
+ 297:app/ESP8266.c **** 
+ 298:app/ESP8266.c **** static int __read(unsigned char *output,uint32_t bytes,uint32_t timeout)
+ 299:app/ESP8266.c **** {
+ 300:app/ESP8266.c ****     int rc = 0;
+ 301:app/ESP8266.c ****     uint32_t l_time = HAL_GetTick() + timeout;
+ 302:app/ESP8266.c ****     while(HAL_GetTick() < l_time)
+ 303:app/ESP8266.c ****     {
+ARM GAS  /tmp/ccC0nB2j.s 			page 8
+
+
+ 304:app/ESP8266.c ****         rc = __read_nb(output,bytes);
+ 305:app/ESP8266.c ****         if (rc < 0)
+ 306:app/ESP8266.c ****             return rc;
+ 307:app/ESP8266.c ****         else if(rc > 0)
+ 308:app/ESP8266.c ****             return rc;
+ 309:app/ESP8266.c ****     }
+ 310:app/ESP8266.c ****     return Err_Timeout;
+ 311:app/ESP8266.c **** }
+ 312:app/ESP8266.c **** 
+ 313:app/ESP8266.c **** /**
+ 314:app/ESP8266.c ****  * @brief 
+ 315:app/ESP8266.c ****  * 
+ 316:app/ESP8266.c ****  * @param Buff 
+ 317:app/ESP8266.c ****  * @param count 
+ 318:app/ESP8266.c ****  * @return int 
+ 319:app/ESP8266.c ****  */
+ 320:app/ESP8266.c **** static int __Transmit_Data(unsigned char *Buff,
+ 321:app/ESP8266.c ****                                int count)
+ 322:app/ESP8266.c **** {
+ 323:app/ESP8266.c ****     memset(Temp,0,128);
+ 324:app/ESP8266.c ****     sprintf(Temp,"AT+CIPSEND=%d\r\n",count);
+ 325:app/ESP8266.c ****     if (__Trans_WaitACK_UntilTimeout(Temp,
+ 326:app/ESP8266.c ****                                      strlen(Temp),
+ 327:app/ESP8266.c ****                                      TBMatch[CIPSEND_TCP].Correct_Back,
+ 328:app/ESP8266.c ****                                      NULL,
+ 329:app/ESP8266.c ****                                      3000,
+ 330:app/ESP8266.c ****                                      TBMatch[CIPSEND_TCP].Retry_times) == ESP8266_Failed)
+ 331:app/ESP8266.c ****     {
+ 332:app/ESP8266.c ****         return -1;
+ 333:app/ESP8266.c ****     }
+ 334:app/ESP8266.c **** 
+ 335:app/ESP8266.c ****     memcpy(Temp,Buff,count);
+ 336:app/ESP8266.c ****     Temp[count]='\r';
+ 337:app/ESP8266.c ****     Temp[count + 1]='\n';
+ 338:app/ESP8266.c ****     if (__Trans_WaitACK_UntilTimeout(Temp,
+ 339:app/ESP8266.c ****                                      count,
+ 340:app/ESP8266.c ****                                      "SEND OK\r\n",
+ 341:app/ESP8266.c ****                                      NULL,
+ 342:app/ESP8266.c ****                                      3000,
+ 343:app/ESP8266.c ****                                      1) == ESP8266_Failed)
+ 344:app/ESP8266.c ****     {
+ 345:app/ESP8266.c ****         return -1;
+ 346:app/ESP8266.c ****     }
+ 347:app/ESP8266.c ****     return count;
+ 348:app/ESP8266.c **** }
+ 349:app/ESP8266.c **** 
+ 350:app/ESP8266.c **** /**
+ 351:app/ESP8266.c ****  * @brief Listening to ESP8266 ,Sync the Receive data to set 
+ 352:app/ESP8266.c ****  *          the flags,this function will not comeout; 
+ 353:app/ESP8266.c ****  * 
+ 354:app/ESP8266.c ****  */
+ 355:app/ESP8266.c **** void __Listen_ESP8266(void *param)
+ 356:app/ESP8266.c **** {
+ 100              		.loc 1 356 0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 0
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ARM GAS  /tmp/ccC0nB2j.s 			page 9
+
+
+ 104              	.LVL8:
+ 105 0000 70B5     		push	{r4, r5, r6, lr}
+ 106              	.LCFI1:
+ 107              		.cfi_def_cfa_offset 16
+ 108              		.cfi_offset 4, -16
+ 109              		.cfi_offset 5, -12
+ 110              		.cfi_offset 6, -8
+ 111              		.cfi_offset 14, -4
+ 112              	.LVL9:
+ 113              	.L10:
+ 357:app/ESP8266.c ****     while(1)
+ 358:app/ESP8266.c ****     {
+ 359:app/ESP8266.c ****         // if (__ESP8266.Wifi_Connect_Flags == WIFI_Connect &&
+ 360:app/ESP8266.c ****         //     __ESP8266.TCP_UDP_Connect_Flags == TCP_UDP_Connect)
+ 361:app/ESP8266.c ****         // {
+ 362:app/ESP8266.c ****         if (Serial_Get_Running_Flags(__ESP8266.Serial) == DMA_Stopping)
+ 114              		.loc 1 362 0
+ 115 0002 1F4B     		ldr	r3, .L15
+ 116 0004 1868     		ldr	r0, [r3]
+ 117 0006 FFF7FEFF 		bl	Serial_Get_Running_Flags
+ 118              	.LVL10:
+ 119 000a 0328     		cmp	r0, #3
+ 120 000c 03D1     		bne	.L9
+ 363:app/ESP8266.c ****             Serial_Start_DMA_Receive(__ESP8266.Serial);
+ 121              		.loc 1 363 0
+ 122 000e 1C4B     		ldr	r3, .L15
+ 123 0010 1868     		ldr	r0, [r3]
+ 124 0012 FFF7FEFF 		bl	Serial_Start_DMA_Receive
+ 125              	.LVL11:
+ 126              	.L9:
+ 364:app/ESP8266.c ****         if (Serial_Get_Receive_Flags(__ESP8266.Serial) == Serial_Data_Ready)
+ 127              		.loc 1 364 0
+ 128 0016 1A4B     		ldr	r3, .L15
+ 129 0018 1868     		ldr	r0, [r3]
+ 130 001a FFF7FEFF 		bl	Serial_Get_Receive_Flags
+ 131              	.LVL12:
+ 132 001e 0028     		cmp	r0, #0
+ 133 0020 EFD1     		bne	.L10
+ 134              	.LBB2:
+ 365:app/ESP8266.c ****         {
+ 366:app/ESP8266.c ****             Serial_Stop_DMA_Receive(__ESP8266.Serial);
+ 135              		.loc 1 366 0
+ 136 0022 174C     		ldr	r4, .L15
+ 137 0024 2068     		ldr	r0, [r4]
+ 138 0026 FFF7FEFF 		bl	Serial_Stop_DMA_Receive
+ 139              	.LVL13:
+ 367:app/ESP8266.c ****             uint8_t *pBuff = Serial_Get_Receive_Buff(__ESP8266.Serial);
+ 140              		.loc 1 367 0
+ 141 002a 2068     		ldr	r0, [r4]
+ 142 002c FFF7FEFF 		bl	Serial_Get_Receive_Buff
+ 143              	.LVL14:
+ 144 0030 0546     		mov	r5, r0
+ 145              	.LVL15:
+ 368:app/ESP8266.c ****             uint16_t len = Serial_Get_Receive_Len(__ESP8266.Serial);
+ 146              		.loc 1 368 0
+ 147 0032 2068     		ldr	r0, [r4]
+ 148              	.LVL16:
+ARM GAS  /tmp/ccC0nB2j.s 			page 10
+
+
+ 149 0034 FFF7FEFF 		bl	Serial_Get_Receive_Len
+ 150              	.LVL17:
+ 151 0038 0646     		mov	r6, r0
+ 152              	.LVL18:
+ 369:app/ESP8266.c ****             //Sync Data
+ 370:app/ESP8266.c ****             /*Receive UDP or TCP Data*/
+ 371:app/ESP8266.c ****             if (strstr((const char *)Serial_Get_Receive_Buff(__ESP8266.Serial), "+IPD,") != NULL)
+ 153              		.loc 1 371 0
+ 154 003a 2068     		ldr	r0, [r4]
+ 155 003c FFF7FEFF 		bl	Serial_Get_Receive_Buff
+ 156              	.LVL19:
+ 157 0040 1049     		ldr	r1, .L15+4
+ 158 0042 FFF7FEFF 		bl	strstr
+ 159              	.LVL20:
+ 160 0046 38B1     		cbz	r0, .L11
+ 372:app/ESP8266.c ****             {
+ 373:app/ESP8266.c ****                 pBuff[0] = len;
+ 161              		.loc 1 373 0
+ 162 0048 2E70     		strb	r6, [r5]
+ 374:app/ESP8266.c ****                 xQueueSend(Qset, pBuff, 0);
+ 163              		.loc 1 374 0
+ 164 004a 0023     		movs	r3, #0
+ 165 004c 1A46     		mov	r2, r3
+ 166 004e 2946     		mov	r1, r5
+ 167 0050 0D48     		ldr	r0, .L15+8
+ 168 0052 0068     		ldr	r0, [r0]
+ 169 0054 FFF7FEFF 		bl	xQueueGenericSend
+ 170              	.LVL21:
+ 171              	.L11:
+ 375:app/ESP8266.c ****             }
+ 376:app/ESP8266.c ****             if (strstr((const char *)Serial_Get_Receive_Buff(__ESP8266.Serial), "WIFI DISCONNECT\r\
+ 172              		.loc 1 376 0
+ 173 0058 094B     		ldr	r3, .L15
+ 174 005a 1868     		ldr	r0, [r3]
+ 175 005c FFF7FEFF 		bl	Serial_Get_Receive_Buff
+ 176              	.LVL22:
+ 177 0060 0A49     		ldr	r1, .L15+12
+ 178 0062 FFF7FEFF 		bl	strstr
+ 179              	.LVL23:
+ 180 0066 30B1     		cbz	r0, .L12
+ 377:app/ESP8266.c ****             {
+ 378:app/ESP8266.c ****                 if(__ESP8266.Status_Changed_Callback != NULL)
+ 181              		.loc 1 378 0
+ 182 0068 054B     		ldr	r3, .L15
+ 183 006a DB6B     		ldr	r3, [r3, #60]
+ 184 006c 002B     		cmp	r3, #0
+ 185 006e C8D0     		beq	.L10
+ 379:app/ESP8266.c ****                     __ESP8266.Status_Changed_Callback(CHANGED_WIFI_DISCONNECT);
+ 186              		.loc 1 379 0
+ 187 0070 0020     		movs	r0, #0
+ 188 0072 9847     		blx	r3
+ 189              	.LVL24:
+ 190 0074 C5E7     		b	.L10
+ 191              	.L12:
+ 380:app/ESP8266.c ****             }
+ 381:app/ESP8266.c ****             else
+ 382:app/ESP8266.c ****             {
+ARM GAS  /tmp/ccC0nB2j.s 			page 11
+
+
+ 383:app/ESP8266.c ****                 Copy_to_ACK_Cache(pBuff,len);
+ 192              		.loc 1 383 0
+ 193 0076 3146     		mov	r1, r6
+ 194 0078 2846     		mov	r0, r5
+ 195 007a FFF7FEFF 		bl	Copy_to_ACK_Cache
+ 196              	.LVL25:
+ 197 007e C0E7     		b	.L10
+ 198              	.L16:
+ 199              		.align	2
+ 200              	.L15:
+ 201 0080 00000000 		.word	.LANCHOR1
+ 202 0084 00000000 		.word	.LC0
+ 203 0088 00000000 		.word	Qset
+ 204 008c 08000000 		.word	.LC1
+ 205              	.LBE2:
+ 206              		.cfi_endproc
+ 207              	.LFE79:
+ 209              		.section	.text.__RST,"ax",%progbits
+ 210              		.align	2
+ 211              		.thumb
+ 212              		.thumb_func
+ 214              	__RST:
+ 215              	.LFB75:
+ 268:app/ESP8266.c ****     __ESP8266.Wifi_Connect_Flags = WIFI_NoConnect;
+ 216              		.loc 1 268 0
+ 217              		.cfi_startproc
+ 218              		@ args = 0, pretend = 0, frame = 0
+ 219              		@ frame_needed = 0, uses_anonymous_args = 0
+ 220 0000 08B5     		push	{r3, lr}
+ 221              	.LCFI2:
+ 222              		.cfi_def_cfa_offset 8
+ 223              		.cfi_offset 3, -8
+ 224              		.cfi_offset 14, -4
+ 269:app/ESP8266.c ****     AT_TRANSMIT("AT+RST\r\n",strlen("AT+RST\r\n"));
+ 225              		.loc 1 269 0
+ 226 0002 064B     		ldr	r3, .L19
+ 227 0004 0322     		movs	r2, #3
+ 228 0006 5A74     		strb	r2, [r3, #17]
+ 270:app/ESP8266.c **** }
+ 229              		.loc 1 270 0
+ 230 0008 1868     		ldr	r0, [r3]
+ 231 000a 4FF6FF73 		movw	r3, #65535
+ 232 000e 0822     		movs	r2, #8
+ 233 0010 0349     		ldr	r1, .L19+4
+ 234 0012 0068     		ldr	r0, [r0]
+ 235 0014 FFF7FEFF 		bl	HAL_UART_Transmit
+ 236              	.LVL26:
+ 237 0018 08BD     		pop	{r3, pc}
+ 238              	.L20:
+ 239 001a 00BF     		.align	2
+ 240              	.L19:
+ 241 001c 00000000 		.word	.LANCHOR1
+ 242 0020 1C000000 		.word	.LC2
+ 243              		.cfi_endproc
+ 244              	.LFE75:
+ 246              		.section	.text.__Stop_Listen_ESP8266,"ax",%progbits
+ 247              		.align	2
+ARM GAS  /tmp/ccC0nB2j.s 			page 12
+
+
+ 248              		.thumb
+ 249              		.thumb_func
+ 251              	__Stop_Listen_ESP8266:
+ 252              	.LFB81:
+ 384:app/ESP8266.c ****             }
+ 385:app/ESP8266.c ****         }
+ 386:app/ESP8266.c ****         // }
+ 387:app/ESP8266.c ****     }
+ 388:app/ESP8266.c **** }
+ 389:app/ESP8266.c **** 
+ 390:app/ESP8266.c **** static int __Start_Listen_ESP8266(void)
+ 391:app/ESP8266.c **** {
+ 392:app/ESP8266.c ****     if (__ESP8266.Listening_Flags == NoListening)
+ 393:app/ESP8266.c ****     {
+ 394:app/ESP8266.c ****         __ESP8266.Listening_Flags = Listening;
+ 395:app/ESP8266.c ****         // xTaskCreate(__Listen_ESP8266, "ESP8266_Listened_Task", 256, NULL, 8, Listened_TaskHandle
+ 396:app/ESP8266.c ****         xTaskCreate(__Listen_ESP8266, "Listened_Task", 64, NULL, 8,&Listened_TaskHandle);
+ 397:app/ESP8266.c ****         return ESP8266_OK;
+ 398:app/ESP8266.c ****     }
+ 399:app/ESP8266.c ****     return ESP8266_Failed;
+ 400:app/ESP8266.c **** }
+ 401:app/ESP8266.c **** 
+ 402:app/ESP8266.c **** static int __Stop_Listen_ESP8266(void)
+ 403:app/ESP8266.c **** {
+ 253              		.loc 1 403 0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257 0000 08B5     		push	{r3, lr}
+ 258              	.LCFI3:
+ 259              		.cfi_def_cfa_offset 8
+ 260              		.cfi_offset 3, -8
+ 261              		.cfi_offset 14, -4
+ 404:app/ESP8266.c ****     if(__ESP8266.Listening_Flags == Listening)
+ 262              		.loc 1 404 0
+ 263 0002 074B     		ldr	r3, .L25
+ 264 0004 DB7C     		ldrb	r3, [r3, #19]	@ zero_extendqisi2
+ 265 0006 082B     		cmp	r3, #8
+ 266 0008 08D1     		bne	.L23
+ 405:app/ESP8266.c ****     {
+ 406:app/ESP8266.c ****         __ESP8266.Listening_Flags = NoListening;
+ 267              		.loc 1 406 0
+ 268 000a 0A22     		movs	r2, #10
+ 269 000c 044B     		ldr	r3, .L25
+ 270 000e DA74     		strb	r2, [r3, #19]
+ 407:app/ESP8266.c ****         vTaskDelete(Listened_TaskHandle);
+ 271              		.loc 1 407 0
+ 272 0010 044B     		ldr	r3, .L25+4
+ 273 0012 1868     		ldr	r0, [r3]
+ 274 0014 FFF7FEFF 		bl	vTaskDelete
+ 275              	.LVL27:
+ 408:app/ESP8266.c ****         return ESP8266_OK;
+ 276              		.loc 1 408 0
+ 277 0018 0020     		movs	r0, #0
+ 278 001a 08BD     		pop	{r3, pc}
+ 279              	.L23:
+ 409:app/ESP8266.c ****     }
+ARM GAS  /tmp/ccC0nB2j.s 			page 13
+
+
+ 410:app/ESP8266.c ****     return ESP8266_Failed;
+ 280              		.loc 1 410 0
+ 281 001c 0120     		movs	r0, #1
+ 411:app/ESP8266.c **** }
+ 282              		.loc 1 411 0
+ 283 001e 08BD     		pop	{r3, pc}
+ 284              	.L26:
+ 285              		.align	2
+ 286              	.L25:
+ 287 0020 00000000 		.word	.LANCHOR1
+ 288 0024 00000000 		.word	Listened_TaskHandle
+ 289              		.cfi_endproc
+ 290              	.LFE81:
+ 292              		.section	.text.__read_nb,"ax",%progbits
+ 293              		.align	2
+ 294              		.thumb
+ 295              		.thumb_func
+ 297              	__read_nb:
+ 298              	.LFB76:
+ 274:app/ESP8266.c ****     int count = 0;
+ 299              		.loc 1 274 0
+ 300              		.cfi_startproc
+ 301              		@ args = 0, pretend = 0, frame = 64
+ 302              		@ frame_needed = 0, uses_anonymous_args = 0
+ 303              	.LVL28:
+ 304 0000 70B5     		push	{r4, r5, r6, lr}
+ 305              	.LCFI4:
+ 306              		.cfi_def_cfa_offset 16
+ 307              		.cfi_offset 4, -16
+ 308              		.cfi_offset 5, -12
+ 309              		.cfi_offset 6, -8
+ 310              		.cfi_offset 14, -4
+ 311 0002 90B0     		sub	sp, sp, #64
+ 312              	.LCFI5:
+ 313              		.cfi_def_cfa_offset 80
+ 314 0004 0646     		mov	r6, r0
+ 315 0006 0D46     		mov	r5, r1
+ 316              	.LVL29:
+ 277:app/ESP8266.c ****     char *p = NULL;
+ 317              		.loc 1 277 0
+ 318 0008 4022     		movs	r2, #64
+ 319 000a 0021     		movs	r1, #0
+ 320              	.LVL30:
+ 321 000c 6846     		mov	r0, sp
+ 322              	.LVL31:
+ 323 000e FFF7FEFF 		bl	memset
+ 324              	.LVL32:
+ 279:app/ESP8266.c ****         return Err_No_WIFI_Connect;
+ 325              		.loc 1 279 0
+ 326 0012 1A4B     		ldr	r3, .L35
+ 327 0014 5B7C     		ldrb	r3, [r3, #17]	@ zero_extendqisi2
+ 328 0016 022B     		cmp	r3, #2
+ 329 0018 24D1     		bne	.L30
+ 281:app/ESP8266.c ****         return Err_No_Server_Connect;
+ 330              		.loc 1 281 0
+ 331 001a 184B     		ldr	r3, .L35
+ 332 001c 9B7C     		ldrb	r3, [r3, #18]	@ zero_extendqisi2
+ARM GAS  /tmp/ccC0nB2j.s 			page 14
+
+
+ 333 001e 042B     		cmp	r3, #4
+ 334 0020 23D1     		bne	.L31
+ 283:app/ESP8266.c ****         return Err_Listener_Stop;
+ 335              		.loc 1 283 0
+ 336 0022 164B     		ldr	r3, .L35
+ 337 0024 DB7C     		ldrb	r3, [r3, #19]	@ zero_extendqisi2
+ 338 0026 0A2B     		cmp	r3, #10
+ 339 0028 22D0     		beq	.L32
+ 285:app/ESP8266.c ****     {
+ 340              		.loc 1 285 0
+ 341 002a 0023     		movs	r3, #0
+ 342 002c 1A46     		mov	r2, r3
+ 343 002e 6946     		mov	r1, sp
+ 344 0030 1348     		ldr	r0, .L35+4
+ 345 0032 0068     		ldr	r0, [r0]
+ 346 0034 FFF7FEFF 		bl	xQueueGenericReceive
+ 347              	.LVL33:
+ 348 0038 0128     		cmp	r0, #1
+ 349 003a 1CD1     		bne	.L33
+ 287:app/ESP8266.c ****         p++;
+ 350              		.loc 1 287 0
+ 351 003c 6C46     		mov	r4, sp
+ 352 003e 3A21     		movs	r1, #58
+ 353 0040 6846     		mov	r0, sp
+ 354 0042 FFF7FEFF 		bl	strchr
+ 355              	.LVL34:
+ 288:app/ESP8266.c ****         count = Buff[0] - (uint8_t)(p - Buff);
+ 356              		.loc 1 288 0
+ 357 0046 411C     		adds	r1, r0, #1
+ 358              	.LVL35:
+ 289:app/ESP8266.c ****         if (bytes > count)
+ 359              		.loc 1 289 0
+ 360 0048 9DF80030 		ldrb	r3, [sp]	@ zero_extendqisi2
+ 361 004c 0C1B     		subs	r4, r1, r4
+ 362 004e E4B2     		uxtb	r4, r4
+ 363 0050 1C1B     		subs	r4, r3, r4
+ 364              	.LVL36:
+ 290:app/ESP8266.c ****             bytes = count;
+ 365              		.loc 1 290 0
+ 366 0052 2246     		mov	r2, r4
+ 367 0054 AC42     		cmp	r4, r5
+ 368 0056 00D3     		bcc	.L29
+ 369 0058 2A46     		mov	r2, r5
+ 370              	.L29:
+ 371              	.LVL37:
+ 292:app/ESP8266.c ****         return count;
+ 372              		.loc 1 292 0
+ 373 005a 3046     		mov	r0, r6
+ 374 005c FFF7FEFF 		bl	memcpy
+ 375              	.LVL38:
+ 293:app/ESP8266.c ****     }
+ 376              		.loc 1 293 0
+ 377 0060 2046     		mov	r0, r4
+ 378 0062 09E0     		b	.L28
+ 379              	.LVL39:
+ 380              	.L30:
+ 280:app/ESP8266.c ****     if(__ESP8266.TCP_UDP_Connect_Flags != TCP_UDP_Connect)
+ARM GAS  /tmp/ccC0nB2j.s 			page 15
+
+
+ 381              		.loc 1 280 0
+ 382 0064 6FF00700 		mvn	r0, #7
+ 383 0068 06E0     		b	.L28
+ 384              	.L31:
+ 282:app/ESP8266.c ****     if(__ESP8266.Listening_Flags == NoListening)
+ 385              		.loc 1 282 0
+ 386 006a 6FF00800 		mvn	r0, #8
+ 387 006e 03E0     		b	.L28
+ 388              	.L32:
+ 284:app/ESP8266.c ****     if (xQueueReceive(Qset, Buff, 0) == pdTRUE)
+ 389              		.loc 1 284 0
+ 390 0070 6FF00600 		mvn	r0, #6
+ 391 0074 00E0     		b	.L28
+ 392              	.L33:
+ 295:app/ESP8266.c **** }
+ 393              		.loc 1 295 0
+ 394 0076 0020     		movs	r0, #0
+ 395              	.LVL40:
+ 396              	.L28:
+ 296:app/ESP8266.c **** 
+ 397              		.loc 1 296 0
+ 398 0078 10B0     		add	sp, sp, #64
+ 399              	.LCFI6:
+ 400              		.cfi_def_cfa_offset 16
+ 401              		@ sp needed
+ 402 007a 70BD     		pop	{r4, r5, r6, pc}
+ 403              	.LVL41:
+ 404              	.L36:
+ 405              		.align	2
+ 406              	.L35:
+ 407 007c 00000000 		.word	.LANCHOR1
+ 408 0080 00000000 		.word	Qset
+ 409              		.cfi_endproc
+ 410              	.LFE76:
+ 412              		.section	.text.__read,"ax",%progbits
+ 413              		.align	2
+ 414              		.thumb
+ 415              		.thumb_func
+ 417              	__read:
+ 418              	.LFB77:
+ 299:app/ESP8266.c ****     int rc = 0;
+ 419              		.loc 1 299 0
+ 420              		.cfi_startproc
+ 421              		@ args = 0, pretend = 0, frame = 0
+ 422              		@ frame_needed = 0, uses_anonymous_args = 0
+ 423              	.LVL42:
+ 424 0000 70B5     		push	{r4, r5, r6, lr}
+ 425              	.LCFI7:
+ 426              		.cfi_def_cfa_offset 16
+ 427              		.cfi_offset 4, -16
+ 428              		.cfi_offset 5, -12
+ 429              		.cfi_offset 6, -8
+ 430              		.cfi_offset 14, -4
+ 431 0002 0646     		mov	r6, r0
+ 432 0004 0D46     		mov	r5, r1
+ 433 0006 1446     		mov	r4, r2
+ 434              	.LVL43:
+ARM GAS  /tmp/ccC0nB2j.s 			page 16
+
+
+ 301:app/ESP8266.c ****     while(HAL_GetTick() < l_time)
+ 435              		.loc 1 301 0
+ 436 0008 FFF7FEFF 		bl	HAL_GetTick
+ 437              	.LVL44:
+ 438 000c 0444     		add	r4, r4, r0
+ 439              	.LVL45:
+ 302:app/ESP8266.c ****     {
+ 440              		.loc 1 302 0
+ 441 000e 06E0     		b	.L38
+ 442              	.LVL46:
+ 443              	.L40:
+ 304:app/ESP8266.c ****         if (rc < 0)
+ 444              		.loc 1 304 0
+ 445 0010 2946     		mov	r1, r5
+ 446 0012 3046     		mov	r0, r6
+ 447 0014 FFF7FEFF 		bl	__read_nb
+ 448              	.LVL47:
+ 305:app/ESP8266.c ****             return rc;
+ 449              		.loc 1 305 0
+ 450 0018 0028     		cmp	r0, #0
+ 451 001a 06DB     		blt	.L39
+ 307:app/ESP8266.c ****             return rc;
+ 452              		.loc 1 307 0
+ 453 001c 05DC     		bgt	.L39
+ 454              	.LVL48:
+ 455              	.L38:
+ 302:app/ESP8266.c ****     {
+ 456              		.loc 1 302 0
+ 457 001e FFF7FEFF 		bl	HAL_GetTick
+ 458              	.LVL49:
+ 459 0022 8442     		cmp	r4, r0
+ 460 0024 F4D8     		bhi	.L40
+ 310:app/ESP8266.c **** }
+ 461              		.loc 1 310 0
+ 462 0026 6FF00900 		mvn	r0, #9
+ 463              	.L39:
+ 311:app/ESP8266.c **** 
+ 464              		.loc 1 311 0
+ 465 002a 70BD     		pop	{r4, r5, r6, pc}
+ 466              		.cfi_endproc
+ 467              	.LFE77:
+ 469              		.section	.text.Command_Process_Over,"ax",%progbits
+ 470              		.align	2
+ 471              		.thumb
+ 472              		.thumb_func
+ 474              	Command_Process_Over:
+ 475              	.LFB70:
+  83:app/ESP8266.c ****     memset(ACK_Cache,0,ACK_CACHE_SIZE);
+ 476              		.loc 1 83 0
+ 477              		.cfi_startproc
+ 478              		@ args = 0, pretend = 0, frame = 0
+ 479              		@ frame_needed = 0, uses_anonymous_args = 0
+ 480 0000 08B5     		push	{r3, lr}
+ 481              	.LCFI8:
+ 482              		.cfi_def_cfa_offset 8
+ 483              		.cfi_offset 3, -8
+ 484              		.cfi_offset 14, -4
+ARM GAS  /tmp/ccC0nB2j.s 			page 17
+
+
+  84:app/ESP8266.c ****     ACK_len = 0;
+ 485              		.loc 1 84 0
+ 486 0002 4022     		movs	r2, #64
+ 487 0004 0021     		movs	r1, #0
+ 488 0006 0548     		ldr	r0, .L46
+ 489 0008 FFF7FEFF 		bl	memset
+ 490              	.LVL50:
+  85:app/ESP8266.c ****     __ESP8266.Serial_ACK_Flags = Serial_ACK_None;
+ 491              		.loc 1 85 0
+ 492 000c 0022     		movs	r2, #0
+ 493 000e 044B     		ldr	r3, .L46+4
+ 494 0010 1A70     		strb	r2, [r3]
+  86:app/ESP8266.c **** }
+ 495              		.loc 1 86 0
+ 496 0012 0122     		movs	r2, #1
+ 497 0014 034B     		ldr	r3, .L46+8
+ 498 0016 1A75     		strb	r2, [r3, #20]
+ 499 0018 08BD     		pop	{r3, pc}
+ 500              	.L47:
+ 501 001a 00BF     		.align	2
+ 502              	.L46:
+ 503 001c 00000000 		.word	ACK_Cache
+ 504 0020 00000000 		.word	ACK_len
+ 505 0024 00000000 		.word	.LANCHOR1
+ 506              		.cfi_endproc
+ 507              	.LFE70:
+ 509              		.section	.text.__Trans_WaitACK_UntilTimeout,"ax",%progbits
+ 510              		.align	2
+ 511              		.thumb
+ 512              		.thumb_func
+ 514              	__Trans_WaitACK_UntilTimeout:
+ 515              	.LFB71:
+ 109:app/ESP8266.c ****     uint32_t Last_Time;
+ 516              		.loc 1 109 0
+ 517              		.cfi_startproc
+ 518              		@ args = 8, pretend = 0, frame = 8
+ 519              		@ frame_needed = 0, uses_anonymous_args = 0
+ 520              	.LVL51:
+ 521 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 522              	.LCFI9:
+ 523              		.cfi_def_cfa_offset 36
+ 524              		.cfi_offset 4, -36
+ 525              		.cfi_offset 5, -32
+ 526              		.cfi_offset 6, -28
+ 527              		.cfi_offset 7, -24
+ 528              		.cfi_offset 8, -20
+ 529              		.cfi_offset 9, -16
+ 530              		.cfi_offset 10, -12
+ 531              		.cfi_offset 11, -8
+ 532              		.cfi_offset 14, -4
+ 533 0004 83B0     		sub	sp, sp, #12
+ 534              	.LCFI10:
+ 535              		.cfi_def_cfa_offset 48
+ 536 0006 8346     		mov	fp, r0
+ 537 0008 0191     		str	r1, [sp, #4]
+ 538 000a 1646     		mov	r6, r2
+ 539 000c 9846     		mov	r8, r3
+ARM GAS  /tmp/ccC0nB2j.s 			page 18
+
+
+ 540 000e DDF830A0 		ldr	r10, [sp, #48]
+ 541 0012 9DF83490 		ldrb	r9, [sp, #52]	@ zero_extendqisi2
+ 542              	.LVL52:
+ 112:app/ESP8266.c ****     for (i = 0; i < Retry_Times; i++)
+ 543              		.loc 1 112 0
+ 544 0016 0125     		movs	r5, #1
+ 113:app/ESP8266.c ****     {
+ 545              		.loc 1 113 0
+ 546 0018 0027     		movs	r7, #0
+ 547 001a 4CE0     		b	.L49
+ 548              	.LVL53:
+ 549              	.L55:
+ 116:app/ESP8266.c ****         Command_Process_Over();
+ 550              		.loc 1 116 0
+ 551 001c 324C     		ldr	r4, .L59
+ 552 001e 0023     		movs	r3, #0
+ 553 0020 4FF0FF32 		mov	r2, #-1
+ 554 0024 1946     		mov	r1, r3
+ 555 0026 2068     		ldr	r0, [r4]
+ 556 0028 FFF7FEFF 		bl	xQueueGenericReceive
+ 557              	.LVL54:
+ 117:app/ESP8266.c ****         xSemaphoreGive(xSemaphore);
+ 558              		.loc 1 117 0
+ 559 002c FFF7FEFF 		bl	Command_Process_Over
+ 560              	.LVL55:
+ 118:app/ESP8266.c ****         AT_TRANSMIT(AT, len);
+ 561              		.loc 1 118 0
+ 562 0030 0023     		movs	r3, #0
+ 563 0032 1A46     		mov	r2, r3
+ 564 0034 1946     		mov	r1, r3
+ 565 0036 2068     		ldr	r0, [r4]
+ 566 0038 FFF7FEFF 		bl	xQueueGenericSend
+ 567              	.LVL56:
+ 119:app/ESP8266.c ****         Last_Time = HAL_GetTick() + ACK_timeout;
+ 568              		.loc 1 119 0
+ 569 003c 2B4B     		ldr	r3, .L59+4
+ 570 003e 1868     		ldr	r0, [r3]
+ 571 0040 4FF6FF73 		movw	r3, #65535
+ 572 0044 BDF80420 		ldrh	r2, [sp, #4]
+ 573 0048 5946     		mov	r1, fp
+ 574 004a 0068     		ldr	r0, [r0]
+ 575 004c FFF7FEFF 		bl	HAL_UART_Transmit
+ 576              	.LVL57:
+ 120:app/ESP8266.c ****         while (HAL_GetTick() < Last_Time)
+ 577              		.loc 1 120 0
+ 578 0050 FFF7FEFF 		bl	HAL_GetTick
+ 579              	.LVL58:
+ 580 0054 00EB0A04 		add	r4, r0, r10
+ 581              	.LVL59:
+ 121:app/ESP8266.c ****         {
+ 582              		.loc 1 121 0
+ 583 0058 27E0     		b	.L50
+ 584              	.L54:
+ 124:app/ESP8266.c ****             {
+ 585              		.loc 1 124 0
+ 586 005a 244B     		ldr	r3, .L59+4
+ 587 005c 1B7D     		ldrb	r3, [r3, #20]	@ zero_extendqisi2
+ARM GAS  /tmp/ccC0nB2j.s 			page 19
+
+
+ 588 005e 0BBB     		cbnz	r3, .L51
+ 126:app/ESP8266.c ****                 if (strstr((const char *)ACK_Cache, (const char *)Correct_ACK) != NULL)
+ 589              		.loc 1 126 0
+ 590 0060 4FF0FF32 		mov	r2, #-1
+ 591 0064 1946     		mov	r1, r3
+ 592 0066 2048     		ldr	r0, .L59
+ 593 0068 0068     		ldr	r0, [r0]
+ 594 006a FFF7FEFF 		bl	xQueueGenericReceive
+ 595              	.LVL60:
+ 127:app/ESP8266.c ****                 {
+ 596              		.loc 1 127 0
+ 597 006e 3146     		mov	r1, r6
+ 598 0070 1F48     		ldr	r0, .L59+8
+ 599 0072 FFF7FEFF 		bl	strstr
+ 600              	.LVL61:
+ 601 0076 58B1     		cbz	r0, .L52
+ 129:app/ESP8266.c ****                         memcpy(Data_Output, ACK_Cache,ACK_len);
+ 602              		.loc 1 129 0
+ 603 0078 B8F1000F 		cmp	r8, #0
+ 604 007c 07D0     		beq	.L56
+ 130:app/ESP8266.c ****                     ret = ESP8266_OK;
+ 605              		.loc 1 130 0
+ 606 007e 1D4B     		ldr	r3, .L59+12
+ 607 0080 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 608 0082 1B49     		ldr	r1, .L59+8
+ 609 0084 4046     		mov	r0, r8
+ 610 0086 FFF7FEFF 		bl	memcpy
+ 611              	.LVL62:
+ 131:app/ESP8266.c ****                 }
+ 612              		.loc 1 131 0
+ 613 008a 0025     		movs	r5, #0
+ 614              	.LVL63:
+ 615 008c 00E0     		b	.L52
+ 616              	.LVL64:
+ 617              	.L56:
+ 618 008e 0025     		movs	r5, #0
+ 619              	.LVL65:
+ 620              	.L52:
+ 138:app/ESP8266.c ****                 xSemaphoreGive(xSemaphore);
+ 621              		.loc 1 138 0
+ 622 0090 FFF7FEFF 		bl	Command_Process_Over
+ 623              	.LVL66:
+ 139:app/ESP8266.c ****                 if (ret == ESP8266_OK)
+ 624              		.loc 1 139 0
+ 625 0094 0023     		movs	r3, #0
+ 626 0096 1A46     		mov	r2, r3
+ 627 0098 1946     		mov	r1, r3
+ 628 009a 1348     		ldr	r0, .L59
+ 629 009c 0068     		ldr	r0, [r0]
+ 630 009e FFF7FEFF 		bl	xQueueGenericSend
+ 631              	.LVL67:
+ 140:app/ESP8266.c ****                     return ret;
+ 632              		.loc 1 140 0
+ 633 00a2 E5B1     		cbz	r5, .L57
+ 634              	.L51:
+ 143:app/ESP8266.c ****         }
+ 635              		.loc 1 143 0
+ARM GAS  /tmp/ccC0nB2j.s 			page 20
+
+
+ 636 00a4 0A20     		movs	r0, #10
+ 637 00a6 FFF7FEFF 		bl	vTaskDelay
+ 638              	.LVL68:
+ 639              	.L50:
+ 121:app/ESP8266.c ****         {
+ 640              		.loc 1 121 0
+ 641 00aa FFF7FEFF 		bl	HAL_GetTick
+ 642              	.LVL69:
+ 643 00ae 8442     		cmp	r4, r0
+ 644 00b0 D3D8     		bhi	.L54
+ 113:app/ESP8266.c ****     {
+ 645              		.loc 1 113 0 discriminator 2
+ 646 00b2 0137     		adds	r7, r7, #1
+ 647              	.LVL70:
+ 648 00b4 FFB2     		uxtb	r7, r7
+ 649              	.LVL71:
+ 650              	.L49:
+ 113:app/ESP8266.c ****     {
+ 651              		.loc 1 113 0 is_stmt 0 discriminator 1
+ 652 00b6 4F45     		cmp	r7, r9
+ 653 00b8 B0D3     		bcc	.L55
+ 146:app/ESP8266.c ****     Command_Process_Over();
+ 654              		.loc 1 146 0 is_stmt 1
+ 655 00ba 0B4C     		ldr	r4, .L59
+ 656 00bc 0023     		movs	r3, #0
+ 657 00be 4FF0FF32 		mov	r2, #-1
+ 658 00c2 1946     		mov	r1, r3
+ 659 00c4 2068     		ldr	r0, [r4]
+ 660 00c6 FFF7FEFF 		bl	xQueueGenericReceive
+ 661              	.LVL72:
+ 147:app/ESP8266.c ****     xSemaphoreGive(xSemaphore);
+ 662              		.loc 1 147 0
+ 663 00ca FFF7FEFF 		bl	Command_Process_Over
+ 664              	.LVL73:
+ 148:app/ESP8266.c ****     return ESP8266_Failed;
+ 665              		.loc 1 148 0
+ 666 00ce 0023     		movs	r3, #0
+ 667 00d0 1A46     		mov	r2, r3
+ 668 00d2 1946     		mov	r1, r3
+ 669 00d4 2068     		ldr	r0, [r4]
+ 670 00d6 FFF7FEFF 		bl	xQueueGenericSend
+ 671              	.LVL74:
+ 149:app/ESP8266.c **** }
+ 672              		.loc 1 149 0
+ 673 00da 0120     		movs	r0, #1
+ 674 00dc 00E0     		b	.L53
+ 675              	.LVL75:
+ 676              	.L57:
+ 141:app/ESP8266.c ****             }
+ 677              		.loc 1 141 0
+ 678 00de 2846     		mov	r0, r5
+ 679              	.LVL76:
+ 680              	.L53:
+ 150:app/ESP8266.c **** 
+ 681              		.loc 1 150 0
+ 682 00e0 03B0     		add	sp, sp, #12
+ 683              	.LCFI11:
+ARM GAS  /tmp/ccC0nB2j.s 			page 21
+
+
+ 684              		.cfi_def_cfa_offset 36
+ 685              		@ sp needed
+ 686 00e2 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 687              	.LVL77:
+ 688              	.L60:
+ 689 00e6 00BF     		.align	2
+ 690              	.L59:
+ 691 00e8 00000000 		.word	.LANCHOR0
+ 692 00ec 00000000 		.word	.LANCHOR1
+ 693 00f0 00000000 		.word	ACK_Cache
+ 694 00f4 00000000 		.word	ACK_len
+ 695              		.cfi_endproc
+ 696              	.LFE71:
+ 698              		.section	.text.__Transmit_Data,"ax",%progbits
+ 699              		.align	2
+ 700              		.thumb
+ 701              		.thumb_func
+ 703              	__Transmit_Data:
+ 704              	.LFB78:
+ 322:app/ESP8266.c ****     memset(Temp,0,128);
+ 705              		.loc 1 322 0
+ 706              		.cfi_startproc
+ 707              		@ args = 0, pretend = 0, frame = 0
+ 708              		@ frame_needed = 0, uses_anonymous_args = 0
+ 709              	.LVL78:
+ 710 0000 70B5     		push	{r4, r5, r6, lr}
+ 711              	.LCFI12:
+ 712              		.cfi_def_cfa_offset 16
+ 713              		.cfi_offset 4, -16
+ 714              		.cfi_offset 5, -12
+ 715              		.cfi_offset 6, -8
+ 716              		.cfi_offset 14, -4
+ 717 0002 82B0     		sub	sp, sp, #8
+ 718              	.LCFI13:
+ 719              		.cfi_def_cfa_offset 24
+ 720 0004 0646     		mov	r6, r0
+ 721 0006 0C46     		mov	r4, r1
+ 323:app/ESP8266.c ****     sprintf(Temp,"AT+CIPSEND=%d\r\n",count);
+ 722              		.loc 1 323 0
+ 723 0008 1E4D     		ldr	r5, .L66
+ 724 000a 8022     		movs	r2, #128
+ 725 000c 0021     		movs	r1, #0
+ 726              	.LVL79:
+ 727 000e 2846     		mov	r0, r5
+ 728              	.LVL80:
+ 729 0010 FFF7FEFF 		bl	memset
+ 730              	.LVL81:
+ 324:app/ESP8266.c ****     if (__Trans_WaitACK_UntilTimeout(Temp,
+ 731              		.loc 1 324 0
+ 732 0014 2246     		mov	r2, r4
+ 733 0016 1C49     		ldr	r1, .L66+4
+ 734 0018 2846     		mov	r0, r5
+ 735 001a FFF7FEFF 		bl	sprintf
+ 736              	.LVL82:
+ 326:app/ESP8266.c ****                                      TBMatch[CIPSEND_TCP].Correct_Back,
+ 737              		.loc 1 326 0
+ 738 001e 2846     		mov	r0, r5
+ARM GAS  /tmp/ccC0nB2j.s 			page 22
+
+
+ 739 0020 FFF7FEFF 		bl	strlen
+ 740              	.LVL83:
+ 325:app/ESP8266.c ****                                      strlen(Temp),
+ 741              		.loc 1 325 0
+ 742 0024 194B     		ldr	r3, .L66+8
+ 743 0026 DA6C     		ldr	r2, [r3, #76]
+ 744 0028 93F85030 		ldrb	r3, [r3, #80]	@ zero_extendqisi2
+ 745 002c 0193     		str	r3, [sp, #4]
+ 746 002e 40F6B833 		movw	r3, #3000
+ 747 0032 0093     		str	r3, [sp]
+ 748 0034 0023     		movs	r3, #0
+ 749 0036 0146     		mov	r1, r0
+ 750 0038 2846     		mov	r0, r5
+ 751 003a FFF7FEFF 		bl	__Trans_WaitACK_UntilTimeout
+ 752              	.LVL84:
+ 753 003e 0128     		cmp	r0, #1
+ 754 0040 19D0     		beq	.L63
+ 335:app/ESP8266.c ****     Temp[count]='\r';
+ 755              		.loc 1 335 0
+ 756 0042 2246     		mov	r2, r4
+ 757 0044 3146     		mov	r1, r6
+ 758 0046 2846     		mov	r0, r5
+ 759 0048 FFF7FEFF 		bl	memcpy
+ 760              	.LVL85:
+ 336:app/ESP8266.c ****     Temp[count + 1]='\n';
+ 761              		.loc 1 336 0
+ 762 004c 0D23     		movs	r3, #13
+ 763 004e 2B55     		strb	r3, [r5, r4]
+ 337:app/ESP8266.c ****     if (__Trans_WaitACK_UntilTimeout(Temp,
+ 764              		.loc 1 337 0
+ 765 0050 631C     		adds	r3, r4, #1
+ 766 0052 0A22     		movs	r2, #10
+ 767 0054 EA54     		strb	r2, [r5, r3]
+ 338:app/ESP8266.c ****                                      count,
+ 768              		.loc 1 338 0
+ 769 0056 0123     		movs	r3, #1
+ 770 0058 0193     		str	r3, [sp, #4]
+ 771 005a 40F6B833 		movw	r3, #3000
+ 772 005e 0093     		str	r3, [sp]
+ 773 0060 0023     		movs	r3, #0
+ 774 0062 0B4A     		ldr	r2, .L66+12
+ 775 0064 2146     		mov	r1, r4
+ 776 0066 2846     		mov	r0, r5
+ 777 0068 FFF7FEFF 		bl	__Trans_WaitACK_UntilTimeout
+ 778              	.LVL86:
+ 779 006c 0128     		cmp	r0, #1
+ 780 006e 05D1     		bne	.L64
+ 345:app/ESP8266.c ****     }
+ 781              		.loc 1 345 0
+ 782 0070 4FF0FF30 		mov	r0, #-1
+ 783 0074 03E0     		b	.L62
+ 784              	.L63:
+ 332:app/ESP8266.c ****     }
+ 785              		.loc 1 332 0
+ 786 0076 4FF0FF30 		mov	r0, #-1
+ 787 007a 00E0     		b	.L62
+ 788              	.L64:
+ARM GAS  /tmp/ccC0nB2j.s 			page 23
+
+
+ 347:app/ESP8266.c **** }
+ 789              		.loc 1 347 0
+ 790 007c 2046     		mov	r0, r4
+ 791              	.L62:
+ 348:app/ESP8266.c **** 
+ 792              		.loc 1 348 0
+ 793 007e 02B0     		add	sp, sp, #8
+ 794              	.LCFI14:
+ 795              		.cfi_def_cfa_offset 16
+ 796              		@ sp needed
+ 797 0080 70BD     		pop	{r4, r5, r6, pc}
+ 798              	.LVL87:
+ 799              	.L67:
+ 800 0082 00BF     		.align	2
+ 801              	.L66:
+ 802 0084 00000000 		.word	Temp
+ 803 0088 28000000 		.word	.LC3
+ 804 008c 00000000 		.word	.LANCHOR2
+ 805 0090 38000000 		.word	.LC4
+ 806              		.cfi_endproc
+ 807              	.LFE78:
+ 809              		.section	.text.__Connect_Server,"ax",%progbits
+ 810              		.align	2
+ 811              		.thumb
+ 812              		.thumb_func
+ 814              	__Connect_Server:
+ 815              	.LFB74:
+ 228:app/ESP8266.c ****     memset(Temp,0,128);
+ 816              		.loc 1 228 0
+ 817              		.cfi_startproc
+ 818              		@ args = 4, pretend = 0, frame = 0
+ 819              		@ frame_needed = 0, uses_anonymous_args = 0
+ 820              	.LVL88:
+ 821 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 822              	.LCFI15:
+ 823              		.cfi_def_cfa_offset 20
+ 824              		.cfi_offset 4, -20
+ 825              		.cfi_offset 5, -16
+ 826              		.cfi_offset 6, -12
+ 827              		.cfi_offset 7, -8
+ 828              		.cfi_offset 14, -4
+ 829 0002 83B0     		sub	sp, sp, #12
+ 830              	.LCFI16:
+ 831              		.cfi_def_cfa_offset 32
+ 832 0004 0746     		mov	r7, r0
+ 833 0006 0D46     		mov	r5, r1
+ 834 0008 1646     		mov	r6, r2
+ 835 000a 1C46     		mov	r4, r3
+ 229:app/ESP8266.c ****     if (Type == TCP)
+ 836              		.loc 1 229 0
+ 837 000c 8022     		movs	r2, #128
+ 838              	.LVL89:
+ 839 000e 0021     		movs	r1, #0
+ 840              	.LVL90:
+ 841 0010 2048     		ldr	r0, .L76
+ 842              	.LVL91:
+ 843 0012 FFF7FEFF 		bl	memset
+ARM GAS  /tmp/ccC0nB2j.s 			page 24
+
+
+ 844              	.LVL92:
+ 230:app/ESP8266.c ****         sprintf(Temp, "AT+CIPSTART=\"TCP\",\"%s\",%ld\r\n", Server_IP, Server_Port);
+ 845              		.loc 1 230 0
+ 846 0016 37B9     		cbnz	r7, .L69
+ 231:app/ESP8266.c ****     else
+ 847              		.loc 1 231 0
+ 848 0018 3346     		mov	r3, r6
+ 849 001a 2A46     		mov	r2, r5
+ 850 001c 1E49     		ldr	r1, .L76+4
+ 851 001e 1D48     		ldr	r0, .L76
+ 852 0020 FFF7FEFF 		bl	sprintf
+ 853              	.LVL93:
+ 854 0024 0EE0     		b	.L70
+ 855              	.L69:
+ 234:app/ESP8266.c ****             sprintf(Temp, "AT+CIPSTART=\"UDP\",\"%s\",%ld\r\n", Server_IP, Server_Port);
+ 856              		.loc 1 234 0
+ 857 0026 34B9     		cbnz	r4, .L71
+ 235:app/ESP8266.c ****         else
+ 858              		.loc 1 235 0
+ 859 0028 3346     		mov	r3, r6
+ 860 002a 2A46     		mov	r2, r5
+ 861 002c 1B49     		ldr	r1, .L76+8
+ 862 002e 1948     		ldr	r0, .L76
+ 863 0030 FFF7FEFF 		bl	sprintf
+ 864              	.LVL94:
+ 865 0034 06E0     		b	.L70
+ 866              	.L71:
+ 237:app/ESP8266.c ****     }
+ 867              		.loc 1 237 0
+ 868 0036 0094     		str	r4, [sp]
+ 869 0038 3346     		mov	r3, r6
+ 870 003a 2A46     		mov	r2, r5
+ 871 003c 1849     		ldr	r1, .L76+12
+ 872 003e 1548     		ldr	r0, .L76
+ 873 0040 FFF7FEFF 		bl	sprintf
+ 874              	.LVL95:
+ 875              	.L70:
+ 240:app/ESP8266.c ****                                      strlen("AT+CIPCLOSE\r\n"),
+ 876              		.loc 1 240 0
+ 877 0044 0223     		movs	r3, #2
+ 878 0046 0193     		str	r3, [sp, #4]
+ 879 0048 C823     		movs	r3, #200
+ 880 004a 0093     		str	r3, [sp]
+ 881 004c 0023     		movs	r3, #0
+ 882 004e 154A     		ldr	r2, .L76+16
+ 883 0050 0D21     		movs	r1, #13
+ 884 0052 1548     		ldr	r0, .L76+20
+ 885 0054 FFF7FEFF 		bl	__Trans_WaitACK_UntilTimeout
+ 886              	.LVL96:
+ 887 0058 10B9     		cbnz	r0, .L72
+ 247:app/ESP8266.c ****     }
+ 888              		.loc 1 247 0
+ 889 005a 0522     		movs	r2, #5
+ 890 005c 134B     		ldr	r3, .L76+24
+ 891 005e 9A74     		strb	r2, [r3, #18]
+ 892              	.L72:
+ 250:app/ESP8266.c ****                                      "\r\nOK\r\n",
+ARM GAS  /tmp/ccC0nB2j.s 			page 25
+
+
+ 893              		.loc 1 250 0
+ 894 0060 0C4C     		ldr	r4, .L76
+ 895              	.LVL97:
+ 896 0062 2046     		mov	r0, r4
+ 897 0064 FFF7FEFF 		bl	strlen
+ 898              	.LVL98:
+ 249:app/ESP8266.c ****                                      strlen(Temp),
+ 899              		.loc 1 249 0
+ 900 0068 0223     		movs	r3, #2
+ 901 006a 0193     		str	r3, [sp, #4]
+ 902 006c 089B     		ldr	r3, [sp, #32]
+ 903 006e 0093     		str	r3, [sp]
+ 904 0070 0023     		movs	r3, #0
+ 905 0072 0C4A     		ldr	r2, .L76+16
+ 906 0074 0146     		mov	r1, r0
+ 907 0076 2046     		mov	r0, r4
+ 908 0078 FFF7FEFF 		bl	__Trans_WaitACK_UntilTimeout
+ 909              	.LVL99:
+ 910 007c 0128     		cmp	r0, #1
+ 911 007e 03D1     		bne	.L73
+ 256:app/ESP8266.c ****         return ESP8266_Failed;
+ 912              		.loc 1 256 0
+ 913 0080 0522     		movs	r2, #5
+ 914 0082 0A4B     		ldr	r3, .L76+24
+ 915 0084 9A74     		strb	r2, [r3, #18]
+ 257:app/ESP8266.c ****     }
+ 916              		.loc 1 257 0
+ 917 0086 03E0     		b	.L74
+ 918              	.L73:
+ 259:app/ESP8266.c ****     return ESP8266_OK;
+ 919              		.loc 1 259 0
+ 920 0088 0422     		movs	r2, #4
+ 921 008a 084B     		ldr	r3, .L76+24
+ 922 008c 9A74     		strb	r2, [r3, #18]
+ 260:app/ESP8266.c **** }
+ 923              		.loc 1 260 0
+ 924 008e 0020     		movs	r0, #0
+ 925              	.L74:
+ 261:app/ESP8266.c **** 
+ 926              		.loc 1 261 0
+ 927 0090 03B0     		add	sp, sp, #12
+ 928              	.LCFI17:
+ 929              		.cfi_def_cfa_offset 20
+ 930              		@ sp needed
+ 931 0092 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 932              	.LVL100:
+ 933              	.L77:
+ 934              		.align	2
+ 935              	.L76:
+ 936 0094 00000000 		.word	Temp
+ 937 0098 44000000 		.word	.LC5
+ 938 009c 64000000 		.word	.LC6
+ 939 00a0 84000000 		.word	.LC7
+ 940 00a4 A8000000 		.word	.LC8
+ 941 00a8 B0000000 		.word	.LC9
+ 942 00ac 00000000 		.word	.LANCHOR1
+ 943              		.cfi_endproc
+ARM GAS  /tmp/ccC0nB2j.s 			page 26
+
+
+ 944              	.LFE74:
+ 946              		.section	.text.__Connect_wifi,"ax",%progbits
+ 947              		.align	2
+ 948              		.thumb
+ 949              		.thumb_func
+ 951              	__Connect_wifi:
+ 952              	.LFB73:
+ 183:app/ESP8266.c ****     sprintf(Temp, TBMatch[CWJAP_CUR].AT, SSID, PASSWD);
+ 953              		.loc 1 183 0
+ 954              		.cfi_startproc
+ 955              		@ args = 0, pretend = 0, frame = 0
+ 956              		@ frame_needed = 0, uses_anonymous_args = 0
+ 957              	.LVL101:
+ 958 0000 70B5     		push	{r4, r5, r6, lr}
+ 959              	.LCFI18:
+ 960              		.cfi_def_cfa_offset 16
+ 961              		.cfi_offset 4, -16
+ 962              		.cfi_offset 5, -12
+ 963              		.cfi_offset 6, -8
+ 964              		.cfi_offset 14, -4
+ 965 0002 82B0     		sub	sp, sp, #8
+ 966              	.LCFI19:
+ 967              		.cfi_def_cfa_offset 24
+ 968 0004 1646     		mov	r6, r2
+ 184:app/ESP8266.c ****     //Transmit AT Command and Wait ACK
+ 969              		.loc 1 184 0
+ 970 0006 104D     		ldr	r5, .L82
+ 971 0008 104C     		ldr	r4, .L82+4
+ 972 000a 0B46     		mov	r3, r1
+ 973 000c 0246     		mov	r2, r0
+ 974              	.LVL102:
+ 975 000e 296B     		ldr	r1, [r5, #48]
+ 976              	.LVL103:
+ 977 0010 2046     		mov	r0, r4
+ 978              	.LVL104:
+ 979 0012 FFF7FEFF 		bl	sprintf
+ 980              	.LVL105:
+ 187:app/ESP8266.c ****                                      TBMatch[CWJAP_CUR].Correct_Back,
+ 981              		.loc 1 187 0
+ 982 0016 2046     		mov	r0, r4
+ 983 0018 FFF7FEFF 		bl	strlen
+ 984              	.LVL106:
+ 186:app/ESP8266.c ****                                      strlen(Temp),
+ 985              		.loc 1 186 0
+ 986 001c 6A6B     		ldr	r2, [r5, #52]
+ 987 001e 95F83830 		ldrb	r3, [r5, #56]	@ zero_extendqisi2
+ 988 0022 0193     		str	r3, [sp, #4]
+ 989 0024 0096     		str	r6, [sp]
+ 990 0026 0023     		movs	r3, #0
+ 991 0028 0146     		mov	r1, r0
+ 992 002a 2046     		mov	r0, r4
+ 993 002c FFF7FEFF 		bl	__Trans_WaitACK_UntilTimeout
+ 994              	.LVL107:
+ 995 0030 0128     		cmp	r0, #1
+ 996 0032 03D1     		bne	.L79
+ 193:app/ESP8266.c ****         return ESP8266_Failed;
+ 997              		.loc 1 193 0
+ARM GAS  /tmp/ccC0nB2j.s 			page 27
+
+
+ 998 0034 0322     		movs	r2, #3
+ 999 0036 064B     		ldr	r3, .L82+8
+ 1000 0038 5A74     		strb	r2, [r3, #17]
+ 194:app/ESP8266.c ****     }
+ 1001              		.loc 1 194 0
+ 1002 003a 03E0     		b	.L80
+ 1003              	.L79:
+ 196:app/ESP8266.c ****     return ESP8266_OK;
+ 1004              		.loc 1 196 0
+ 1005 003c 0222     		movs	r2, #2
+ 1006 003e 044B     		ldr	r3, .L82+8
+ 1007 0040 5A74     		strb	r2, [r3, #17]
+ 197:app/ESP8266.c **** }
+ 1008              		.loc 1 197 0
+ 1009 0042 0020     		movs	r0, #0
+ 1010              	.L80:
+ 198:app/ESP8266.c **** 
+ 1011              		.loc 1 198 0
+ 1012 0044 02B0     		add	sp, sp, #8
+ 1013              	.LCFI20:
+ 1014              		.cfi_def_cfa_offset 16
+ 1015              		@ sp needed
+ 1016 0046 70BD     		pop	{r4, r5, r6, pc}
+ 1017              	.LVL108:
+ 1018              	.L83:
+ 1019              		.align	2
+ 1020              	.L82:
+ 1021 0048 00000000 		.word	.LANCHOR2
+ 1022 004c 00000000 		.word	Temp
+ 1023 0050 00000000 		.word	.LANCHOR1
+ 1024              		.cfi_endproc
+ 1025              	.LFE73:
+ 1027              		.section	.text.__Tran_WaitACK_NoParameter,"ax",%progbits
+ 1028              		.align	2
+ 1029              		.thumb
+ 1030              		.thumb_func
+ 1032              	__Tran_WaitACK_NoParameter:
+ 1033              	.LFB72:
+ 163:app/ESP8266.c ****     return __Trans_WaitACK_UntilTimeout(TBMatch[Cmd_order].AT,
+ 1034              		.loc 1 163 0
+ 1035              		.cfi_startproc
+ 1036              		@ args = 0, pretend = 0, frame = 0
+ 1037              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1038              	.LVL109:
+ 1039 0000 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, r10, lr}
+ 1040              	.LCFI21:
+ 1041              		.cfi_def_cfa_offset 32
+ 1042              		.cfi_offset 4, -32
+ 1043              		.cfi_offset 5, -28
+ 1044              		.cfi_offset 6, -24
+ 1045              		.cfi_offset 7, -20
+ 1046              		.cfi_offset 8, -16
+ 1047              		.cfi_offset 9, -12
+ 1048              		.cfi_offset 10, -8
+ 1049              		.cfi_offset 14, -4
+ 1050 0004 82B0     		sub	sp, sp, #8
+ 1051              	.LCFI22:
+ARM GAS  /tmp/ccC0nB2j.s 			page 28
+
+
+ 1052              		.cfi_def_cfa_offset 40
+ 1053 0006 0F46     		mov	r7, r1
+ 1054 0008 1646     		mov	r6, r2
+ 165:app/ESP8266.c ****                                         TBMatch[Cmd_order].Correct_Back,
+ 1055              		.loc 1 165 0
+ 1056 000a 0D4D     		ldr	r5, .L86
+ 1057 000c 4FEA4009 		lsl	r9, r0, #1
+ 1058 0010 09EB0002 		add	r2, r9, r0
+ 1059              	.LVL110:
+ 1060 0014 9300     		lsls	r3, r2, #2
+ 1061 0016 05EB030A 		add	r10, r5, r3
+ 1062 001a 55F80380 		ldr	r8, [r5, r3]
+ 1063 001e 4046     		mov	r0, r8
+ 1064              	.LVL111:
+ 1065 0020 FFF7FEFF 		bl	strlen
+ 1066              	.LVL112:
+ 164:app/ESP8266.c ****                                         strlen(TBMatch[Cmd_order].AT),
+ 1067              		.loc 1 164 0
+ 1068 0024 DAF80420 		ldr	r2, [r10, #4]
+ 1069 0028 9AF80830 		ldrb	r3, [r10, #8]	@ zero_extendqisi2
+ 1070 002c 0193     		str	r3, [sp, #4]
+ 1071 002e 0097     		str	r7, [sp]
+ 1072 0030 3346     		mov	r3, r6
+ 1073 0032 0146     		mov	r1, r0
+ 1074 0034 4046     		mov	r0, r8
+ 1075 0036 FFF7FEFF 		bl	__Trans_WaitACK_UntilTimeout
+ 1076              	.LVL113:
+ 170:app/ESP8266.c **** 
+ 1077              		.loc 1 170 0
+ 1078 003a 02B0     		add	sp, sp, #8
+ 1079              	.LCFI23:
+ 1080              		.cfi_def_cfa_offset 32
+ 1081              		@ sp needed
+ 1082 003c BDE8F087 		pop	{r4, r5, r6, r7, r8, r9, r10, pc}
+ 1083              	.LVL114:
+ 1084              	.L87:
+ 1085              		.align	2
+ 1086              	.L86:
+ 1087 0040 00000000 		.word	.LANCHOR2
+ 1088              		.cfi_endproc
+ 1089              	.LFE72:
+ 1091              		.section	.text.__Start_Listen_ESP8266,"ax",%progbits
+ 1092              		.align	2
+ 1093              		.thumb
+ 1094              		.thumb_func
+ 1096              	__Start_Listen_ESP8266:
+ 1097              	.LFB80:
+ 391:app/ESP8266.c ****     if (__ESP8266.Listening_Flags == NoListening)
+ 1098              		.loc 1 391 0
+ 1099              		.cfi_startproc
+ 1100              		@ args = 0, pretend = 0, frame = 0
+ 1101              		@ frame_needed = 0, uses_anonymous_args = 0
+ 392:app/ESP8266.c ****     {
+ 1102              		.loc 1 392 0
+ 1103 0000 0C4B     		ldr	r3, .L93
+ 1104 0002 DB7C     		ldrb	r3, [r3, #19]	@ zero_extendqisi2
+ 1105 0004 0A2B     		cmp	r3, #10
+ARM GAS  /tmp/ccC0nB2j.s 			page 29
+
+
+ 1106 0006 0FD1     		bne	.L90
+ 391:app/ESP8266.c ****     if (__ESP8266.Listening_Flags == NoListening)
+ 1107              		.loc 1 391 0
+ 1108 0008 00B5     		push	{lr}
+ 1109              	.LCFI24:
+ 1110              		.cfi_def_cfa_offset 4
+ 1111              		.cfi_offset 14, -4
+ 1112 000a 83B0     		sub	sp, sp, #12
+ 1113              	.LCFI25:
+ 1114              		.cfi_def_cfa_offset 16
+ 394:app/ESP8266.c ****         // xTaskCreate(__Listen_ESP8266, "ESP8266_Listened_Task", 256, NULL, 8, Listened_TaskHandle
+ 1115              		.loc 1 394 0
+ 1116 000c 0823     		movs	r3, #8
+ 1117 000e 094A     		ldr	r2, .L93
+ 1118 0010 D374     		strb	r3, [r2, #19]
+ 396:app/ESP8266.c ****         return ESP8266_OK;
+ 1119              		.loc 1 396 0
+ 1120 0012 094A     		ldr	r2, .L93+4
+ 1121 0014 0192     		str	r2, [sp, #4]
+ 1122 0016 0093     		str	r3, [sp]
+ 1123 0018 0023     		movs	r3, #0
+ 1124 001a 4022     		movs	r2, #64
+ 1125 001c 0749     		ldr	r1, .L93+8
+ 1126 001e 0848     		ldr	r0, .L93+12
+ 1127 0020 FFF7FEFF 		bl	xTaskCreate
+ 1128              	.LVL115:
+ 397:app/ESP8266.c ****     }
+ 1129              		.loc 1 397 0
+ 1130 0024 0020     		movs	r0, #0
+ 1131 0026 01E0     		b	.L89
+ 1132              	.L90:
+ 1133              	.LCFI26:
+ 1134              		.cfi_def_cfa_offset 0
+ 1135              		.cfi_restore 14
+ 399:app/ESP8266.c **** }
+ 1136              		.loc 1 399 0
+ 1137 0028 0120     		movs	r0, #1
+ 1138 002a 7047     		bx	lr
+ 1139              	.L89:
+ 1140              	.LCFI27:
+ 1141              		.cfi_def_cfa_offset 16
+ 1142              		.cfi_offset 14, -4
+ 400:app/ESP8266.c **** 
+ 1143              		.loc 1 400 0
+ 1144 002c 03B0     		add	sp, sp, #12
+ 1145              	.LCFI28:
+ 1146              		.cfi_def_cfa_offset 4
+ 1147              		@ sp needed
+ 1148 002e 5DF804FB 		ldr	pc, [sp], #4
+ 1149              	.L94:
+ 1150 0032 00BF     		.align	2
+ 1151              	.L93:
+ 1152 0034 00000000 		.word	.LANCHOR1
+ 1153 0038 00000000 		.word	Listened_TaskHandle
+ 1154 003c C0000000 		.word	.LC10
+ 1155 0040 00000000 		.word	__Listen_ESP8266
+ 1156              		.cfi_endproc
+ARM GAS  /tmp/ccC0nB2j.s 			page 30
+
+
+ 1157              	.LFE80:
+ 1159              		.section	.text.ESP8266_Handle_Init,"ax",%progbits
+ 1160              		.align	2
+ 1161              		.global	ESP8266_Handle_Init
+ 1162              		.thumb
+ 1163              		.thumb_func
+ 1165              	ESP8266_Handle_Init:
+ 1166              	.LFB82:
+ 412:app/ESP8266.c **** 
+ 413:app/ESP8266.c **** ESP8266_Handle *ESP8266_Handle_Init(void)
+ 414:app/ESP8266.c **** {
+ 1167              		.loc 1 414 0
+ 1168              		.cfi_startproc
+ 1169              		@ args = 0, pretend = 0, frame = 0
+ 1170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1171 0000 38B5     		push	{r3, r4, r5, lr}
+ 1172              	.LCFI29:
+ 1173              		.cfi_def_cfa_offset 16
+ 1174              		.cfi_offset 3, -16
+ 1175              		.cfi_offset 4, -12
+ 1176              		.cfi_offset 5, -8
+ 1177              		.cfi_offset 14, -4
+ 415:app/ESP8266.c ****     new_Serial(&ESP8266_Serial,&huart1);
+ 1178              		.loc 1 415 0
+ 1179 0002 184D     		ldr	r5, .L97
+ 1180 0004 1849     		ldr	r1, .L97+4
+ 1181 0006 2846     		mov	r0, r5
+ 1182 0008 FFF7FEFF 		bl	new_Serial
+ 1183              	.LVL116:
+ 416:app/ESP8266.c ****     __ESP8266.Serial = &ESP8266_Serial;
+ 1184              		.loc 1 416 0
+ 1185 000c 174C     		ldr	r4, .L97+8
+ 1186 000e 2560     		str	r5, [r4]
+ 417:app/ESP8266.c **** 
+ 418:app/ESP8266.c ****     __ESP8266.Wifi_Connect_Flags = WIFI_NoConnect;
+ 1187              		.loc 1 418 0
+ 1188 0010 0323     		movs	r3, #3
+ 1189 0012 6374     		strb	r3, [r4, #17]
+ 419:app/ESP8266.c ****     __ESP8266.TCP_UDP_Connect_Flags = TCP_UDP_NoConnect;
+ 1190              		.loc 1 419 0
+ 1191 0014 0520     		movs	r0, #5
+ 1192 0016 A074     		strb	r0, [r4, #18]
+ 420:app/ESP8266.c ****     __ESP8266.Listening_Flags = NoListening;
+ 1193              		.loc 1 420 0
+ 1194 0018 0A23     		movs	r3, #10
+ 1195 001a E374     		strb	r3, [r4, #19]
+ 421:app/ESP8266.c ****     __ESP8266.Serial_ACK_Flags = Serial_ACK_None;
+ 1196              		.loc 1 421 0
+ 1197 001c 0125     		movs	r5, #1
+ 1198 001e 2575     		strb	r5, [r4, #20]
+ 422:app/ESP8266.c **** 
+ 423:app/ESP8266.c ****     __ESP8266.Tran_WaitACK_NoParameter = __Tran_WaitACK_NoParameter;
+ 1199              		.loc 1 423 0
+ 1200 0020 134B     		ldr	r3, .L97+12
+ 1201 0022 A361     		str	r3, [r4, #24]
+ 424:app/ESP8266.c ****     __ESP8266.Connect_wifi = __Connect_wifi;
+ 1202              		.loc 1 424 0
+ARM GAS  /tmp/ccC0nB2j.s 			page 31
+
+
+ 1203 0024 134B     		ldr	r3, .L97+16
+ 1204 0026 E361     		str	r3, [r4, #28]
+ 425:app/ESP8266.c ****     __ESP8266.Connect_Server = __Connect_Server;
+ 1205              		.loc 1 425 0
+ 1206 0028 134B     		ldr	r3, .L97+20
+ 1207 002a 2362     		str	r3, [r4, #32]
+ 426:app/ESP8266.c ****     __ESP8266.Start_Listen_ESP8266 = __Start_Listen_ESP8266;
+ 1208              		.loc 1 426 0
+ 1209 002c 134B     		ldr	r3, .L97+24
+ 1210 002e 2363     		str	r3, [r4, #48]
+ 427:app/ESP8266.c ****     __ESP8266.Transmit_Data = __Transmit_Data;
+ 1211              		.loc 1 427 0
+ 1212 0030 134B     		ldr	r3, .L97+28
+ 1213 0032 6362     		str	r3, [r4, #36]
+ 428:app/ESP8266.c ****     __ESP8266.read = __read;
+ 1214              		.loc 1 428 0
+ 1215 0034 134B     		ldr	r3, .L97+32
+ 1216 0036 E362     		str	r3, [r4, #44]
+ 429:app/ESP8266.c ****     __ESP8266.read_nb = __read_nb;
+ 1217              		.loc 1 429 0
+ 1218 0038 134B     		ldr	r3, .L97+36
+ 1219 003a A362     		str	r3, [r4, #40]
+ 430:app/ESP8266.c ****     __ESP8266.Stop_Listen_ESP8266 = __Stop_Listen_ESP8266;
+ 1220              		.loc 1 430 0
+ 1221 003c 134B     		ldr	r3, .L97+40
+ 1222 003e 6363     		str	r3, [r4, #52]
+ 431:app/ESP8266.c ****     __ESP8266.ReSet = __RST;
+ 1223              		.loc 1 431 0
+ 1224 0040 134B     		ldr	r3, .L97+44
+ 1225 0042 A363     		str	r3, [r4, #56]
+ 432:app/ESP8266.c ****     Qset = xQueueCreate(QSET_DEPTH,QSET_ITEM_SIZE);
+ 1226              		.loc 1 432 0
+ 1227 0044 0022     		movs	r2, #0
+ 1228 0046 4021     		movs	r1, #64
+ 1229 0048 FFF7FEFF 		bl	xQueueGenericCreate
+ 1230              	.LVL117:
+ 1231 004c 114B     		ldr	r3, .L97+48
+ 1232 004e 1860     		str	r0, [r3]
+ 433:app/ESP8266.c ****     xSemaphore = xSemaphoreCreateMutex();
+ 1233              		.loc 1 433 0
+ 1234 0050 2846     		mov	r0, r5
+ 1235 0052 FFF7FEFF 		bl	xQueueCreateMutex
+ 1236              	.LVL118:
+ 1237 0056 104B     		ldr	r3, .L97+52
+ 1238 0058 1860     		str	r0, [r3]
+ 434:app/ESP8266.c ****     __ESP8266.Start_Listen_ESP8266();
+ 1239              		.loc 1 434 0
+ 1240 005a 236B     		ldr	r3, [r4, #48]
+ 1241 005c 9847     		blx	r3
+ 1242              	.LVL119:
+ 435:app/ESP8266.c ****     return &__ESP8266;
+ 436:app/ESP8266.c **** }...
+ 1243              		.loc 1 436 0
+ 1244 005e 2046     		mov	r0, r4
+ 1245 0060 38BD     		pop	{r3, r4, r5, pc}
+ 1246              	.L98:
+ 1247 0062 00BF     		.align	2
+ARM GAS  /tmp/ccC0nB2j.s 			page 32
+
+
+ 1248              	.L97:
+ 1249 0064 00000000 		.word	ESP8266_Serial
+ 1250 0068 00000000 		.word	huart1
+ 1251 006c 00000000 		.word	.LANCHOR1
+ 1252 0070 00000000 		.word	__Tran_WaitACK_NoParameter
+ 1253 0074 00000000 		.word	__Connect_wifi
+ 1254 0078 00000000 		.word	__Connect_Server
+ 1255 007c 00000000 		.word	__Start_Listen_ESP8266
+ 1256 0080 00000000 		.word	__Transmit_Data
+ 1257 0084 00000000 		.word	__read
+ 1258 0088 00000000 		.word	__read_nb
+ 1259 008c 00000000 		.word	__Stop_Listen_ESP8266
+ 1260 0090 00000000 		.word	__RST
+ 1261 0094 00000000 		.word	Qset
+ 1262 0098 00000000 		.word	.LANCHOR0
+ 1263              		.cfi_endproc
+ 1264              	.LFE82:
+ 1266              		.comm	Listened_TaskHandle,4,4
+ 1267              		.global	TBMatch
+ 1268              		.comm	__Qset_Item,8,4
+ 1269              		.comm	Qset,4,4
+ 1270              		.global	xSemaphore
+ 1271              		.comm	ACK_len,1,1
+ 1272              		.comm	ACK_Cache,64,4
+ 1273              		.comm	Temp,128,4
+ 1274              		.comm	ESP8266_Serial,136,4
+ 1275              		.section	.bss.__ESP8266,"aw",%nobits
+ 1276              		.align	2
+ 1277              		.set	.LANCHOR1,. + 0
+ 1280              	__ESP8266:
+ 1281 0000 00000000 		.space	64
+ 1281      00000000 
+ 1281      00000000 
+ 1281      00000000 
+ 1281      00000000 
+ 1282              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 1283              		.align	2
+ 1284              	.LC0:
+ 1285 0000 2B495044 		.ascii	"+IPD,\000"
+ 1285      2C00
+ 1286 0006 0000     		.space	2
+ 1287              	.LC1:
+ 1288 0008 57494649 		.ascii	"WIFI DISCONNECT\015\012\000"
+ 1288      20444953 
+ 1288      434F4E4E 
+ 1288      4543540D 
+ 1288      0A00
+ 1289 001a 0000     		.space	2
+ 1290              	.LC2:
+ 1291 001c 41542B52 		.ascii	"AT+RST\015\012\000"
+ 1291      53540D0A 
+ 1291      00
+ 1292 0025 000000   		.space	3
+ 1293              	.LC3:
+ 1294 0028 41542B43 		.ascii	"AT+CIPSEND=%d\015\012\000"
+ 1294      49505345 
+ 1294      4E443D25 
+ARM GAS  /tmp/ccC0nB2j.s 			page 33
+
+
+ 1294      640D0A00 
+ 1295              	.LC4:
+ 1296 0038 53454E44 		.ascii	"SEND OK\015\012\000"
+ 1296      204F4B0D 
+ 1296      0A00
+ 1297 0042 0000     		.space	2
+ 1298              	.LC5:
+ 1299 0044 41542B43 		.ascii	"AT+CIPSTART=\"TCP\",\"%s\",%ld\015\012\000"
+ 1299      49505354 
+ 1299      4152543D 
+ 1299      22544350 
+ 1299      222C2225 
+ 1300 0061 000000   		.space	3
+ 1301              	.LC6:
+ 1302 0064 41542B43 		.ascii	"AT+CIPSTART=\"UDP\",\"%s\",%ld\015\012\000"
+ 1302      49505354 
+ 1302      4152543D 
+ 1302      22554450 
+ 1302      222C2225 
+ 1303 0081 000000   		.space	3
+ 1304              	.LC7:
+ 1305 0084 41542B43 		.ascii	"AT+CIPSTART=\"UDP\",\"%s\",%ld,%ld,0\015\012\000"
+ 1305      49505354 
+ 1305      4152543D 
+ 1305      22554450 
+ 1305      222C2225 
+ 1306 00a7 00       		.space	1
+ 1307              	.LC8:
+ 1308 00a8 0D0A4F4B 		.ascii	"\015\012OK\015\012\000"
+ 1308      0D0A00
+ 1309 00af 00       		.space	1
+ 1310              	.LC9:
+ 1311 00b0 41542B43 		.ascii	"AT+CIPCLOSE\015\012\000"
+ 1311      4950434C 
+ 1311      4F53450D 
+ 1311      0A00
+ 1312 00be 0000     		.space	2
+ 1313              	.LC10:
+ 1314 00c0 4C697374 		.ascii	"Listened_Task\000"
+ 1314      656E6564 
+ 1314      5F546173 
+ 1314      6B00
+ 1315 00ce 0000     		.space	2
+ 1316              	.LC11:
+ 1317 00d0 41540D0A 		.ascii	"AT\015\012\000"
+ 1317      00
+ 1318 00d5 000000   		.space	3
+ 1319              	.LC12:
+ 1320 00d8 41544530 		.ascii	"ATE0\015\012\000"
+ 1320      0D0A00
+ 1321 00df 00       		.space	1
+ 1322              	.LC13:
+ 1323 00e0 41544531 		.ascii	"ATE1\015\012\000"
+ 1323      0D0A00
+ 1324 00e7 00       		.space	1
+ 1325              	.LC14:
+ 1326 00e8 41542B43 		.ascii	"AT+CWMODE_CUR=1\015\012\000"
+ARM GAS  /tmp/ccC0nB2j.s 			page 34
+
+
+ 1326      574D4F44 
+ 1326      455F4355 
+ 1326      523D310D 
+ 1326      0A00
+ 1327 00fa 0000     		.space	2
+ 1328              	.LC15:
+ 1329 00fc 41542B43 		.ascii	"AT+CWJAP_CUR=\"%s\",\"%s\"\015\012\000"
+ 1329      574A4150 
+ 1329      5F435552 
+ 1329      3D222573 
+ 1329      222C2225 
+ 1330 0115 000000   		.space	3
+ 1331              	.LC16:
+ 1332 0118 41542B43 		.ascii	"AT+CIPSTART=\"%s\",\"%s\",%d\015\012\000"
+ 1332      49505354 
+ 1332      4152543D 
+ 1332      22257322 
+ 1332      2C222573 
+ 1333 0133 00       		.space	1
+ 1334              	.LC17:
+ 1335 0134 0D0A3E00 		.ascii	"\015\012>\000"
+ 1336              		.section	.data.TBMatch,"aw",%progbits
+ 1337              		.align	2
+ 1338              		.set	.LANCHOR2,. + 0
+ 1341              	TBMatch:
+ 1342 0000 D0000000 		.word	.LC11
+ 1343 0004 A8000000 		.word	.LC8
+ 1344 0008 03       		.byte	3
+ 1345 0009 000000   		.space	3
+ 1346 000c D8000000 		.word	.LC12
+ 1347 0010 A8000000 		.word	.LC8
+ 1348 0014 03       		.byte	3
+ 1349 0015 000000   		.space	3
+ 1350 0018 E0000000 		.word	.LC13
+ 1351 001c A8000000 		.word	.LC8
+ 1352 0020 03       		.byte	3
+ 1353 0021 000000   		.space	3
+ 1354 0024 E8000000 		.word	.LC14
+ 1355 0028 A8000000 		.word	.LC8
+ 1356 002c 03       		.byte	3
+ 1357 002d 000000   		.space	3
+ 1358 0030 FC000000 		.word	.LC15
+ 1359 0034 A8000000 		.word	.LC8
+ 1360 0038 03       		.byte	3
+ 1361 0039 000000   		.space	3
+ 1362 003c 18010000 		.word	.LC16
+ 1363 0040 A8000000 		.word	.LC8
+ 1364 0044 03       		.byte	3
+ 1365 0045 000000   		.space	3
+ 1366 0048 28000000 		.word	.LC3
+ 1367 004c 34010000 		.word	.LC17
+ 1368 0050 03       		.byte	3
+ 1369 0051 000000   		.space	3
+ 1370 0054 28000000 		.word	.LC3
+ 1371 0058 34010000 		.word	.LC17
+ 1372 005c 03       		.byte	3
+ 1373 005d 000000   		.space	3
+ARM GAS  /tmp/ccC0nB2j.s 			page 35
+
+
+ 1374              		.section	.bss.xSemaphore,"aw",%nobits
+ 1375              		.align	2
+ 1376              		.set	.LANCHOR0,. + 0
+ 1379              	xSemaphore:
+ 1380 0000 00000000 		.space	4
+ 1381              		.text
+ 1382              	.Letext0:
+ 1383              		.file 2 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/machine/_default_types.h"
+ 1384              		.file 3 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/sys/_stdint.h"
+ 1385              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 1386              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 1387              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 1388              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 1389              		.file 8 "app/Serial.h"
+ 1390              		.file 9 "app/ESP8266.h"
+ 1391              		.file 10 "Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3/portmacro.h"
+ 1392              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ 1393              		.file 12 "Middlewares/Third_Party/FreeRTOS/Source/include/queue.h"
+ 1394              		.file 13 "Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h"
+ 1395              		.file 14 "Drivers/CMSIS/Include/core_cm3.h"
+ 1396              		.file 15 "Inc/usart.h"
+ 1397              		.file 16 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/string.h"
+ 1398              		.file 17 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ 1399              		.file 18 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/stdio.h"
+ 1400              		.file 19 "<built-in>"
+ARM GAS  /tmp/ccC0nB2j.s 			page 36
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ESP8266.c
+     /tmp/ccC0nB2j.s:20     .text.Copy_to_ACK_Cache:00000000 $t
+     /tmp/ccC0nB2j.s:24     .text.Copy_to_ACK_Cache:00000000 Copy_to_ACK_Cache
+     /tmp/ccC0nB2j.s:85     .text.Copy_to_ACK_Cache:00000040 $d
+                            *COM*:00000040 ACK_Cache
+                            *COM*:00000001 ACK_len
+     /tmp/ccC0nB2j.s:93     .text.__Listen_ESP8266:00000000 $t
+     /tmp/ccC0nB2j.s:98     .text.__Listen_ESP8266:00000000 __Listen_ESP8266
+     /tmp/ccC0nB2j.s:201    .text.__Listen_ESP8266:00000080 $d
+                            *COM*:00000004 Qset
+     /tmp/ccC0nB2j.s:210    .text.__RST:00000000 $t
+     /tmp/ccC0nB2j.s:214    .text.__RST:00000000 __RST
+     /tmp/ccC0nB2j.s:241    .text.__RST:0000001c $d
+     /tmp/ccC0nB2j.s:247    .text.__Stop_Listen_ESP8266:00000000 $t
+     /tmp/ccC0nB2j.s:251    .text.__Stop_Listen_ESP8266:00000000 __Stop_Listen_ESP8266
+     /tmp/ccC0nB2j.s:287    .text.__Stop_Listen_ESP8266:00000020 $d
+                            *COM*:00000004 Listened_TaskHandle
+     /tmp/ccC0nB2j.s:293    .text.__read_nb:00000000 $t
+     /tmp/ccC0nB2j.s:297    .text.__read_nb:00000000 __read_nb
+     /tmp/ccC0nB2j.s:407    .text.__read_nb:0000007c $d
+     /tmp/ccC0nB2j.s:413    .text.__read:00000000 $t
+     /tmp/ccC0nB2j.s:417    .text.__read:00000000 __read
+     /tmp/ccC0nB2j.s:470    .text.Command_Process_Over:00000000 $t
+     /tmp/ccC0nB2j.s:474    .text.Command_Process_Over:00000000 Command_Process_Over
+     /tmp/ccC0nB2j.s:503    .text.Command_Process_Over:0000001c $d
+     /tmp/ccC0nB2j.s:510    .text.__Trans_WaitACK_UntilTimeout:00000000 $t
+     /tmp/ccC0nB2j.s:514    .text.__Trans_WaitACK_UntilTimeout:00000000 __Trans_WaitACK_UntilTimeout
+     /tmp/ccC0nB2j.s:691    .text.__Trans_WaitACK_UntilTimeout:000000e8 $d
+     /tmp/ccC0nB2j.s:699    .text.__Transmit_Data:00000000 $t
+     /tmp/ccC0nB2j.s:703    .text.__Transmit_Data:00000000 __Transmit_Data
+     /tmp/ccC0nB2j.s:802    .text.__Transmit_Data:00000084 $d
+                            *COM*:00000080 Temp
+     /tmp/ccC0nB2j.s:810    .text.__Connect_Server:00000000 $t
+     /tmp/ccC0nB2j.s:814    .text.__Connect_Server:00000000 __Connect_Server
+     /tmp/ccC0nB2j.s:936    .text.__Connect_Server:00000094 $d
+     /tmp/ccC0nB2j.s:947    .text.__Connect_wifi:00000000 $t
+     /tmp/ccC0nB2j.s:951    .text.__Connect_wifi:00000000 __Connect_wifi
+     /tmp/ccC0nB2j.s:1021   .text.__Connect_wifi:00000048 $d
+     /tmp/ccC0nB2j.s:1028   .text.__Tran_WaitACK_NoParameter:00000000 $t
+     /tmp/ccC0nB2j.s:1032   .text.__Tran_WaitACK_NoParameter:00000000 __Tran_WaitACK_NoParameter
+     /tmp/ccC0nB2j.s:1087   .text.__Tran_WaitACK_NoParameter:00000040 $d
+     /tmp/ccC0nB2j.s:1092   .text.__Start_Listen_ESP8266:00000000 $t
+     /tmp/ccC0nB2j.s:1096   .text.__Start_Listen_ESP8266:00000000 __Start_Listen_ESP8266
+     /tmp/ccC0nB2j.s:1152   .text.__Start_Listen_ESP8266:00000034 $d
+     /tmp/ccC0nB2j.s:1160   .text.ESP8266_Handle_Init:00000000 $t
+     /tmp/ccC0nB2j.s:1165   .text.ESP8266_Handle_Init:00000000 ESP8266_Handle_Init
+     /tmp/ccC0nB2j.s:1249   .text.ESP8266_Handle_Init:00000064 $d
+                            *COM*:00000088 ESP8266_Serial
+     /tmp/ccC0nB2j.s:1341   .data.TBMatch:00000000 TBMatch
+                            *COM*:00000008 __Qset_Item
+     /tmp/ccC0nB2j.s:1379   .bss.xSemaphore:00000000 xSemaphore
+     /tmp/ccC0nB2j.s:1276   .bss.__ESP8266:00000000 $d
+     /tmp/ccC0nB2j.s:1280   .bss.__ESP8266:00000000 __ESP8266
+     /tmp/ccC0nB2j.s:1283   .rodata.str1.4:00000000 $d
+     /tmp/ccC0nB2j.s:1337   .data.TBMatch:00000000 $d
+     /tmp/ccC0nB2j.s:1375   .bss.xSemaphore:00000000 $d
+ARM GAS  /tmp/ccC0nB2j.s 			page 37
+
+
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+xQueueGenericReceive
+memcpy
+xQueueGenericSend
+Serial_Get_Running_Flags
+Serial_Start_DMA_Receive
+Serial_Get_Receive_Flags
+Serial_Stop_DMA_Receive
+Serial_Get_Receive_Buff
+Serial_Get_Receive_Len
+strstr
+HAL_UART_Transmit
+vTaskDelete
+memset
+strchr
+HAL_GetTick
+vTaskDelay
+sprintf
+strlen
+xTaskCreate
+new_Serial
+xQueueGenericCreate
+xQueueCreateMutex
+huart1

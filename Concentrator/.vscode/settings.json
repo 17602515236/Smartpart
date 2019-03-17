@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "usart.h": "c",
+        "serial.h": "c",
+        "esp8266.h": "c",
+        "network_adapter.h": "c",
+        "smartpart.h": "c",
+        "ra02.h": "c",
+        "platform.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
+}

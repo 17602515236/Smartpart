@@ -1,0 +1,1 @@
+-o ../VisualGDB/Debug/LinuxProject1 -Wl,-gc-sections  -Wl,--start-group VisualGDB/Debug/LinuxProject1.o -Wl,--rpath='$ORIGIN' -Wl,--end-group

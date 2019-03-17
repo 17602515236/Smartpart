@@ -1,0 +1,2737 @@
+ARM GAS  /tmp/ccpwgW31.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"sx1276-Fsk.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.SX1276FskSetDefaults,"ax",%progbits
+  20              		.align	2
+  21              		.global	SX1276FskSetDefaults
+  22              		.thumb
+  23              		.thumb_func
+  25              	SX1276FskSetDefaults:
+  26              	.LFB65:
+  27              		.file 1 "radio/sx1276-Fsk.c"
+   1:radio/sx1276-Fsk.c **** /*
+   2:radio/sx1276-Fsk.c ****  * THE FOLLOWING FIRMWARE IS PROVIDED: (1) "AS IS" WITH NO WARRANTY; AND 
+   3:radio/sx1276-Fsk.c ****  * (2)TO ENABLE ACCESS TO CODING INFORMATION TO GUIDE AND FACILITATE CUSTOMER.
+   4:radio/sx1276-Fsk.c ****  * CONSEQUENTLY, SEMTECH SHALL NOT BE HELD LIABLE FOR ANY DIRECT, INDIRECT OR
+   5:radio/sx1276-Fsk.c ****  * CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING FROM THE CONTENT
+   6:radio/sx1276-Fsk.c ****  * OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE CODING INFORMATION
+   7:radio/sx1276-Fsk.c ****  * CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+   8:radio/sx1276-Fsk.c ****  * 
+   9:radio/sx1276-Fsk.c ****  * Copyright (C) SEMTECH S.A.
+  10:radio/sx1276-Fsk.c ****  */
+  11:radio/sx1276-Fsk.c **** /*! 
+  12:radio/sx1276-Fsk.c ****  * \file       sx1276.c
+  13:radio/sx1276-Fsk.c ****  * \brief      SX1276 RF chip driver
+  14:radio/sx1276-Fsk.c ****  *
+  15:radio/sx1276-Fsk.c ****  * \version    2.0.0 
+  16:radio/sx1276-Fsk.c ****  * \date       May 6 2013
+  17:radio/sx1276-Fsk.c ****  * \author     Gregory Cristian
+  18:radio/sx1276-Fsk.c ****  *
+  19:radio/sx1276-Fsk.c ****  * Last modified by Miguel Luis on Jun 19 2013
+  20:radio/sx1276-Fsk.c ****  */
+  21:radio/sx1276-Fsk.c **** #include <string.h>
+  22:radio/sx1276-Fsk.c **** #include <math.h>
+  23:radio/sx1276-Fsk.c **** 
+  24:radio/sx1276-Fsk.c **** #include "platform.h"
+  25:radio/sx1276-Fsk.c **** 
+  26:radio/sx1276-Fsk.c **** #if defined( USE_SX1276_RADIO )
+  27:radio/sx1276-Fsk.c **** 
+  28:radio/sx1276-Fsk.c **** #include "radio.h"
+  29:radio/sx1276-Fsk.c **** 
+  30:radio/sx1276-Fsk.c **** #include "sx1276-Hal.h"
+  31:radio/sx1276-Fsk.c **** #include "sx1276.h"
+ARM GAS  /tmp/ccpwgW31.s 			page 2
+
+
+  32:radio/sx1276-Fsk.c **** 
+  33:radio/sx1276-Fsk.c **** #include "sx1276-FskMisc.h"
+  34:radio/sx1276-Fsk.c **** #include "sx1276-Fsk.h"
+  35:radio/sx1276-Fsk.c **** 
+  36:radio/sx1276-Fsk.c **** // Default settings
+  37:radio/sx1276-Fsk.c **** tFskSettings FskSettings = 
+  38:radio/sx1276-Fsk.c **** {
+  39:radio/sx1276-Fsk.c ****     870000000,      // RFFrequency
+  40:radio/sx1276-Fsk.c ****     9600,           // Bitrate
+  41:radio/sx1276-Fsk.c ****     50000,          // Fdev
+  42:radio/sx1276-Fsk.c ****     20,             // Power
+  43:radio/sx1276-Fsk.c ****     100000,         // RxBw
+  44:radio/sx1276-Fsk.c ****     150000,         // RxBwAfc
+  45:radio/sx1276-Fsk.c ****     true,           // CrcOn
+  46:radio/sx1276-Fsk.c ****     true,           // AfcOn    
+  47:radio/sx1276-Fsk.c ****     255             // PayloadLength (set payload size to the maximum for variable mode, else set t
+  48:radio/sx1276-Fsk.c **** };
+  49:radio/sx1276-Fsk.c **** 
+  50:radio/sx1276-Fsk.c **** /*!
+  51:radio/sx1276-Fsk.c ****  * SX1276 FSK registers variable
+  52:radio/sx1276-Fsk.c ****  */
+  53:radio/sx1276-Fsk.c **** tSX1276* SX1276;
+  54:radio/sx1276-Fsk.c **** 
+  55:radio/sx1276-Fsk.c **** /*!
+  56:radio/sx1276-Fsk.c ****  * Local RF buffer for communication support
+  57:radio/sx1276-Fsk.c ****  */
+  58:radio/sx1276-Fsk.c **** static uint8_t RFBuffer[RF_BUFFER_SIZE];
+  59:radio/sx1276-Fsk.c **** 
+  60:radio/sx1276-Fsk.c **** /*!
+  61:radio/sx1276-Fsk.c ****  * Chunk size of data write in buffer 
+  62:radio/sx1276-Fsk.c ****  */
+  63:radio/sx1276-Fsk.c **** static uint8_t DataChunkSize = 32;
+  64:radio/sx1276-Fsk.c **** 
+  65:radio/sx1276-Fsk.c **** 
+  66:radio/sx1276-Fsk.c **** /*!
+  67:radio/sx1276-Fsk.c ****  * RF state machine variable
+  68:radio/sx1276-Fsk.c ****  */
+  69:radio/sx1276-Fsk.c **** static uint8_t RFState = RF_STATE_IDLE;
+  70:radio/sx1276-Fsk.c **** 
+  71:radio/sx1276-Fsk.c **** /*!
+  72:radio/sx1276-Fsk.c ****  * Rx management support variables
+  73:radio/sx1276-Fsk.c ****  */
+  74:radio/sx1276-Fsk.c **** 
+  75:radio/sx1276-Fsk.c **** /*!
+  76:radio/sx1276-Fsk.c ****  * PacketTimeout holds the RF packet timeout
+  77:radio/sx1276-Fsk.c ****  * SyncSize = [0..8]
+  78:radio/sx1276-Fsk.c ****  * VariableSize = [0;1]
+  79:radio/sx1276-Fsk.c ****  * AddressSize = [0;1]
+  80:radio/sx1276-Fsk.c ****  * PayloadSize = [0..RF_BUFFER_SIZE]
+  81:radio/sx1276-Fsk.c ****  * CrcSize = [0;2]
+  82:radio/sx1276-Fsk.c ****  * PacketTimeout = ( ( 8 * ( VariableSize + AddressSize + PayloadSize + CrcSize ) / BR ) * 1000.0 )
+  83:radio/sx1276-Fsk.c ****  * Computed timeout is in miliseconds
+  84:radio/sx1276-Fsk.c ****  */
+  85:radio/sx1276-Fsk.c **** static uint32_t PacketTimeout;
+  86:radio/sx1276-Fsk.c **** 
+  87:radio/sx1276-Fsk.c **** /*!
+  88:radio/sx1276-Fsk.c ****  * Preamble2SyncTimeout
+ARM GAS  /tmp/ccpwgW31.s 			page 3
+
+
+  89:radio/sx1276-Fsk.c ****  * Preamble2SyncTimeout = ( ( 8 * ( PremableSize + SyncSize ) / RFBitrate ) * 1000.0 ) + 1
+  90:radio/sx1276-Fsk.c ****  * Computed timeout is in miliseconds
+  91:radio/sx1276-Fsk.c ****  */
+  92:radio/sx1276-Fsk.c **** static uint32_t Preamble2SyncTimeout;
+  93:radio/sx1276-Fsk.c **** 
+  94:radio/sx1276-Fsk.c **** static bool PreambleDetected = false;
+  95:radio/sx1276-Fsk.c **** static bool SyncWordDetected = false;
+  96:radio/sx1276-Fsk.c **** static bool PacketDetected = false;
+  97:radio/sx1276-Fsk.c **** static uint16_t RxPacketSize = 0;
+  98:radio/sx1276-Fsk.c **** static uint8_t RxBytesRead = 0;
+  99:radio/sx1276-Fsk.c **** static uint8_t TxBytesSent = 0;
+ 100:radio/sx1276-Fsk.c **** static double RxPacketRssiValue;
+ 101:radio/sx1276-Fsk.c **** static uint32_t RxPacketAfcValue;
+ 102:radio/sx1276-Fsk.c **** static uint8_t RxGain = 1;
+ 103:radio/sx1276-Fsk.c **** static uint32_t RxTimeoutTimer = 0;
+ 104:radio/sx1276-Fsk.c **** static uint32_t Preamble2SyncTimer = 0;
+ 105:radio/sx1276-Fsk.c **** 
+ 106:radio/sx1276-Fsk.c **** /*!
+ 107:radio/sx1276-Fsk.c ****  * Tx management support variables
+ 108:radio/sx1276-Fsk.c ****  */
+ 109:radio/sx1276-Fsk.c **** static uint16_t TxPacketSize = 0;
+ 110:radio/sx1276-Fsk.c **** static uint32_t TxTimeoutTimer = 0;
+ 111:radio/sx1276-Fsk.c **** 
+ 112:radio/sx1276-Fsk.c **** void SX1276FskInit( void )
+ 113:radio/sx1276-Fsk.c **** {
+ 114:radio/sx1276-Fsk.c ****     RFState = RF_STATE_IDLE;
+ 115:radio/sx1276-Fsk.c **** 
+ 116:radio/sx1276-Fsk.c ****     SX1276FskSetDefaults( );
+ 117:radio/sx1276-Fsk.c ****     
+ 118:radio/sx1276-Fsk.c ****     SX1276ReadBuffer( REG_OPMODE, SX1276Regs + 1, 0x70 - 1 );
+ 119:radio/sx1276-Fsk.c **** 
+ 120:radio/sx1276-Fsk.c ****     // Set the device in FSK mode and Sleep Mode
+ 121:radio/sx1276-Fsk.c ****     SX1276->RegOpMode = RF_OPMODE_MODULATIONTYPE_FSK | RF_OPMODE_SLEEP;
+ 122:radio/sx1276-Fsk.c ****     SX1276Write( REG_OPMODE, SX1276->RegOpMode );
+ 123:radio/sx1276-Fsk.c **** 
+ 124:radio/sx1276-Fsk.c ****     SX1276->RegPaRamp = RF_PARAMP_MODULATIONSHAPING_01;
+ 125:radio/sx1276-Fsk.c ****     SX1276Write( REG_PARAMP, SX1276->RegPaRamp );
+ 126:radio/sx1276-Fsk.c **** 
+ 127:radio/sx1276-Fsk.c ****     SX1276->RegLna = RF_LNA_GAIN_G1;
+ 128:radio/sx1276-Fsk.c ****     SX1276Write( REG_LNA, SX1276->RegLna );
+ 129:radio/sx1276-Fsk.c **** 
+ 130:radio/sx1276-Fsk.c ****     if( FskSettings.AfcOn == true )
+ 131:radio/sx1276-Fsk.c ****     {
+ 132:radio/sx1276-Fsk.c ****         SX1276->RegRxConfig = RF_RXCONFIG_RESTARTRXONCOLLISION_OFF | RF_RXCONFIG_AFCAUTO_ON |
+ 133:radio/sx1276-Fsk.c ****                               RF_RXCONFIG_AGCAUTO_ON | RF_RXCONFIG_RXTRIGER_PREAMBLEDETECT;
+ 134:radio/sx1276-Fsk.c ****     }
+ 135:radio/sx1276-Fsk.c ****     else
+ 136:radio/sx1276-Fsk.c ****     {
+ 137:radio/sx1276-Fsk.c ****         SX1276->RegRxConfig = RF_RXCONFIG_RESTARTRXONCOLLISION_OFF | RF_RXCONFIG_AFCAUTO_OFF |
+ 138:radio/sx1276-Fsk.c ****                               RF_RXCONFIG_AGCAUTO_ON | RF_RXCONFIG_RXTRIGER_PREAMBLEDETECT;
+ 139:radio/sx1276-Fsk.c ****     }
+ 140:radio/sx1276-Fsk.c **** 
+ 141:radio/sx1276-Fsk.c ****     SX1276->RegPreambleLsb = 8;
+ 142:radio/sx1276-Fsk.c ****     
+ 143:radio/sx1276-Fsk.c ****     SX1276->RegPreambleDetect = RF_PREAMBLEDETECT_DETECTOR_ON | RF_PREAMBLEDETECT_DETECTORSIZE_2 |
+ 144:radio/sx1276-Fsk.c ****                                 RF_PREAMBLEDETECT_DETECTORTOL_10;
+ 145:radio/sx1276-Fsk.c **** 
+ARM GAS  /tmp/ccpwgW31.s 			page 4
+
+
+ 146:radio/sx1276-Fsk.c ****     SX1276->RegRssiThresh = 0xFF;
+ 147:radio/sx1276-Fsk.c **** 
+ 148:radio/sx1276-Fsk.c ****     SX1276->RegSyncConfig = RF_SYNCCONFIG_AUTORESTARTRXMODE_WAITPLL_ON | RF_SYNCCONFIG_PREAMBLEPOLA
+ 149:radio/sx1276-Fsk.c ****                             RF_SYNCCONFIG_SYNC_ON |
+ 150:radio/sx1276-Fsk.c ****                             RF_SYNCCONFIG_SYNCSIZE_4;
+ 151:radio/sx1276-Fsk.c **** 
+ 152:radio/sx1276-Fsk.c ****     SX1276->RegSyncValue1 = 0x69;
+ 153:radio/sx1276-Fsk.c ****     SX1276->RegSyncValue2 = 0x81;
+ 154:radio/sx1276-Fsk.c ****     SX1276->RegSyncValue3 = 0x7E;
+ 155:radio/sx1276-Fsk.c ****     SX1276->RegSyncValue4 = 0x96;
+ 156:radio/sx1276-Fsk.c **** 
+ 157:radio/sx1276-Fsk.c ****     SX1276->RegPacketConfig1 = RF_PACKETCONFIG1_PACKETFORMAT_VARIABLE | RF_PACKETCONFIG1_DCFREE_OFF
+ 158:radio/sx1276-Fsk.c ****                                ( FskSettings.CrcOn << 4 ) | RF_PACKETCONFIG1_CRCAUTOCLEAR_ON |
+ 159:radio/sx1276-Fsk.c ****                                RF_PACKETCONFIG1_ADDRSFILTERING_OFF | RF_PACKETCONFIG1_CRCWHITENINGT
+ 160:radio/sx1276-Fsk.c ****     SX1276FskGetPacketCrcOn( ); // Update CrcOn on FskSettings
+ 161:radio/sx1276-Fsk.c **** 
+ 162:radio/sx1276-Fsk.c ****     SX1276->RegPayloadLength = FskSettings.PayloadLength;
+ 163:radio/sx1276-Fsk.c **** 
+ 164:radio/sx1276-Fsk.c ****     // we can now update the registers with our configuration
+ 165:radio/sx1276-Fsk.c ****     SX1276WriteBuffer( REG_OPMODE, SX1276Regs + 1, 0x70 - 1 );
+ 166:radio/sx1276-Fsk.c **** 
+ 167:radio/sx1276-Fsk.c ****     // then we need to set the RF settings 
+ 168:radio/sx1276-Fsk.c ****     SX1276FskSetRFFrequency( FskSettings.RFFrequency );
+ 169:radio/sx1276-Fsk.c ****     SX1276FskSetBitrate( FskSettings.Bitrate );
+ 170:radio/sx1276-Fsk.c ****     SX1276FskSetFdev( FskSettings.Fdev );
+ 171:radio/sx1276-Fsk.c **** 
+ 172:radio/sx1276-Fsk.c ****     SX1276FskSetDccBw( &SX1276->RegRxBw, 0, FskSettings.RxBw );
+ 173:radio/sx1276-Fsk.c ****     SX1276FskSetDccBw( &SX1276->RegAfcBw, 0, FskSettings.RxBwAfc );
+ 174:radio/sx1276-Fsk.c ****     SX1276FskSetRssiOffset( 0 );
+ 175:radio/sx1276-Fsk.c **** 
+ 176:radio/sx1276-Fsk.c **** #if( ( MODULE_SX1276RF1IAS == 1 ) || ( MODULE_SX1276RF1KAS == 1 ) )
+ 177:radio/sx1276-Fsk.c ****     if( FskSettings.RFFrequency > 860000000 )
+ 178:radio/sx1276-Fsk.c ****     {
+ 179:radio/sx1276-Fsk.c ****         SX1276FskSetPAOutput( RF_PACONFIG_PASELECT_RFO );
+ 180:radio/sx1276-Fsk.c ****         SX1276FskSetPa20dBm( false );
+ 181:radio/sx1276-Fsk.c ****         FskSettings.Power = 14;
+ 182:radio/sx1276-Fsk.c ****         SX1276FskSetRFPower( FskSettings.Power );
+ 183:radio/sx1276-Fsk.c ****     }
+ 184:radio/sx1276-Fsk.c ****     else
+ 185:radio/sx1276-Fsk.c ****     {
+ 186:radio/sx1276-Fsk.c ****         SX1276FskSetPAOutput( RF_PACONFIG_PASELECT_PABOOST );
+ 187:radio/sx1276-Fsk.c ****         SX1276FskSetPa20dBm( true );
+ 188:radio/sx1276-Fsk.c ****         FskSettings.Power = 20;
+ 189:radio/sx1276-Fsk.c ****         SX1276FskSetRFPower( FskSettings.Power );
+ 190:radio/sx1276-Fsk.c ****     } 
+ 191:radio/sx1276-Fsk.c **** #elif( MODULE_SX1276RF1JAS == 1 )
+ 192:radio/sx1276-Fsk.c ****     if( FskSettings.RFFrequency > 860000000 )
+ 193:radio/sx1276-Fsk.c ****     {
+ 194:radio/sx1276-Fsk.c ****         SX1276FskSetPAOutput( RF_PACONFIG_PASELECT_PABOOST );
+ 195:radio/sx1276-Fsk.c ****         SX1276FskSetPa20dBm( true );
+ 196:radio/sx1276-Fsk.c ****         FskSettings.Power = 20;
+ 197:radio/sx1276-Fsk.c ****         SX1276FskSetRFPower( FskSettings.Power );
+ 198:radio/sx1276-Fsk.c ****     }
+ 199:radio/sx1276-Fsk.c ****     else
+ 200:radio/sx1276-Fsk.c ****     {
+ 201:radio/sx1276-Fsk.c ****         SX1276FskSetPAOutput( RF_PACONFIG_PASELECT_RFO );
+ 202:radio/sx1276-Fsk.c ****         SX1276FskSetPa20dBm( false );
+ARM GAS  /tmp/ccpwgW31.s 			page 5
+
+
+ 203:radio/sx1276-Fsk.c ****         FskSettings.Power = 14;
+ 204:radio/sx1276-Fsk.c ****         SX1276FskSetRFPower( FskSettings.Power );
+ 205:radio/sx1276-Fsk.c ****     } 
+ 206:radio/sx1276-Fsk.c **** #endif
+ 207:radio/sx1276-Fsk.c **** 
+ 208:radio/sx1276-Fsk.c ****     SX1276FskSetOpMode( RF_OPMODE_STANDBY );
+ 209:radio/sx1276-Fsk.c **** 
+ 210:radio/sx1276-Fsk.c ****     // Calibrate the HF
+ 211:radio/sx1276-Fsk.c ****     SX1276FskRxCalibrate( );
+ 212:radio/sx1276-Fsk.c **** }
+ 213:radio/sx1276-Fsk.c **** 
+ 214:radio/sx1276-Fsk.c **** void SX1276FskSetDefaults( void )
+ 215:radio/sx1276-Fsk.c **** {
+  28              		.loc 1 215 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+ 216:radio/sx1276-Fsk.c ****     // REMARK: See SX1276 datasheet for modified default values.
+ 217:radio/sx1276-Fsk.c **** 
+ 218:radio/sx1276-Fsk.c ****     SX1276Read( REG_VERSION, &SX1276->RegVersion );
+  37              		.loc 1 218 0
+  38 0002 034B     		ldr	r3, .L3
+  39 0004 1968     		ldr	r1, [r3]
+  40 0006 4231     		adds	r1, r1, #66
+  41 0008 4220     		movs	r0, #66
+  42 000a FFF7FEFF 		bl	SX1276Read
+  43              	.LVL0:
+  44 000e 08BD     		pop	{r3, pc}
+  45              	.L4:
+  46              		.align	2
+  47              	.L3:
+  48 0010 00000000 		.word	SX1276
+  49              		.cfi_endproc
+  50              	.LFE65:
+  52              		.section	.text.SX1276FskSetOpMode,"ax",%progbits
+  53              		.align	2
+  54              		.global	SX1276FskSetOpMode
+  55              		.thumb
+  56              		.thumb_func
+  58              	SX1276FskSetOpMode:
+  59              	.LFB66:
+ 219:radio/sx1276-Fsk.c **** }
+ 220:radio/sx1276-Fsk.c **** 
+ 221:radio/sx1276-Fsk.c **** void SX1276FskSetOpMode( uint8_t opMode )
+ 222:radio/sx1276-Fsk.c **** {
+  60              		.loc 1 222 0
+  61              		.cfi_startproc
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64              	.LVL1:
+ 223:radio/sx1276-Fsk.c ****     static uint8_t opModePrev = RF_OPMODE_STANDBY;
+ 224:radio/sx1276-Fsk.c ****     static bool antennaSwitchTxOnPrev = true;
+ARM GAS  /tmp/ccpwgW31.s 			page 6
+
+
+ 225:radio/sx1276-Fsk.c ****     bool antennaSwitchTxOn = false;
+ 226:radio/sx1276-Fsk.c **** 
+ 227:radio/sx1276-Fsk.c ****     opModePrev = SX1276->RegOpMode & ~RF_OPMODE_MASK;
+  65              		.loc 1 227 0
+  66 0000 124B     		ldr	r3, .L12
+  67 0002 1B68     		ldr	r3, [r3]
+  68 0004 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+  69 0006 03F00703 		and	r3, r3, #7
+ 228:radio/sx1276-Fsk.c **** 
+ 229:radio/sx1276-Fsk.c ****     if( opMode != opModePrev )
+  70              		.loc 1 229 0
+  71 000a 8342     		cmp	r3, r0
+  72 000c 1CD0     		beq	.L11
+ 222:radio/sx1276-Fsk.c ****     static uint8_t opModePrev = RF_OPMODE_STANDBY;
+  73              		.loc 1 222 0
+  74 000e 10B5     		push	{r4, lr}
+  75              	.LCFI1:
+  76              		.cfi_def_cfa_offset 8
+  77              		.cfi_offset 4, -8
+  78              		.cfi_offset 14, -4
+ 230:radio/sx1276-Fsk.c ****     {
+ 231:radio/sx1276-Fsk.c ****         if( opMode == RF_OPMODE_TRANSMITTER )
+  79              		.loc 1 231 0
+  80 0010 0328     		cmp	r0, #3
+  81 0012 01D1     		bne	.L9
+ 232:radio/sx1276-Fsk.c ****         {
+ 233:radio/sx1276-Fsk.c ****             antennaSwitchTxOn = true;
+  82              		.loc 1 233 0
+  83 0014 0123     		movs	r3, #1
+  84 0016 00E0     		b	.L7
+  85              	.L9:
+ 234:radio/sx1276-Fsk.c ****         }
+ 235:radio/sx1276-Fsk.c ****         else
+ 236:radio/sx1276-Fsk.c ****         {
+ 237:radio/sx1276-Fsk.c ****             antennaSwitchTxOn = false;
+  86              		.loc 1 237 0
+  87 0018 0023     		movs	r3, #0
+  88              	.L7:
+  89 001a 0446     		mov	r4, r0
+  90              	.LVL2:
+ 238:radio/sx1276-Fsk.c ****         }
+ 239:radio/sx1276-Fsk.c ****         if( antennaSwitchTxOn != antennaSwitchTxOnPrev )
+  91              		.loc 1 239 0
+  92 001c 0C4A     		ldr	r2, .L12+4
+  93 001e 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+  94 0020 9342     		cmp	r3, r2
+  95 0022 04D0     		beq	.L8
+ 240:radio/sx1276-Fsk.c ****         {
+ 241:radio/sx1276-Fsk.c ****             antennaSwitchTxOnPrev = antennaSwitchTxOn;
+  96              		.loc 1 241 0
+  97 0024 0A4A     		ldr	r2, .L12+4
+  98 0026 1370     		strb	r3, [r2]
+ 242:radio/sx1276-Fsk.c ****             RXTX( antennaSwitchTxOn ); // Antenna switch control
+  99              		.loc 1 242 0
+ 100 0028 1846     		mov	r0, r3
+ 101              	.LVL3:
+ 102 002a FFF7FEFF 		bl	SX1276WriteRxTx
+ARM GAS  /tmp/ccpwgW31.s 			page 7
+
+
+ 103              	.LVL4:
+ 104              	.L8:
+ 243:radio/sx1276-Fsk.c ****         }
+ 244:radio/sx1276-Fsk.c ****         SX1276->RegOpMode = ( SX1276->RegOpMode & RF_OPMODE_MASK ) | opMode;
+ 105              		.loc 1 244 0
+ 106 002e 074B     		ldr	r3, .L12
+ 107 0030 1A68     		ldr	r2, [r3]
+ 108 0032 5078     		ldrb	r0, [r2, #1]	@ zero_extendqisi2
+ 109 0034 20F00700 		bic	r0, r0, #7
+ 110 0038 2043     		orrs	r0, r0, r4
+ 111 003a 5070     		strb	r0, [r2, #1]
+ 245:radio/sx1276-Fsk.c **** 
+ 246:radio/sx1276-Fsk.c ****         SX1276Write( REG_OPMODE, SX1276->RegOpMode );        
+ 112              		.loc 1 246 0
+ 113 003c 1B68     		ldr	r3, [r3]
+ 114 003e 5978     		ldrb	r1, [r3, #1]	@ zero_extendqisi2
+ 115 0040 0120     		movs	r0, #1
+ 116 0042 FFF7FEFF 		bl	SX1276Write
+ 117              	.LVL5:
+ 118 0046 10BD     		pop	{r4, pc}
+ 119              	.LVL6:
+ 120              	.L11:
+ 121              	.LCFI2:
+ 122              		.cfi_def_cfa_offset 0
+ 123              		.cfi_restore 4
+ 124              		.cfi_restore 14
+ 125 0048 7047     		bx	lr
+ 126              	.L13:
+ 127 004a 00BF     		.align	2
+ 128              	.L12:
+ 129 004c 00000000 		.word	SX1276
+ 130 0050 00000000 		.word	.LANCHOR0
+ 131              		.cfi_endproc
+ 132              	.LFE66:
+ 134              		.section	.text.SX1276FskInit,"ax",%progbits
+ 135              		.align	2
+ 136              		.global	SX1276FskInit
+ 137              		.thumb
+ 138              		.thumb_func
+ 140              	SX1276FskInit:
+ 141              	.LFB64:
+ 113:radio/sx1276-Fsk.c ****     RFState = RF_STATE_IDLE;
+ 142              		.loc 1 113 0
+ 143              		.cfi_startproc
+ 144              		@ args = 0, pretend = 0, frame = 0
+ 145              		@ frame_needed = 0, uses_anonymous_args = 0
+ 146 0000 38B5     		push	{r3, r4, r5, lr}
+ 147              	.LCFI3:
+ 148              		.cfi_def_cfa_offset 16
+ 149              		.cfi_offset 3, -16
+ 150              		.cfi_offset 4, -12
+ 151              		.cfi_offset 5, -8
+ 152              		.cfi_offset 14, -4
+ 114:radio/sx1276-Fsk.c **** 
+ 153              		.loc 1 114 0
+ 154 0002 0024     		movs	r4, #0
+ 155 0004 454B     		ldr	r3, .L20
+ARM GAS  /tmp/ccpwgW31.s 			page 8
+
+
+ 156 0006 1C70     		strb	r4, [r3]
+ 116:radio/sx1276-Fsk.c ****     
+ 157              		.loc 1 116 0
+ 158 0008 FFF7FEFF 		bl	SX1276FskSetDefaults
+ 159              	.LVL7:
+ 118:radio/sx1276-Fsk.c **** 
+ 160              		.loc 1 118 0
+ 161 000c 6F22     		movs	r2, #111
+ 162 000e 4449     		ldr	r1, .L20+4
+ 163 0010 0120     		movs	r0, #1
+ 164 0012 FFF7FEFF 		bl	SX1276ReadBuffer
+ 165              	.LVL8:
+ 121:radio/sx1276-Fsk.c ****     SX1276Write( REG_OPMODE, SX1276->RegOpMode );
+ 166              		.loc 1 121 0
+ 167 0016 434D     		ldr	r5, .L20+8
+ 168 0018 2B68     		ldr	r3, [r5]
+ 169 001a 5C70     		strb	r4, [r3, #1]
+ 122:radio/sx1276-Fsk.c **** 
+ 170              		.loc 1 122 0
+ 171 001c 2B68     		ldr	r3, [r5]
+ 172 001e 5978     		ldrb	r1, [r3, #1]	@ zero_extendqisi2
+ 173 0020 0120     		movs	r0, #1
+ 174 0022 FFF7FEFF 		bl	SX1276Write
+ 175              	.LVL9:
+ 124:radio/sx1276-Fsk.c ****     SX1276Write( REG_PARAMP, SX1276->RegPaRamp );
+ 176              		.loc 1 124 0
+ 177 0026 2B68     		ldr	r3, [r5]
+ 178 0028 2024     		movs	r4, #32
+ 179 002a 9C72     		strb	r4, [r3, #10]
+ 125:radio/sx1276-Fsk.c **** 
+ 180              		.loc 1 125 0
+ 181 002c 2146     		mov	r1, r4
+ 182 002e 0A20     		movs	r0, #10
+ 183 0030 FFF7FEFF 		bl	SX1276Write
+ 184              	.LVL10:
+ 127:radio/sx1276-Fsk.c ****     SX1276Write( REG_LNA, SX1276->RegLna );
+ 185              		.loc 1 127 0
+ 186 0034 2B68     		ldr	r3, [r5]
+ 187 0036 1C73     		strb	r4, [r3, #12]
+ 128:radio/sx1276-Fsk.c **** 
+ 188              		.loc 1 128 0
+ 189 0038 2146     		mov	r1, r4
+ 190 003a 0C20     		movs	r0, #12
+ 191 003c FFF7FEFF 		bl	SX1276Write
+ 192              	.LVL11:
+ 130:radio/sx1276-Fsk.c ****     {
+ 193              		.loc 1 130 0
+ 194 0040 394B     		ldr	r3, .L20+12
+ 195 0042 5B7E     		ldrb	r3, [r3, #25]	@ zero_extendqisi2
+ 196 0044 1BB1     		cbz	r3, .L15
+ 132:radio/sx1276-Fsk.c ****                               RF_RXCONFIG_AGCAUTO_ON | RF_RXCONFIG_RXTRIGER_PREAMBLEDETECT;
+ 197              		.loc 1 132 0
+ 198 0046 2B68     		ldr	r3, [r5]
+ 199 0048 1E22     		movs	r2, #30
+ 200 004a 5A73     		strb	r2, [r3, #13]
+ 201 004c 03E0     		b	.L16
+ 202              	.L15:
+ARM GAS  /tmp/ccpwgW31.s 			page 9
+
+
+ 137:radio/sx1276-Fsk.c ****                               RF_RXCONFIG_AGCAUTO_ON | RF_RXCONFIG_RXTRIGER_PREAMBLEDETECT;
+ 203              		.loc 1 137 0
+ 204 004e 354B     		ldr	r3, .L20+8
+ 205 0050 1B68     		ldr	r3, [r3]
+ 206 0052 0E22     		movs	r2, #14
+ 207 0054 5A73     		strb	r2, [r3, #13]
+ 208              	.L16:
+ 141:radio/sx1276-Fsk.c ****     
+ 209              		.loc 1 141 0
+ 210 0056 334D     		ldr	r5, .L20+8
+ 211 0058 2B68     		ldr	r3, [r5]
+ 212 005a 0822     		movs	r2, #8
+ 213 005c 83F82620 		strb	r2, [r3, #38]
+ 143:radio/sx1276-Fsk.c ****                                 RF_PREAMBLEDETECT_DETECTORTOL_10;
+ 214              		.loc 1 143 0
+ 215 0060 AA22     		movs	r2, #170
+ 216 0062 DA77     		strb	r2, [r3, #31]
+ 146:radio/sx1276-Fsk.c **** 
+ 217              		.loc 1 146 0
+ 218 0064 FF22     		movs	r2, #255
+ 219 0066 1A74     		strb	r2, [r3, #16]
+ 148:radio/sx1276-Fsk.c ****                             RF_SYNCCONFIG_SYNC_ON |
+ 220              		.loc 1 148 0
+ 221 0068 9322     		movs	r2, #147
+ 222 006a 83F82720 		strb	r2, [r3, #39]
+ 152:radio/sx1276-Fsk.c ****     SX1276->RegSyncValue2 = 0x81;
+ 223              		.loc 1 152 0
+ 224 006e 6922     		movs	r2, #105
+ 225 0070 83F82820 		strb	r2, [r3, #40]
+ 153:radio/sx1276-Fsk.c ****     SX1276->RegSyncValue3 = 0x7E;
+ 226              		.loc 1 153 0
+ 227 0074 8122     		movs	r2, #129
+ 228 0076 83F82920 		strb	r2, [r3, #41]
+ 154:radio/sx1276-Fsk.c ****     SX1276->RegSyncValue4 = 0x96;
+ 229              		.loc 1 154 0
+ 230 007a 7E22     		movs	r2, #126
+ 231 007c 83F82A20 		strb	r2, [r3, #42]
+ 155:radio/sx1276-Fsk.c **** 
+ 232              		.loc 1 155 0
+ 233 0080 9622     		movs	r2, #150
+ 234 0082 83F82B20 		strb	r2, [r3, #43]
+ 158:radio/sx1276-Fsk.c ****                                RF_PACKETCONFIG1_ADDRSFILTERING_OFF | RF_PACKETCONFIG1_CRCWHITENINGT
+ 235              		.loc 1 158 0
+ 236 0086 284C     		ldr	r4, .L20+12
+ 237 0088 227E     		ldrb	r2, [r4, #24]	@ zero_extendqisi2
+ 238 008a 1201     		lsls	r2, r2, #4
+ 157:radio/sx1276-Fsk.c ****                                ( FskSettings.CrcOn << 4 ) | RF_PACKETCONFIG1_CRCAUTOCLEAR_ON |
+ 239              		.loc 1 157 0
+ 240 008c 62F07F02 		orn	r2, r2, #127
+ 241 0090 83F83020 		strb	r2, [r3, #48]
+ 160:radio/sx1276-Fsk.c **** 
+ 242              		.loc 1 160 0
+ 243 0094 FFF7FEFF 		bl	SX1276FskGetPacketCrcOn
+ 244              	.LVL12:
+ 162:radio/sx1276-Fsk.c **** 
+ 245              		.loc 1 162 0
+ 246 0098 2B68     		ldr	r3, [r5]
+ARM GAS  /tmp/ccpwgW31.s 			page 10
+
+
+ 247 009a A27E     		ldrb	r2, [r4, #26]	@ zero_extendqisi2
+ 248 009c 83F83220 		strb	r2, [r3, #50]
+ 165:radio/sx1276-Fsk.c **** 
+ 249              		.loc 1 165 0
+ 250 00a0 6F22     		movs	r2, #111
+ 251 00a2 1F49     		ldr	r1, .L20+4
+ 252 00a4 0120     		movs	r0, #1
+ 253 00a6 FFF7FEFF 		bl	SX1276WriteBuffer
+ 254              	.LVL13:
+ 168:radio/sx1276-Fsk.c ****     SX1276FskSetBitrate( FskSettings.Bitrate );
+ 255              		.loc 1 168 0
+ 256 00aa 2068     		ldr	r0, [r4]
+ 257 00ac FFF7FEFF 		bl	SX1276FskSetRFFrequency
+ 258              	.LVL14:
+ 169:radio/sx1276-Fsk.c ****     SX1276FskSetFdev( FskSettings.Fdev );
+ 259              		.loc 1 169 0
+ 260 00b0 6068     		ldr	r0, [r4, #4]
+ 261 00b2 FFF7FEFF 		bl	SX1276FskSetBitrate
+ 262              	.LVL15:
+ 170:radio/sx1276-Fsk.c **** 
+ 263              		.loc 1 170 0
+ 264 00b6 A068     		ldr	r0, [r4, #8]
+ 265 00b8 FFF7FEFF 		bl	SX1276FskSetFdev
+ 266              	.LVL16:
+ 172:radio/sx1276-Fsk.c ****     SX1276FskSetDccBw( &SX1276->RegAfcBw, 0, FskSettings.RxBwAfc );
+ 267              		.loc 1 172 0
+ 268 00bc 2868     		ldr	r0, [r5]
+ 269 00be 2269     		ldr	r2, [r4, #16]
+ 270 00c0 0021     		movs	r1, #0
+ 271 00c2 1230     		adds	r0, r0, #18
+ 272 00c4 FFF7FEFF 		bl	SX1276FskSetDccBw
+ 273              	.LVL17:
+ 173:radio/sx1276-Fsk.c ****     SX1276FskSetRssiOffset( 0 );
+ 274              		.loc 1 173 0
+ 275 00c8 2868     		ldr	r0, [r5]
+ 276 00ca 6269     		ldr	r2, [r4, #20]
+ 277 00cc 0021     		movs	r1, #0
+ 278 00ce 1330     		adds	r0, r0, #19
+ 279 00d0 FFF7FEFF 		bl	SX1276FskSetDccBw
+ 280              	.LVL18:
+ 174:radio/sx1276-Fsk.c **** 
+ 281              		.loc 1 174 0
+ 282 00d4 0020     		movs	r0, #0
+ 283 00d6 FFF7FEFF 		bl	SX1276FskSetRssiOffset
+ 284              	.LVL19:
+ 177:radio/sx1276-Fsk.c ****     {
+ 285              		.loc 1 177 0
+ 286 00da 2268     		ldr	r2, [r4]
+ 287 00dc 134B     		ldr	r3, .L20+16
+ 288 00de 9A42     		cmp	r2, r3
+ 289 00e0 0AD9     		bls	.L17
+ 179:radio/sx1276-Fsk.c ****         SX1276FskSetPa20dBm( false );
+ 290              		.loc 1 179 0
+ 291 00e2 0020     		movs	r0, #0
+ 292 00e4 FFF7FEFF 		bl	SX1276FskSetPAOutput
+ 293              	.LVL20:
+ 180:radio/sx1276-Fsk.c ****         FskSettings.Power = 14;
+ARM GAS  /tmp/ccpwgW31.s 			page 11
+
+
+ 294              		.loc 1 180 0
+ 295 00e8 0020     		movs	r0, #0
+ 296 00ea FFF7FEFF 		bl	SX1276FskSetPa20dBm
+ 297              	.LVL21:
+ 181:radio/sx1276-Fsk.c ****         SX1276FskSetRFPower( FskSettings.Power );
+ 298              		.loc 1 181 0
+ 299 00ee 0E20     		movs	r0, #14
+ 300 00f0 2073     		strb	r0, [r4, #12]
+ 182:radio/sx1276-Fsk.c ****     }
+ 301              		.loc 1 182 0
+ 302 00f2 FFF7FEFF 		bl	SX1276FskSetRFPower
+ 303              	.LVL22:
+ 304 00f6 0AE0     		b	.L18
+ 305              	.L17:
+ 186:radio/sx1276-Fsk.c ****         SX1276FskSetPa20dBm( true );
+ 306              		.loc 1 186 0
+ 307 00f8 8020     		movs	r0, #128
+ 308 00fa FFF7FEFF 		bl	SX1276FskSetPAOutput
+ 309              	.LVL23:
+ 187:radio/sx1276-Fsk.c ****         FskSettings.Power = 20;
+ 310              		.loc 1 187 0
+ 311 00fe 0120     		movs	r0, #1
+ 312 0100 FFF7FEFF 		bl	SX1276FskSetPa20dBm
+ 313              	.LVL24:
+ 188:radio/sx1276-Fsk.c ****         SX1276FskSetRFPower( FskSettings.Power );
+ 314              		.loc 1 188 0
+ 315 0104 1420     		movs	r0, #20
+ 316 0106 084B     		ldr	r3, .L20+12
+ 317 0108 1873     		strb	r0, [r3, #12]
+ 189:radio/sx1276-Fsk.c ****     } 
+ 318              		.loc 1 189 0
+ 319 010a FFF7FEFF 		bl	SX1276FskSetRFPower
+ 320              	.LVL25:
+ 321              	.L18:
+ 208:radio/sx1276-Fsk.c **** 
+ 322              		.loc 1 208 0
+ 323 010e 0120     		movs	r0, #1
+ 324 0110 FFF7FEFF 		bl	SX1276FskSetOpMode
+ 325              	.LVL26:
+ 211:radio/sx1276-Fsk.c **** }
+ 326              		.loc 1 211 0
+ 327 0114 FFF7FEFF 		bl	SX1276FskRxCalibrate
+ 328              	.LVL27:
+ 329 0118 38BD     		pop	{r3, r4, r5, pc}
+ 330              	.L21:
+ 331 011a 00BF     		.align	2
+ 332              	.L20:
+ 333 011c 00000000 		.word	.LANCHOR1
+ 334 0120 01000000 		.word	SX1276Regs+1
+ 335 0124 00000000 		.word	SX1276
+ 336 0128 00000000 		.word	.LANCHOR2
+ 337 012c 008F4233 		.word	860000000
+ 338              		.cfi_endproc
+ 339              	.LFE64:
+ 341              		.section	.text.SX1276FskGetOpMode,"ax",%progbits
+ 342              		.align	2
+ 343              		.global	SX1276FskGetOpMode
+ARM GAS  /tmp/ccpwgW31.s 			page 12
+
+
+ 344              		.thumb
+ 345              		.thumb_func
+ 347              	SX1276FskGetOpMode:
+ 348              	.LFB67:
+ 247:radio/sx1276-Fsk.c ****     }
+ 248:radio/sx1276-Fsk.c **** }
+ 249:radio/sx1276-Fsk.c **** 
+ 250:radio/sx1276-Fsk.c **** uint8_t SX1276FskGetOpMode( void )
+ 251:radio/sx1276-Fsk.c **** {
+ 349              		.loc 1 251 0
+ 350              		.cfi_startproc
+ 351              		@ args = 0, pretend = 0, frame = 0
+ 352              		@ frame_needed = 0, uses_anonymous_args = 0
+ 353 0000 10B5     		push	{r4, lr}
+ 354              	.LCFI4:
+ 355              		.cfi_def_cfa_offset 8
+ 356              		.cfi_offset 4, -8
+ 357              		.cfi_offset 14, -4
+ 252:radio/sx1276-Fsk.c ****     SX1276Read( REG_OPMODE, &SX1276->RegOpMode );
+ 358              		.loc 1 252 0
+ 359 0002 054C     		ldr	r4, .L24
+ 360 0004 2168     		ldr	r1, [r4]
+ 361 0006 0131     		adds	r1, r1, #1
+ 362 0008 0120     		movs	r0, #1
+ 363 000a FFF7FEFF 		bl	SX1276Read
+ 364              	.LVL28:
+ 253:radio/sx1276-Fsk.c ****     
+ 254:radio/sx1276-Fsk.c ****     return SX1276->RegOpMode & ~RF_OPMODE_MASK;
+ 365              		.loc 1 254 0
+ 366 000e 2368     		ldr	r3, [r4]
+ 367 0010 5878     		ldrb	r0, [r3, #1]	@ zero_extendqisi2
+ 255:radio/sx1276-Fsk.c **** }
+ 368              		.loc 1 255 0
+ 369 0012 00F00700 		and	r0, r0, #7
+ 370 0016 10BD     		pop	{r4, pc}
+ 371              	.L25:
+ 372              		.align	2
+ 373              	.L24:
+ 374 0018 00000000 		.word	SX1276
+ 375              		.cfi_endproc
+ 376              	.LFE67:
+ 378              		.global	__aeabi_i2d
+ 379              		.global	__aeabi_dmul
+ 380              		.global	__aeabi_d2iz
+ 381              		.section	.text.SX1276FskReadFei,"ax",%progbits
+ 382              		.align	2
+ 383              		.global	SX1276FskReadFei
+ 384              		.thumb
+ 385              		.thumb_func
+ 387              	SX1276FskReadFei:
+ 388              	.LFB68:
+ 256:radio/sx1276-Fsk.c **** 
+ 257:radio/sx1276-Fsk.c **** int32_t SX1276FskReadFei( void )
+ 258:radio/sx1276-Fsk.c **** {
+ 389              		.loc 1 258 0
+ 390              		.cfi_startproc
+ 391              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  /tmp/ccpwgW31.s 			page 13
+
+
+ 392              		@ frame_needed = 0, uses_anonymous_args = 0
+ 393 0000 10B5     		push	{r4, lr}
+ 394              	.LCFI5:
+ 395              		.cfi_def_cfa_offset 8
+ 396              		.cfi_offset 4, -8
+ 397              		.cfi_offset 14, -4
+ 259:radio/sx1276-Fsk.c ****     SX1276ReadBuffer( REG_FEIMSB, &SX1276->RegFeiMsb, 2 );                          // Reads the FE
+ 398              		.loc 1 259 0
+ 399 0002 0D4C     		ldr	r4, .L28+8
+ 400 0004 2168     		ldr	r1, [r4]
+ 401 0006 0222     		movs	r2, #2
+ 402 0008 1D31     		adds	r1, r1, #29
+ 403 000a 1D20     		movs	r0, #29
+ 404 000c FFF7FEFF 		bl	SX1276ReadBuffer
+ 405              	.LVL29:
+ 260:radio/sx1276-Fsk.c **** 
+ 261:radio/sx1276-Fsk.c ****     return ( int32_t )( double )( ( ( uint16_t )SX1276->RegFeiMsb << 8 ) | ( uint16_t )SX1276->RegF
+ 406              		.loc 1 261 0
+ 407 0010 2368     		ldr	r3, [r4]
+ 408 0012 587F     		ldrb	r0, [r3, #29]	@ zero_extendqisi2
+ 409 0014 9B7F     		ldrb	r3, [r3, #30]	@ zero_extendqisi2
+ 410 0016 43EA0020 		orr	r0, r3, r0, lsl #8
+ 411 001a FFF7FEFF 		bl	__aeabi_i2d
+ 412              	.LVL30:
+ 413 001e 04A3     		adr	r3, .L28
+ 414 0020 D3E90023 		ldrd	r2, [r3]
+ 415 0024 FFF7FEFF 		bl	__aeabi_dmul
+ 416              	.LVL31:
+ 417 0028 FFF7FEFF 		bl	__aeabi_d2iz
+ 418              	.LVL32:
+ 262:radio/sx1276-Fsk.c **** }
+ 419              		.loc 1 262 0
+ 420 002c 10BD     		pop	{r4, pc}
+ 421              	.L29:
+ 422 002e 00BF     		.align	3
+ 423              	.L28:
+ 424 0030 00000000 		.word	0
+ 425 0034 80844E40 		.word	1078887552
+ 426 0038 00000000 		.word	SX1276
+ 427              		.cfi_endproc
+ 428              	.LFE68:
+ 430              		.section	.text.SX1276FskReadAfc,"ax",%progbits
+ 431              		.align	2
+ 432              		.global	SX1276FskReadAfc
+ 433              		.thumb
+ 434              		.thumb_func
+ 436              	SX1276FskReadAfc:
+ 437              	.LFB69:
+ 263:radio/sx1276-Fsk.c **** 
+ 264:radio/sx1276-Fsk.c **** int32_t SX1276FskReadAfc( void )
+ 265:radio/sx1276-Fsk.c **** {
+ 438              		.loc 1 265 0
+ 439              		.cfi_startproc
+ 440              		@ args = 0, pretend = 0, frame = 0
+ 441              		@ frame_needed = 0, uses_anonymous_args = 0
+ 442 0000 10B5     		push	{r4, lr}
+ 443              	.LCFI6:
+ARM GAS  /tmp/ccpwgW31.s 			page 14
+
+
+ 444              		.cfi_def_cfa_offset 8
+ 445              		.cfi_offset 4, -8
+ 446              		.cfi_offset 14, -4
+ 266:radio/sx1276-Fsk.c ****     SX1276ReadBuffer( REG_AFCMSB, &SX1276->RegAfcMsb, 2 );                            // Reads the 
+ 447              		.loc 1 266 0
+ 448 0002 0D4C     		ldr	r4, .L32+8
+ 449 0004 2168     		ldr	r1, [r4]
+ 450 0006 0222     		movs	r2, #2
+ 451 0008 1B31     		adds	r1, r1, #27
+ 452 000a 1B20     		movs	r0, #27
+ 453 000c FFF7FEFF 		bl	SX1276ReadBuffer
+ 454              	.LVL33:
+ 267:radio/sx1276-Fsk.c ****     return ( int32_t )( double )( ( ( uint16_t )SX1276->RegAfcMsb << 8 ) | ( uint16_t )SX1276->RegA
+ 455              		.loc 1 267 0
+ 456 0010 2368     		ldr	r3, [r4]
+ 457 0012 D87E     		ldrb	r0, [r3, #27]	@ zero_extendqisi2
+ 458 0014 1B7F     		ldrb	r3, [r3, #28]	@ zero_extendqisi2
+ 459 0016 43EA0020 		orr	r0, r3, r0, lsl #8
+ 460 001a FFF7FEFF 		bl	__aeabi_i2d
+ 461              	.LVL34:
+ 462 001e 04A3     		adr	r3, .L32
+ 463 0020 D3E90023 		ldrd	r2, [r3]
+ 464 0024 FFF7FEFF 		bl	__aeabi_dmul
+ 465              	.LVL35:
+ 466 0028 FFF7FEFF 		bl	__aeabi_d2iz
+ 467              	.LVL36:
+ 268:radio/sx1276-Fsk.c **** }
+ 468              		.loc 1 268 0
+ 469 002c 10BD     		pop	{r4, pc}
+ 470              	.L33:
+ 471 002e 00BF     		.align	3
+ 472              	.L32:
+ 473 0030 00000000 		.word	0
+ 474 0034 80844E40 		.word	1078887552
+ 475 0038 00000000 		.word	SX1276
+ 476              		.cfi_endproc
+ 477              	.LFE69:
+ 479              		.section	.text.SX1276FskReadRxGain,"ax",%progbits
+ 480              		.align	2
+ 481              		.global	SX1276FskReadRxGain
+ 482              		.thumb
+ 483              		.thumb_func
+ 485              	SX1276FskReadRxGain:
+ 486              	.LFB70:
+ 269:radio/sx1276-Fsk.c **** 
+ 270:radio/sx1276-Fsk.c **** uint8_t SX1276FskReadRxGain( void )
+ 271:radio/sx1276-Fsk.c **** {
+ 487              		.loc 1 271 0
+ 488              		.cfi_startproc
+ 489              		@ args = 0, pretend = 0, frame = 0
+ 490              		@ frame_needed = 0, uses_anonymous_args = 0
+ 491 0000 10B5     		push	{r4, lr}
+ 492              	.LCFI7:
+ 493              		.cfi_def_cfa_offset 8
+ 494              		.cfi_offset 4, -8
+ 495              		.cfi_offset 14, -4
+ 272:radio/sx1276-Fsk.c ****     SX1276Read( REG_LNA, &SX1276->RegLna );
+ARM GAS  /tmp/ccpwgW31.s 			page 15
+
+
+ 496              		.loc 1 272 0
+ 497 0002 054C     		ldr	r4, .L36
+ 498 0004 2168     		ldr	r1, [r4]
+ 499 0006 0C31     		adds	r1, r1, #12
+ 500 0008 0C20     		movs	r0, #12
+ 501 000a FFF7FEFF 		bl	SX1276Read
+ 502              	.LVL37:
+ 273:radio/sx1276-Fsk.c ****     return( SX1276->RegLna >> 5 ) & 0x07;
+ 503              		.loc 1 273 0
+ 504 000e 2368     		ldr	r3, [r4]
+ 505 0010 187B     		ldrb	r0, [r3, #12]	@ zero_extendqisi2
+ 274:radio/sx1276-Fsk.c **** }
+ 506              		.loc 1 274 0
+ 507 0012 4009     		lsrs	r0, r0, #5
+ 508 0014 10BD     		pop	{r4, pc}
+ 509              	.L37:
+ 510 0016 00BF     		.align	2
+ 511              	.L36:
+ 512 0018 00000000 		.word	SX1276
+ 513              		.cfi_endproc
+ 514              	.LFE70:
+ 516              		.global	__aeabi_ui2d
+ 517              		.section	.text.SX1276FskReadRssi,"ax",%progbits
+ 518              		.align	2
+ 519              		.global	SX1276FskReadRssi
+ 520              		.thumb
+ 521              		.thumb_func
+ 523              	SX1276FskReadRssi:
+ 524              	.LFB71:
+ 275:radio/sx1276-Fsk.c **** 
+ 276:radio/sx1276-Fsk.c **** double SX1276FskReadRssi( void )
+ 277:radio/sx1276-Fsk.c **** {
+ 525              		.loc 1 277 0
+ 526              		.cfi_startproc
+ 527              		@ args = 0, pretend = 0, frame = 0
+ 528              		@ frame_needed = 0, uses_anonymous_args = 0
+ 529 0000 10B5     		push	{r4, lr}
+ 530              	.LCFI8:
+ 531              		.cfi_def_cfa_offset 8
+ 532              		.cfi_offset 4, -8
+ 533              		.cfi_offset 14, -4
+ 278:radio/sx1276-Fsk.c ****     SX1276Read( REG_RSSIVALUE, &SX1276->RegRssiValue );                               // Reads the 
+ 534              		.loc 1 278 0
+ 535 0002 0A4C     		ldr	r4, .L40
+ 536 0004 2168     		ldr	r1, [r4]
+ 537 0006 1131     		adds	r1, r1, #17
+ 538 0008 1120     		movs	r0, #17
+ 539 000a FFF7FEFF 		bl	SX1276Read
+ 540              	.LVL38:
+ 279:radio/sx1276-Fsk.c **** 
+ 280:radio/sx1276-Fsk.c ****     return -( double )( ( double )SX1276->RegRssiValue / 2.0 );
+ 541              		.loc 1 280 0
+ 542 000e 2368     		ldr	r3, [r4]
+ 543 0010 587C     		ldrb	r0, [r3, #17]	@ zero_extendqisi2
+ 544 0012 FFF7FEFF 		bl	__aeabi_ui2d
+ 545              	.LVL39:
+ 546 0016 0022     		movs	r2, #0
+ARM GAS  /tmp/ccpwgW31.s 			page 16
+
+
+ 547 0018 054B     		ldr	r3, .L40+4
+ 548 001a FFF7FEFF 		bl	__aeabi_dmul
+ 549              	.LVL40:
+ 550 001e 0246     		mov	r2, r0
+ 551 0020 0B46     		mov	r3, r1
+ 281:radio/sx1276-Fsk.c **** }
+ 552              		.loc 1 281 0
+ 553 0022 1046     		mov	r0, r2
+ 554 0024 03F10041 		add	r1, r3, #-2147483648
+ 555 0028 10BD     		pop	{r4, pc}
+ 556              	.L41:
+ 557 002a 00BF     		.align	2
+ 558              	.L40:
+ 559 002c 00000000 		.word	SX1276
+ 560 0030 0000E03F 		.word	1071644672
+ 561              		.cfi_endproc
+ 562              	.LFE71:
+ 564              		.section	.text.SX1276FskGetPacketRxGain,"ax",%progbits
+ 565              		.align	2
+ 566              		.global	SX1276FskGetPacketRxGain
+ 567              		.thumb
+ 568              		.thumb_func
+ 570              	SX1276FskGetPacketRxGain:
+ 571              	.LFB72:
+ 282:radio/sx1276-Fsk.c **** 
+ 283:radio/sx1276-Fsk.c **** uint8_t SX1276FskGetPacketRxGain( void )
+ 284:radio/sx1276-Fsk.c **** {
+ 572              		.loc 1 284 0
+ 573              		.cfi_startproc
+ 574              		@ args = 0, pretend = 0, frame = 0
+ 575              		@ frame_needed = 0, uses_anonymous_args = 0
+ 576              		@ link register save eliminated.
+ 285:radio/sx1276-Fsk.c ****     return RxGain;
+ 286:radio/sx1276-Fsk.c **** }
+ 577              		.loc 1 286 0
+ 578 0000 014B     		ldr	r3, .L43
+ 579 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 580 0004 7047     		bx	lr
+ 581              	.L44:
+ 582 0006 00BF     		.align	2
+ 583              	.L43:
+ 584 0008 00000000 		.word	.LANCHOR3
+ 585              		.cfi_endproc
+ 586              	.LFE72:
+ 588              		.section	.text.SX1276FskGetPacketRssi,"ax",%progbits
+ 589              		.align	2
+ 590              		.global	SX1276FskGetPacketRssi
+ 591              		.thumb
+ 592              		.thumb_func
+ 594              	SX1276FskGetPacketRssi:
+ 595              	.LFB73:
+ 287:radio/sx1276-Fsk.c **** 
+ 288:radio/sx1276-Fsk.c **** double SX1276FskGetPacketRssi( void )
+ 289:radio/sx1276-Fsk.c **** {
+ 596              		.loc 1 289 0
+ 597              		.cfi_startproc
+ 598              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  /tmp/ccpwgW31.s 			page 17
+
+
+ 599              		@ frame_needed = 0, uses_anonymous_args = 0
+ 600              		@ link register save eliminated.
+ 290:radio/sx1276-Fsk.c ****     return RxPacketRssiValue;
+ 291:radio/sx1276-Fsk.c **** }
+ 601              		.loc 1 291 0
+ 602 0000 014B     		ldr	r3, .L46
+ 603 0002 D3E90001 		ldrd	r0, [r3]
+ 604 0006 7047     		bx	lr
+ 605              	.L47:
+ 606              		.align	2
+ 607              	.L46:
+ 608 0008 00000000 		.word	.LANCHOR4
+ 609              		.cfi_endproc
+ 610              	.LFE73:
+ 612              		.section	.text.SX1276FskGetPacketAfc,"ax",%progbits
+ 613              		.align	2
+ 614              		.global	SX1276FskGetPacketAfc
+ 615              		.thumb
+ 616              		.thumb_func
+ 618              	SX1276FskGetPacketAfc:
+ 619              	.LFB74:
+ 292:radio/sx1276-Fsk.c **** 
+ 293:radio/sx1276-Fsk.c **** uint32_t SX1276FskGetPacketAfc( void )
+ 294:radio/sx1276-Fsk.c **** {
+ 620              		.loc 1 294 0
+ 621              		.cfi_startproc
+ 622              		@ args = 0, pretend = 0, frame = 0
+ 623              		@ frame_needed = 0, uses_anonymous_args = 0
+ 624              		@ link register save eliminated.
+ 295:radio/sx1276-Fsk.c ****     return RxPacketAfcValue;
+ 296:radio/sx1276-Fsk.c **** }
+ 625              		.loc 1 296 0
+ 626 0000 014B     		ldr	r3, .L49
+ 627 0002 1868     		ldr	r0, [r3]
+ 628 0004 7047     		bx	lr
+ 629              	.L50:
+ 630 0006 00BF     		.align	2
+ 631              	.L49:
+ 632 0008 00000000 		.word	.LANCHOR5
+ 633              		.cfi_endproc
+ 634              	.LFE74:
+ 636              		.section	.text.SX1276FskGetRxPacket,"ax",%progbits
+ 637              		.align	2
+ 638              		.global	SX1276FskGetRxPacket
+ 639              		.thumb
+ 640              		.thumb_func
+ 642              	SX1276FskGetRxPacket:
+ 643              	.LFB76:
+ 297:radio/sx1276-Fsk.c **** 
+ 298:radio/sx1276-Fsk.c **** void SX1276FskStartRx( void )
+ 299:radio/sx1276-Fsk.c **** {
+ 300:radio/sx1276-Fsk.c ****     SX1276FskSetRFState( RF_STATE_RX_INIT );
+ 301:radio/sx1276-Fsk.c **** }
+ 302:radio/sx1276-Fsk.c **** 
+ 303:radio/sx1276-Fsk.c **** void SX1276FskGetRxPacket( void *buffer, uint16_t *size )
+ 304:radio/sx1276-Fsk.c **** {
+ 644              		.loc 1 304 0
+ARM GAS  /tmp/ccpwgW31.s 			page 18
+
+
+ 645              		.cfi_startproc
+ 646              		@ args = 0, pretend = 0, frame = 0
+ 647              		@ frame_needed = 0, uses_anonymous_args = 0
+ 648              	.LVL41:
+ 649 0000 08B5     		push	{r3, lr}
+ 650              	.LCFI9:
+ 651              		.cfi_def_cfa_offset 8
+ 652              		.cfi_offset 3, -8
+ 653              		.cfi_offset 14, -4
+ 305:radio/sx1276-Fsk.c ****     *size = RxPacketSize;
+ 654              		.loc 1 305 0
+ 655 0002 054B     		ldr	r3, .L53
+ 656 0004 1A88     		ldrh	r2, [r3]
+ 657 0006 0A80     		strh	r2, [r1]	@ movhi
+ 306:radio/sx1276-Fsk.c ****     RxPacketSize = 0;
+ 658              		.loc 1 306 0
+ 659 0008 0022     		movs	r2, #0
+ 660 000a 1A80     		strh	r2, [r3]	@ movhi
+ 307:radio/sx1276-Fsk.c ****     memcpy( ( void * )buffer, ( void * )RFBuffer, ( size_t )*size );
+ 661              		.loc 1 307 0
+ 662 000c 0A88     		ldrh	r2, [r1]
+ 663 000e 0349     		ldr	r1, .L53+4
+ 664              	.LVL42:
+ 665 0010 FFF7FEFF 		bl	memcpy
+ 666              	.LVL43:
+ 667 0014 08BD     		pop	{r3, pc}
+ 668              	.L54:
+ 669 0016 00BF     		.align	2
+ 670              	.L53:
+ 671 0018 00000000 		.word	.LANCHOR6
+ 672 001c 00000000 		.word	.LANCHOR7
+ 673              		.cfi_endproc
+ 674              	.LFE76:
+ 676              		.section	.text.SX1276FskSetTxPacket,"ax",%progbits
+ 677              		.align	2
+ 678              		.global	SX1276FskSetTxPacket
+ 679              		.thumb
+ 680              		.thumb_func
+ 682              	SX1276FskSetTxPacket:
+ 683              	.LFB77:
+ 308:radio/sx1276-Fsk.c **** }
+ 309:radio/sx1276-Fsk.c **** 
+ 310:radio/sx1276-Fsk.c **** void SX1276FskSetTxPacket( const void *buffer, uint16_t size )
+ 311:radio/sx1276-Fsk.c **** {
+ 684              		.loc 1 311 0
+ 685              		.cfi_startproc
+ 686              		@ args = 0, pretend = 0, frame = 0
+ 687              		@ frame_needed = 0, uses_anonymous_args = 0
+ 688              	.LVL44:
+ 689 0000 08B5     		push	{r3, lr}
+ 690              	.LCFI10:
+ 691              		.cfi_def_cfa_offset 8
+ 692              		.cfi_offset 3, -8
+ 693              		.cfi_offset 14, -4
+ 694 0002 0A46     		mov	r2, r1
+ 312:radio/sx1276-Fsk.c ****     TxPacketSize = size;
+ 695              		.loc 1 312 0
+ARM GAS  /tmp/ccpwgW31.s 			page 19
+
+
+ 696 0004 044B     		ldr	r3, .L57
+ 697 0006 1980     		strh	r1, [r3]	@ movhi
+ 313:radio/sx1276-Fsk.c ****     memcpy( ( void * )RFBuffer, buffer, ( size_t )TxPacketSize ); 
+ 698              		.loc 1 313 0
+ 699 0008 0146     		mov	r1, r0
+ 700              	.LVL45:
+ 701 000a 0448     		ldr	r0, .L57+4
+ 702              	.LVL46:
+ 703 000c FFF7FEFF 		bl	memcpy
+ 704              	.LVL47:
+ 314:radio/sx1276-Fsk.c **** 
+ 315:radio/sx1276-Fsk.c ****     RFState = RF_STATE_TX_INIT;
+ 705              		.loc 1 315 0
+ 706 0010 0722     		movs	r2, #7
+ 707 0012 034B     		ldr	r3, .L57+8
+ 708 0014 1A70     		strb	r2, [r3]
+ 709 0016 08BD     		pop	{r3, pc}
+ 710              	.L58:
+ 711              		.align	2
+ 712              	.L57:
+ 713 0018 00000000 		.word	.LANCHOR8
+ 714 001c 00000000 		.word	.LANCHOR7
+ 715 0020 00000000 		.word	.LANCHOR1
+ 716              		.cfi_endproc
+ 717              	.LFE77:
+ 719              		.section	.text.SX1276FskGetPacketPayloadSize,"ax",%progbits
+ 720              		.align	2
+ 721              		.global	SX1276FskGetPacketPayloadSize
+ 722              		.thumb
+ 723              		.thumb_func
+ 725              	SX1276FskGetPacketPayloadSize:
+ 726              	.LFB78:
+ 316:radio/sx1276-Fsk.c **** }
+ 317:radio/sx1276-Fsk.c **** 
+ 318:radio/sx1276-Fsk.c **** // Remark: SX1276 must be fully initialized before calling this function
+ 319:radio/sx1276-Fsk.c **** uint16_t SX1276FskGetPacketPayloadSize( void )
+ 320:radio/sx1276-Fsk.c **** {
+ 727              		.loc 1 320 0
+ 728              		.cfi_startproc
+ 729              		@ args = 0, pretend = 0, frame = 0
+ 730              		@ frame_needed = 0, uses_anonymous_args = 0
+ 731              		@ link register save eliminated.
+ 732 0000 30B4     		push	{r4, r5}
+ 733              	.LCFI11:
+ 734              		.cfi_def_cfa_offset 8
+ 735              		.cfi_offset 4, -8
+ 736              		.cfi_offset 5, -4
+ 321:radio/sx1276-Fsk.c ****     uint16_t syncSize;
+ 322:radio/sx1276-Fsk.c ****     uint16_t variableSize;
+ 323:radio/sx1276-Fsk.c ****     uint16_t addressSize;
+ 324:radio/sx1276-Fsk.c ****     uint16_t payloadSize;
+ 325:radio/sx1276-Fsk.c ****     uint16_t crcSize;
+ 326:radio/sx1276-Fsk.c **** 
+ 327:radio/sx1276-Fsk.c ****     syncSize = ( SX1276->RegSyncConfig & 0x07 ) + 1;
+ 737              		.loc 1 327 0
+ 738 0002 0F4B     		ldr	r3, .L63
+ 739 0004 1C68     		ldr	r4, [r3]
+ARM GAS  /tmp/ccpwgW31.s 			page 20
+
+
+ 740 0006 94F82730 		ldrb	r3, [r4, #39]	@ zero_extendqisi2
+ 741 000a 03F00703 		and	r3, r3, #7
+ 742 000e 0133     		adds	r3, r3, #1
+ 743              	.LVL48:
+ 328:radio/sx1276-Fsk.c ****     variableSize = ( ( SX1276->RegPacketConfig1 & 0x80 ) == 0x80 ) ? 1 : 0;
+ 744              		.loc 1 328 0
+ 745 0010 94F83010 		ldrb	r1, [r4, #48]	@ zero_extendqisi2
+ 746 0014 CA09     		lsrs	r2, r1, #7
+ 747              	.LVL49:
+ 329:radio/sx1276-Fsk.c ****     addressSize = ( ( SX1276->RegPacketConfig1 & 0x06 ) != 0x00 ) ? 1 : 0;
+ 748              		.loc 1 329 0
+ 749 0016 11F0060F 		tst	r1, #6
+ 750 001a 14BF     		ite	ne
+ 751 001c 0125     		movne	r5, #1
+ 752 001e 0025     		moveq	r5, #0
+ 753              	.LVL50:
+ 330:radio/sx1276-Fsk.c ****     payloadSize = SX1276->RegPayloadLength;
+ 754              		.loc 1 330 0
+ 755 0020 94F83200 		ldrb	r0, [r4, #50]	@ zero_extendqisi2
+ 756              	.LVL51:
+ 331:radio/sx1276-Fsk.c ****     crcSize = ( ( SX1276->RegPacketConfig1 & 0x10 ) == 0x10 ) ? 2 : 0;
+ 757              		.loc 1 331 0
+ 758 0024 11F0100F 		tst	r1, #16
+ 759 0028 01D0     		beq	.L61
+ 760 002a 0221     		movs	r1, #2
+ 761 002c 00E0     		b	.L60
+ 762              	.L61:
+ 763 002e 0021     		movs	r1, #0
+ 764              	.L60:
+ 765              	.LVL52:
+ 332:radio/sx1276-Fsk.c ****     
+ 333:radio/sx1276-Fsk.c ****     return syncSize + variableSize + addressSize + payloadSize + crcSize;
+ 766              		.loc 1 333 0 discriminator 4
+ 767 0030 1344     		add	r3, r3, r2
+ 768              	.LVL53:
+ 769 0032 2B44     		add	r3, r3, r5
+ 770 0034 1844     		add	r0, r0, r3
+ 771              	.LVL54:
+ 772 0036 0844     		add	r0, r0, r1
+ 334:radio/sx1276-Fsk.c **** }
+ 773              		.loc 1 334 0 discriminator 4
+ 774 0038 80B2     		uxth	r0, r0
+ 775 003a 30BC     		pop	{r4, r5}
+ 776              	.LCFI12:
+ 777              		.cfi_restore 5
+ 778              		.cfi_restore 4
+ 779              		.cfi_def_cfa_offset 0
+ 780              	.LVL55:
+ 781 003c 7047     		bx	lr
+ 782              	.L64:
+ 783 003e 00BF     		.align	2
+ 784              	.L63:
+ 785 0040 00000000 		.word	SX1276
+ 786              		.cfi_endproc
+ 787              	.LFE78:
+ 789              		.section	.text.SX1276FskGetPacketHeaderSize,"ax",%progbits
+ 790              		.align	2
+ARM GAS  /tmp/ccpwgW31.s 			page 21
+
+
+ 791              		.global	SX1276FskGetPacketHeaderSize
+ 792              		.thumb
+ 793              		.thumb_func
+ 795              	SX1276FskGetPacketHeaderSize:
+ 796              	.LFB79:
+ 335:radio/sx1276-Fsk.c **** 
+ 336:radio/sx1276-Fsk.c **** // Remark: SX1276 must be fully initialized before calling this function
+ 337:radio/sx1276-Fsk.c **** uint16_t SX1276FskGetPacketHeaderSize( void )
+ 338:radio/sx1276-Fsk.c **** {
+ 797              		.loc 1 338 0
+ 798              		.cfi_startproc
+ 799              		@ args = 0, pretend = 0, frame = 0
+ 800              		@ frame_needed = 0, uses_anonymous_args = 0
+ 801              		@ link register save eliminated.
+ 339:radio/sx1276-Fsk.c ****     uint16_t preambleSize;
+ 340:radio/sx1276-Fsk.c ****     uint16_t syncSize;
+ 341:radio/sx1276-Fsk.c **** 
+ 342:radio/sx1276-Fsk.c ****     preambleSize = ( ( uint16_t )SX1276->RegPreambleMsb << 8 ) | ( uint16_t )SX1276->RegPreambleLsb
+ 802              		.loc 1 342 0
+ 803 0000 074B     		ldr	r3, .L66
+ 804 0002 1A68     		ldr	r2, [r3]
+ 805 0004 92F82500 		ldrb	r0, [r2, #37]	@ zero_extendqisi2
+ 806 0008 92F82630 		ldrb	r3, [r2, #38]	@ zero_extendqisi2
+ 807 000c 43EA0020 		orr	r0, r3, r0, lsl #8
+ 808              	.LVL56:
+ 343:radio/sx1276-Fsk.c ****     syncSize = ( SX1276->RegSyncConfig & 0x07 ) + 1;
+ 809              		.loc 1 343 0
+ 810 0010 92F82730 		ldrb	r3, [r2, #39]	@ zero_extendqisi2
+ 811 0014 03F00703 		and	r3, r3, #7
+ 812 0018 0133     		adds	r3, r3, #1
+ 813              	.LVL57:
+ 344:radio/sx1276-Fsk.c ****     
+ 345:radio/sx1276-Fsk.c ****     return preambleSize + syncSize;
+ 814              		.loc 1 345 0
+ 815 001a 1844     		add	r0, r0, r3
+ 816              	.LVL58:
+ 346:radio/sx1276-Fsk.c **** }
+ 817              		.loc 1 346 0
+ 818 001c 80B2     		uxth	r0, r0
+ 819 001e 7047     		bx	lr
+ 820              	.L67:
+ 821              		.align	2
+ 822              	.L66:
+ 823 0020 00000000 		.word	SX1276
+ 824              		.cfi_endproc
+ 825              	.LFE79:
+ 827              		.section	.text.SX1276FskGetRFState,"ax",%progbits
+ 828              		.align	2
+ 829              		.global	SX1276FskGetRFState
+ 830              		.thumb
+ 831              		.thumb_func
+ 833              	SX1276FskGetRFState:
+ 834              	.LFB80:
+ 347:radio/sx1276-Fsk.c **** 
+ 348:radio/sx1276-Fsk.c **** uint8_t SX1276FskGetRFState( void )
+ 349:radio/sx1276-Fsk.c **** {
+ 835              		.loc 1 349 0
+ARM GAS  /tmp/ccpwgW31.s 			page 22
+
+
+ 836              		.cfi_startproc
+ 837              		@ args = 0, pretend = 0, frame = 0
+ 838              		@ frame_needed = 0, uses_anonymous_args = 0
+ 839              		@ link register save eliminated.
+ 350:radio/sx1276-Fsk.c ****     return RFState;
+ 351:radio/sx1276-Fsk.c **** }
+ 840              		.loc 1 351 0
+ 841 0000 014B     		ldr	r3, .L69
+ 842 0002 1878     		ldrb	r0, [r3]	@ zero_extendqisi2
+ 843 0004 7047     		bx	lr
+ 844              	.L70:
+ 845 0006 00BF     		.align	2
+ 846              	.L69:
+ 847 0008 00000000 		.word	.LANCHOR1
+ 848              		.cfi_endproc
+ 849              	.LFE80:
+ 851              		.section	.text.SX1276FskSetRFState,"ax",%progbits
+ 852              		.align	2
+ 853              		.global	SX1276FskSetRFState
+ 854              		.thumb
+ 855              		.thumb_func
+ 857              	SX1276FskSetRFState:
+ 858              	.LFB81:
+ 352:radio/sx1276-Fsk.c **** 
+ 353:radio/sx1276-Fsk.c **** void SX1276FskSetRFState( uint8_t state )
+ 354:radio/sx1276-Fsk.c **** {
+ 859              		.loc 1 354 0
+ 860              		.cfi_startproc
+ 861              		@ args = 0, pretend = 0, frame = 0
+ 862              		@ frame_needed = 0, uses_anonymous_args = 0
+ 863              		@ link register save eliminated.
+ 864              	.LVL59:
+ 355:radio/sx1276-Fsk.c ****     RFState = state;
+ 865              		.loc 1 355 0
+ 866 0000 014B     		ldr	r3, .L72
+ 867 0002 1870     		strb	r0, [r3]
+ 868 0004 7047     		bx	lr
+ 869              	.L73:
+ 870 0006 00BF     		.align	2
+ 871              	.L72:
+ 872 0008 00000000 		.word	.LANCHOR1
+ 873              		.cfi_endproc
+ 874              	.LFE81:
+ 876              		.section	.text.SX1276FskStartRx,"ax",%progbits
+ 877              		.align	2
+ 878              		.global	SX1276FskStartRx
+ 879              		.thumb
+ 880              		.thumb_func
+ 882              	SX1276FskStartRx:
+ 883              	.LFB75:
+ 299:radio/sx1276-Fsk.c ****     SX1276FskSetRFState( RF_STATE_RX_INIT );
+ 884              		.loc 1 299 0
+ 885              		.cfi_startproc
+ 886              		@ args = 0, pretend = 0, frame = 0
+ 887              		@ frame_needed = 0, uses_anonymous_args = 0
+ 888 0000 08B5     		push	{r3, lr}
+ 889              	.LCFI13:
+ARM GAS  /tmp/ccpwgW31.s 			page 23
+
+
+ 890              		.cfi_def_cfa_offset 8
+ 891              		.cfi_offset 3, -8
+ 892              		.cfi_offset 14, -4
+ 300:radio/sx1276-Fsk.c **** }
+ 893              		.loc 1 300 0
+ 894 0002 0120     		movs	r0, #1
+ 895 0004 FFF7FEFF 		bl	SX1276FskSetRFState
+ 896              	.LVL60:
+ 897 0008 08BD     		pop	{r3, pc}
+ 898              		.cfi_endproc
+ 899              	.LFE75:
+ 901              		.global	__aeabi_ddiv
+ 902              		.global	__aeabi_dadd
+ 903              		.global	__aeabi_d2uiz
+ 904 000a 00BF     		.section	.text.SX1276FskProcess,"ax",%progbits
+ 905              		.align	2
+ 906              		.global	SX1276FskProcess
+ 907              		.thumb
+ 908              		.thumb_func
+ 910              	SX1276FskProcess:
+ 911              	.LFB82:
+ 356:radio/sx1276-Fsk.c **** }
+ 357:radio/sx1276-Fsk.c **** 
+ 358:radio/sx1276-Fsk.c **** uint32_t SX1276FskProcess( void )
+ 359:radio/sx1276-Fsk.c **** {
+ 912              		.loc 1 359 0
+ 913              		.cfi_startproc
+ 914              		@ args = 0, pretend = 0, frame = 0
+ 915              		@ frame_needed = 0, uses_anonymous_args = 0
+ 916 0000 38B5     		push	{r3, r4, r5, lr}
+ 917              	.LCFI14:
+ 918              		.cfi_def_cfa_offset 16
+ 919              		.cfi_offset 3, -16
+ 920              		.cfi_offset 4, -12
+ 921              		.cfi_offset 5, -8
+ 922              		.cfi_offset 14, -4
+ 923              	.LVL61:
+ 360:radio/sx1276-Fsk.c ****     uint32_t result = RF_BUSY;
+ 361:radio/sx1276-Fsk.c **** 
+ 362:radio/sx1276-Fsk.c ****     switch( RFState )
+ 924              		.loc 1 362 0
+ 925 0002 A24B     		ldr	r3, .L120
+ 926 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 927 0006 013B     		subs	r3, r3, #1
+ 928 0008 0A2B     		cmp	r3, #10
+ 929 000a 00F25F82 		bhi	.L110
+ 930 000e DFE813F0 		tbh	[pc, r3, lsl #1]
+ 931              	.L79:
+ 932 0012 0B00     		.2byte	(.L78-.L79)/2
+ 933 0014 6F00     		.2byte	(.L80-.L79)/2
+ 934 0016 D800     		.2byte	(.L81-.L79)/2
+ 935 0018 9F01     		.2byte	(.L82-.L79)/2
+ 936 001a A701     		.2byte	(.L83-.L79)/2
+ 937 001c B901     		.2byte	(.L84-.L79)/2
+ 938 001e CB01     		.2byte	(.L85-.L79)/2
+ 939 0020 EA01     		.2byte	(.L86-.L79)/2
+ 940 0022 1702     		.2byte	(.L87-.L79)/2
+ARM GAS  /tmp/ccpwgW31.s 			page 24
+
+
+ 941 0024 5302     		.2byte	(.L88-.L79)/2
+ 942 0026 5802     		.2byte	(.L89-.L79)/2
+ 943              		.p2align 1
+ 944              	.L78:
+ 363:radio/sx1276-Fsk.c ****     {
+ 364:radio/sx1276-Fsk.c ****     case RF_STATE_IDLE:
+ 365:radio/sx1276-Fsk.c ****         break;
+ 366:radio/sx1276-Fsk.c ****     // Rx management
+ 367:radio/sx1276-Fsk.c ****     case RF_STATE_RX_INIT:
+ 368:radio/sx1276-Fsk.c ****         // DIO mapping setup
+ 369:radio/sx1276-Fsk.c ****         if( ( SX1276->RegPacketConfig1 & RF_PACKETCONFIG1_CRC_ON ) == RF_PACKETCONFIG1_CRC_ON )
+ 945              		.loc 1 369 0
+ 946 0028 994B     		ldr	r3, .L120+4
+ 947 002a 1968     		ldr	r1, [r3]
+ 948 002c 91F83030 		ldrb	r3, [r1, #48]	@ zero_extendqisi2
+ 949 0030 13F0100F 		tst	r3, #16
+ 950 0034 03D0     		beq	.L90
+ 370:radio/sx1276-Fsk.c ****         {
+ 371:radio/sx1276-Fsk.c ****             //                           CrcOk,                   FifoLevel,               SyncAddr
+ 372:radio/sx1276-Fsk.c ****             SX1276->RegDioMapping1 = RF_DIOMAPPING1_DIO0_01 | RF_DIOMAPPING1_DIO1_00 | RF_DIOMAPPIN
+ 951              		.loc 1 372 0
+ 952 0036 4C23     		movs	r3, #76
+ 953 0038 81F84030 		strb	r3, [r1, #64]
+ 954 003c 02E0     		b	.L91
+ 955              	.L90:
+ 373:radio/sx1276-Fsk.c ****         }
+ 374:radio/sx1276-Fsk.c ****         else
+ 375:radio/sx1276-Fsk.c ****         {
+ 376:radio/sx1276-Fsk.c ****             //                           PayloadReady,            FifoLevel,               SyncAddr
+ 377:radio/sx1276-Fsk.c ****             SX1276->RegDioMapping1 = RF_DIOMAPPING1_DIO0_00 | RF_DIOMAPPING1_DIO1_00 | RF_DIOMAPPIN
+ 956              		.loc 1 377 0
+ 957 003e 0C23     		movs	r3, #12
+ 958 0040 81F84030 		strb	r3, [r1, #64]
+ 959              	.L91:
+ 378:radio/sx1276-Fsk.c ****         }
+ 379:radio/sx1276-Fsk.c ****         //                          Preamble,                   Data
+ 380:radio/sx1276-Fsk.c ****         SX1276->RegDioMapping2 = RF_DIOMAPPING2_DIO4_11 | RF_DIOMAPPING2_DIO5_10 | RF_DIOMAPPING2_M
+ 960              		.loc 1 380 0
+ 961 0044 E123     		movs	r3, #225
+ 962 0046 81F84130 		strb	r3, [r1, #65]
+ 381:radio/sx1276-Fsk.c ****         SX1276WriteBuffer( REG_DIOMAPPING1, &SX1276->RegDioMapping1, 2 );
+ 963              		.loc 1 381 0
+ 964 004a 0222     		movs	r2, #2
+ 965 004c 4031     		adds	r1, r1, #64
+ 966 004e 4020     		movs	r0, #64
+ 967 0050 FFF7FEFF 		bl	SX1276WriteBuffer
+ 968              	.LVL62:
+ 382:radio/sx1276-Fsk.c **** 
+ 383:radio/sx1276-Fsk.c ****         SX1276FskSetOpMode( RF_OPMODE_RECEIVER );
+ 969              		.loc 1 383 0
+ 970 0054 0520     		movs	r0, #5
+ 971 0056 FFF7FEFF 		bl	SX1276FskSetOpMode
+ 972              	.LVL63:
+ 384:radio/sx1276-Fsk.c ****     
+ 385:radio/sx1276-Fsk.c ****         memset( RFBuffer, 0, ( size_t )RF_BUFFER_SIZE );
+ 973              		.loc 1 385 0
+ 974 005a 4FF48072 		mov	r2, #256
+ARM GAS  /tmp/ccpwgW31.s 			page 25
+
+
+ 975 005e 0021     		movs	r1, #0
+ 976 0060 8C48     		ldr	r0, .L120+8
+ 977 0062 FFF7FEFF 		bl	memset
+ 978              	.LVL64:
+ 386:radio/sx1276-Fsk.c **** 
+ 387:radio/sx1276-Fsk.c ****         PacketTimeout = ( uint16_t )( round( ( 8.0 * ( ( double )SX1276FskGetPacketPayloadSize( ) )
+ 979              		.loc 1 387 0
+ 980 0066 FFF7FEFF 		bl	SX1276FskGetPacketPayloadSize
+ 981              	.LVL65:
+ 982 006a FFF7FEFF 		bl	__aeabi_ui2d
+ 983              	.LVL66:
+ 984 006e 0022     		movs	r2, #0
+ 985 0070 894B     		ldr	r3, .L120+12
+ 986 0072 FFF7FEFF 		bl	__aeabi_dmul
+ 987              	.LVL67:
+ 988 0076 0446     		mov	r4, r0
+ 989 0078 0D46     		mov	r5, r1
+ 990 007a 884B     		ldr	r3, .L120+16
+ 991 007c 5868     		ldr	r0, [r3, #4]
+ 992 007e FFF7FEFF 		bl	__aeabi_ui2d
+ 993              	.LVL68:
+ 994 0082 0246     		mov	r2, r0
+ 995 0084 0B46     		mov	r3, r1
+ 996 0086 2046     		mov	r0, r4
+ 997 0088 2946     		mov	r1, r5
+ 998 008a FFF7FEFF 		bl	__aeabi_ddiv
+ 999              	.LVL69:
+ 1000 008e 0022     		movs	r2, #0
+ 1001 0090 834B     		ldr	r3, .L120+20
+ 1002 0092 FFF7FEFF 		bl	__aeabi_dmul
+ 1003              	.LVL70:
+ 1004 0096 FFF7FEFF 		bl	round
+ 1005              	.LVL71:
+ 1006 009a 0022     		movs	r2, #0
+ 1007 009c 814B     		ldr	r3, .L120+24
+ 1008 009e FFF7FEFF 		bl	__aeabi_dadd
+ 1009              	.LVL72:
+ 1010 00a2 FFF7FEFF 		bl	__aeabi_d2uiz
+ 1011              	.LVL73:
+ 1012 00a6 80B2     		uxth	r0, r0
+ 388:radio/sx1276-Fsk.c ****         PacketTimeout = PacketTimeout + ( PacketTimeout >> 1 ); // Set the Packet timeout as 1.5 ti
+ 1013              		.loc 1 388 0
+ 1014 00a8 00EB5000 		add	r0, r0, r0, lsr #1
+ 1015 00ac 7E4B     		ldr	r3, .L120+28
+ 1016 00ae 1860     		str	r0, [r3]
+ 389:radio/sx1276-Fsk.c **** 
+ 390:radio/sx1276-Fsk.c ****         Preamble2SyncTimeout = PacketTimeout;
+ 1017              		.loc 1 390 0
+ 1018 00b0 7E4B     		ldr	r3, .L120+32
+ 1019 00b2 1860     		str	r0, [r3]
+ 391:radio/sx1276-Fsk.c **** 
+ 392:radio/sx1276-Fsk.c ****         Preamble2SyncTimer = RxTimeoutTimer = GET_TICK_COUNT( );
+ 1020              		.loc 1 392 0
+ 1021 00b4 FFF7FEFF 		bl	HAL_GetTick
+ 1022              	.LVL74:
+ 1023 00b8 7D4B     		ldr	r3, .L120+36
+ 1024 00ba 1860     		str	r0, [r3]
+ARM GAS  /tmp/ccpwgW31.s 			page 26
+
+
+ 1025 00bc 7D4B     		ldr	r3, .L120+40
+ 1026 00be 1860     		str	r0, [r3]
+ 393:radio/sx1276-Fsk.c **** 
+ 394:radio/sx1276-Fsk.c ****         SX1276->RegFifoThresh = RF_FIFOTHRESH_TXSTARTCONDITION_FIFONOTEMPTY | 0x20; // 32 bytes of 
+ 1027              		.loc 1 394 0
+ 1028 00c0 734B     		ldr	r3, .L120+4
+ 1029 00c2 1B68     		ldr	r3, [r3]
+ 1030 00c4 A021     		movs	r1, #160
+ 1031 00c6 83F83510 		strb	r1, [r3, #53]
+ 395:radio/sx1276-Fsk.c ****         SX1276Write( REG_FIFOTHRESH, SX1276->RegFifoThresh );
+ 1032              		.loc 1 395 0
+ 1033 00ca 3520     		movs	r0, #53
+ 1034 00cc FFF7FEFF 		bl	SX1276Write
+ 1035              	.LVL75:
+ 396:radio/sx1276-Fsk.c **** 
+ 397:radio/sx1276-Fsk.c ****         PreambleDetected = false;
+ 1036              		.loc 1 397 0
+ 1037 00d0 0023     		movs	r3, #0
+ 1038 00d2 794A     		ldr	r2, .L120+44
+ 1039 00d4 1370     		strb	r3, [r2]
+ 398:radio/sx1276-Fsk.c ****         SyncWordDetected = false;
+ 1040              		.loc 1 398 0
+ 1041 00d6 794A     		ldr	r2, .L120+48
+ 1042 00d8 1370     		strb	r3, [r2]
+ 399:radio/sx1276-Fsk.c ****         PacketDetected = false;
+ 1043              		.loc 1 399 0
+ 1044 00da 794A     		ldr	r2, .L120+52
+ 1045 00dc 1370     		strb	r3, [r2]
+ 400:radio/sx1276-Fsk.c ****         RxBytesRead = 0;
+ 1046              		.loc 1 400 0
+ 1047 00de 794A     		ldr	r2, .L120+56
+ 1048 00e0 1370     		strb	r3, [r2]
+ 401:radio/sx1276-Fsk.c ****         RxPacketSize = 0;
+ 1049              		.loc 1 401 0
+ 1050 00e2 794A     		ldr	r2, .L120+60
+ 1051 00e4 1380     		strh	r3, [r2]	@ movhi
+ 402:radio/sx1276-Fsk.c ****         RFState = RF_STATE_RX_SYNC;
+ 1052              		.loc 1 402 0
+ 1053 00e6 0222     		movs	r2, #2
+ 1054 00e8 684B     		ldr	r3, .L120
+ 1055 00ea 1A70     		strb	r2, [r3]
+ 360:radio/sx1276-Fsk.c **** 
+ 1056              		.loc 1 360 0
+ 1057 00ec 0120     		movs	r0, #1
+ 403:radio/sx1276-Fsk.c ****         break;
+ 1058              		.loc 1 403 0
+ 1059 00ee 38BD     		pop	{r3, r4, r5, pc}
+ 1060              	.L80:
+ 404:radio/sx1276-Fsk.c ****     case RF_STATE_RX_SYNC:
+ 405:radio/sx1276-Fsk.c ****         if( ( DIO4 == 1 ) && ( PreambleDetected == false ) )// Preamble
+ 1061              		.loc 1 405 0
+ 1062 00f0 FFF7FEFF 		bl	SX1276ReadDio4
+ 1063              	.LVL76:
+ 1064 00f4 0128     		cmp	r0, #1
+ 1065 00f6 09D1     		bne	.L92
+ 1066              		.loc 1 405 0 is_stmt 0 discriminator 1
+ 1067 00f8 6F4B     		ldr	r3, .L120+44
+ARM GAS  /tmp/ccpwgW31.s 			page 27
+
+
+ 1068 00fa 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1069 00fc 33B9     		cbnz	r3, .L92
+ 406:radio/sx1276-Fsk.c ****         {
+ 407:radio/sx1276-Fsk.c ****             PreambleDetected = true;
+ 1070              		.loc 1 407 0 is_stmt 1
+ 1071 00fe 0122     		movs	r2, #1
+ 1072 0100 6D4B     		ldr	r3, .L120+44
+ 1073 0102 1A70     		strb	r2, [r3]
+ 408:radio/sx1276-Fsk.c ****             Preamble2SyncTimer = GET_TICK_COUNT( );
+ 1074              		.loc 1 408 0
+ 1075 0104 FFF7FEFF 		bl	HAL_GetTick
+ 1076              	.LVL77:
+ 1077 0108 6A4B     		ldr	r3, .L120+40
+ 1078 010a 1860     		str	r0, [r3]
+ 1079              	.L92:
+ 409:radio/sx1276-Fsk.c ****         }
+ 410:radio/sx1276-Fsk.c ****         if( ( DIO2 == 1 ) && ( PreambleDetected == true ) && ( SyncWordDetected == false ) ) // Syn
+ 1080              		.loc 1 410 0
+ 1081 010c FFF7FEFF 		bl	SX1276ReadDio2
+ 1082              	.LVL78:
+ 1083 0110 0128     		cmp	r0, #1
+ 1084 0112 1ED1     		bne	.L93
+ 1085              		.loc 1 410 0 is_stmt 0 discriminator 1
+ 1086 0114 684B     		ldr	r3, .L120+44
+ 1087 0116 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1088 0118 DBB1     		cbz	r3, .L93
+ 1089              		.loc 1 410 0 discriminator 2
+ 1090 011a 684B     		ldr	r3, .L120+48
+ 1091 011c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1092 011e C3B9     		cbnz	r3, .L93
+ 411:radio/sx1276-Fsk.c ****         {
+ 412:radio/sx1276-Fsk.c ****             SyncWordDetected = true;
+ 1093              		.loc 1 412 0 is_stmt 1
+ 1094 0120 0122     		movs	r2, #1
+ 1095 0122 664B     		ldr	r3, .L120+48
+ 1096 0124 1A70     		strb	r2, [r3]
+ 413:radio/sx1276-Fsk.c ****         
+ 414:radio/sx1276-Fsk.c ****             RxPacketRssiValue = SX1276FskReadRssi( );
+ 1097              		.loc 1 414 0
+ 1098 0126 FFF7FEFF 		bl	SX1276FskReadRssi
+ 1099              	.LVL79:
+ 1100 012a 684B     		ldr	r3, .L120+64
+ 1101 012c C3E90001 		strd	r0, [r3]
+ 415:radio/sx1276-Fsk.c **** 
+ 416:radio/sx1276-Fsk.c ****             RxPacketAfcValue = SX1276FskReadAfc( );
+ 1102              		.loc 1 416 0
+ 1103 0130 FFF7FEFF 		bl	SX1276FskReadAfc
+ 1104              	.LVL80:
+ 1105 0134 664B     		ldr	r3, .L120+68
+ 1106 0136 1860     		str	r0, [r3]
+ 417:radio/sx1276-Fsk.c ****             RxGain = SX1276FskReadRxGain( );
+ 1107              		.loc 1 417 0
+ 1108 0138 FFF7FEFF 		bl	SX1276FskReadRxGain
+ 1109              	.LVL81:
+ 1110 013c 654B     		ldr	r3, .L120+72
+ 1111 013e 1870     		strb	r0, [r3]
+ 418:radio/sx1276-Fsk.c ****         
+ARM GAS  /tmp/ccpwgW31.s 			page 28
+
+
+ 419:radio/sx1276-Fsk.c ****             Preamble2SyncTimer = RxTimeoutTimer = GET_TICK_COUNT( );
+ 1112              		.loc 1 419 0
+ 1113 0140 FFF7FEFF 		bl	HAL_GetTick
+ 1114              	.LVL82:
+ 1115 0144 5A4B     		ldr	r3, .L120+36
+ 1116 0146 1860     		str	r0, [r3]
+ 1117 0148 5A4B     		ldr	r3, .L120+40
+ 1118 014a 1860     		str	r0, [r3]
+ 420:radio/sx1276-Fsk.c **** 
+ 421:radio/sx1276-Fsk.c ****             RFState = RF_STATE_RX_RUNNING;
+ 1119              		.loc 1 421 0
+ 1120 014c 0322     		movs	r2, #3
+ 1121 014e 4F4B     		ldr	r3, .L120
+ 1122 0150 1A70     		strb	r2, [r3]
+ 1123              	.L93:
+ 422:radio/sx1276-Fsk.c ****         }
+ 423:radio/sx1276-Fsk.c **** 
+ 424:radio/sx1276-Fsk.c ****         // Preamble 2 SyncAddr timeout
+ 425:radio/sx1276-Fsk.c ****         if( ( SyncWordDetected == false ) && ( PreambleDetected == true ) && ( ( GET_TICK_COUNT( ) 
+ 1124              		.loc 1 425 0
+ 1125 0152 5A4B     		ldr	r3, .L120+48
+ 1126 0154 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1127 0156 B3B9     		cbnz	r3, .L94
+ 1128              		.loc 1 425 0 is_stmt 0 discriminator 1
+ 1129 0158 574B     		ldr	r3, .L120+44
+ 1130 015a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1131 015c 9BB1     		cbz	r3, .L94
+ 1132              		.loc 1 425 0 discriminator 2
+ 1133 015e FFF7FEFF 		bl	HAL_GetTick
+ 1134              	.LVL83:
+ 1135 0162 544B     		ldr	r3, .L120+40
+ 1136 0164 1B68     		ldr	r3, [r3]
+ 1137 0166 C01A     		subs	r0, r0, r3
+ 1138 0168 504A     		ldr	r2, .L120+32
+ 1139 016a 1268     		ldr	r2, [r2]
+ 1140 016c 9042     		cmp	r0, r2
+ 1141 016e 0AD9     		bls	.L94
+ 426:radio/sx1276-Fsk.c ****         {
+ 427:radio/sx1276-Fsk.c ****             RFState = RF_STATE_RX_INIT;
+ 1142              		.loc 1 427 0 is_stmt 1
+ 1143 0170 0122     		movs	r2, #1
+ 1144 0172 464B     		ldr	r3, .L120
+ 1145 0174 1A70     		strb	r2, [r3]
+ 428:radio/sx1276-Fsk.c ****             SX1276Write( REG_RXCONFIG, SX1276->RegRxConfig | RF_RXCONFIG_RESTARTRXWITHPLLLOCK );
+ 1146              		.loc 1 428 0
+ 1147 0176 464B     		ldr	r3, .L120+4
+ 1148 0178 1B68     		ldr	r3, [r3]
+ 1149 017a 597B     		ldrb	r1, [r3, #13]	@ zero_extendqisi2
+ 1150 017c 41F02001 		orr	r1, r1, #32
+ 1151 0180 0D20     		movs	r0, #13
+ 1152 0182 FFF7FEFF 		bl	SX1276Write
+ 1153              	.LVL84:
+ 1154              	.L94:
+ 429:radio/sx1276-Fsk.c ****         }
+ 430:radio/sx1276-Fsk.c ****         if( ( SyncWordDetected == false ) &&
+ 1155              		.loc 1 430 0
+ 1156 0186 4D4B     		ldr	r3, .L120+48
+ARM GAS  /tmp/ccpwgW31.s 			page 29
+
+
+ 1157 0188 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1158 018a 002B     		cmp	r3, #0
+ 1159 018c 40F0A081 		bne	.L111
+ 431:radio/sx1276-Fsk.c ****             ( PreambleDetected == false ) &&
+ 1160              		.loc 1 431 0 discriminator 1
+ 1161 0190 494B     		ldr	r3, .L120+44
+ 1162 0192 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 430:radio/sx1276-Fsk.c ****             ( PreambleDetected == false ) &&
+ 1163              		.loc 1 430 0 discriminator 1
+ 1164 0194 002B     		cmp	r3, #0
+ 1165 0196 40F09D81 		bne	.L112
+ 432:radio/sx1276-Fsk.c ****             ( PacketDetected == false ) &&
+ 1166              		.loc 1 432 0
+ 1167 019a 494B     		ldr	r3, .L120+52
+ 1168 019c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 431:radio/sx1276-Fsk.c ****             ( PreambleDetected == false ) &&
+ 1169              		.loc 1 431 0
+ 1170 019e 002B     		cmp	r3, #0
+ 1171 01a0 40F09A81 		bne	.L113
+ 433:radio/sx1276-Fsk.c ****             ( ( GET_TICK_COUNT( ) - RxTimeoutTimer ) > PacketTimeout ) )
+ 1172              		.loc 1 433 0
+ 1173 01a4 FFF7FEFF 		bl	HAL_GetTick
+ 1174              	.LVL85:
+ 1175 01a8 414B     		ldr	r3, .L120+36
+ 1176 01aa 1B68     		ldr	r3, [r3]
+ 1177 01ac C01A     		subs	r0, r0, r3
+ 1178 01ae 3E4A     		ldr	r2, .L120+28
+ 1179 01b0 1268     		ldr	r2, [r2]
+ 432:radio/sx1276-Fsk.c ****             ( PacketDetected == false ) &&
+ 1180              		.loc 1 432 0
+ 1181 01b2 9042     		cmp	r0, r2
+ 1182 01b4 40F29281 		bls	.L114
+ 434:radio/sx1276-Fsk.c ****         {
+ 435:radio/sx1276-Fsk.c ****             RFState = RF_STATE_RX_TIMEOUT;
+ 1183              		.loc 1 435 0
+ 1184 01b8 0522     		movs	r2, #5
+ 1185 01ba 344B     		ldr	r3, .L120
+ 1186 01bc 1A70     		strb	r2, [r3]
+ 360:radio/sx1276-Fsk.c **** 
+ 1187              		.loc 1 360 0
+ 1188 01be 0120     		movs	r0, #1
+ 1189 01c0 38BD     		pop	{r3, r4, r5, pc}
+ 1190              	.L81:
+ 436:radio/sx1276-Fsk.c ****         }
+ 437:radio/sx1276-Fsk.c ****         break;
+ 438:radio/sx1276-Fsk.c ****     case RF_STATE_RX_RUNNING:
+ 439:radio/sx1276-Fsk.c ****         if( RxPacketSize > RF_BUFFER_SIZE_MAX )
+ 1191              		.loc 1 439 0
+ 1192 01c2 414B     		ldr	r3, .L120+60
+ 1193 01c4 1B88     		ldrh	r3, [r3]
+ 1194 01c6 B3F5807F 		cmp	r3, #256
+ 1195 01ca 04D9     		bls	.L95
+ 440:radio/sx1276-Fsk.c ****         {
+ 441:radio/sx1276-Fsk.c ****             RFState = RF_STATE_RX_LEN_ERROR;
+ 1196              		.loc 1 441 0
+ 1197 01cc 0622     		movs	r2, #6
+ 1198 01ce 2F4B     		ldr	r3, .L120
+ARM GAS  /tmp/ccpwgW31.s 			page 30
+
+
+ 1199 01d0 1A70     		strb	r2, [r3]
+ 360:radio/sx1276-Fsk.c **** 
+ 1200              		.loc 1 360 0
+ 1201 01d2 0120     		movs	r0, #1
+ 442:radio/sx1276-Fsk.c ****             break;
+ 1202              		.loc 1 442 0
+ 1203 01d4 38BD     		pop	{r3, r4, r5, pc}
+ 1204              	.L95:
+ 443:radio/sx1276-Fsk.c ****         }
+ 444:radio/sx1276-Fsk.c **** #if 1
+ 445:radio/sx1276-Fsk.c ****         if( DIO1 == 1 ) // FifoLevel
+ 1205              		.loc 1 445 0
+ 1206 01d6 FFF7FEFF 		bl	SX1276ReadDio1
+ 1207              	.LVL86:
+ 1208 01da 0128     		cmp	r0, #1
+ 1209 01dc 3AD1     		bne	.L96
+ 446:radio/sx1276-Fsk.c ****         {
+ 447:radio/sx1276-Fsk.c ****             if( ( RxPacketSize == 0 ) && ( RxBytesRead == 0 ) ) // Read received packet size
+ 1210              		.loc 1 447 0
+ 1211 01de 3A4B     		ldr	r3, .L120+60
+ 1212 01e0 1B88     		ldrh	r3, [r3]
+ 1213 01e2 8BB9     		cbnz	r3, .L97
+ 1214              		.loc 1 447 0 is_stmt 0 discriminator 1
+ 1215 01e4 374B     		ldr	r3, .L120+56
+ 1216 01e6 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1217 01e8 73B9     		cbnz	r3, .L97
+ 448:radio/sx1276-Fsk.c ****             {
+ 449:radio/sx1276-Fsk.c ****                 if( ( SX1276->RegPacketConfig1 & RF_PACKETCONFIG1_PACKETFORMAT_VARIABLE ) == RF_PAC
+ 1218              		.loc 1 449 0 is_stmt 1
+ 1219 01ea 294B     		ldr	r3, .L120+4
+ 1220 01ec 1B68     		ldr	r3, [r3]
+ 1221 01ee 93F93020 		ldrsb	r2, [r3, #48]
+ 1222 01f2 002A     		cmp	r2, #0
+ 1223 01f4 04DA     		bge	.L98
+ 450:radio/sx1276-Fsk.c ****                 {
+ 451:radio/sx1276-Fsk.c ****                     SX1276ReadFifo( ( uint8_t* )&RxPacketSize, 1 );
+ 1224              		.loc 1 451 0
+ 1225 01f6 0121     		movs	r1, #1
+ 1226 01f8 3348     		ldr	r0, .L120+60
+ 1227 01fa FFF7FEFF 		bl	SX1276ReadFifo
+ 1228              	.LVL87:
+ 1229 01fe 03E0     		b	.L97
+ 1230              	.L98:
+ 452:radio/sx1276-Fsk.c ****                 }
+ 453:radio/sx1276-Fsk.c ****                 else
+ 454:radio/sx1276-Fsk.c ****                 {
+ 455:radio/sx1276-Fsk.c ****                     RxPacketSize = SX1276->RegPayloadLength;
+ 1231              		.loc 1 455 0
+ 1232 0200 93F83220 		ldrb	r2, [r3, #50]	@ zero_extendqisi2
+ 1233 0204 304B     		ldr	r3, .L120+60
+ 1234 0206 1A80     		strh	r2, [r3]	@ movhi
+ 1235              	.L97:
+ 456:radio/sx1276-Fsk.c ****                 }
+ 457:radio/sx1276-Fsk.c ****             }
+ 458:radio/sx1276-Fsk.c **** 
+ 459:radio/sx1276-Fsk.c ****             if( ( RxPacketSize - RxBytesRead ) > ( SX1276->RegFifoThresh & 0x3F ) )
+ 1236              		.loc 1 459 0
+ARM GAS  /tmp/ccpwgW31.s 			page 31
+
+
+ 1237 0208 2F4B     		ldr	r3, .L120+60
+ 1238 020a 1A88     		ldrh	r2, [r3]
+ 1239 020c 2D4B     		ldr	r3, .L120+56
+ 1240 020e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1241 0210 D01A     		subs	r0, r2, r3
+ 1242 0212 1F49     		ldr	r1, .L120+4
+ 1243 0214 0968     		ldr	r1, [r1]
+ 1244 0216 91F83510 		ldrb	r1, [r1, #53]	@ zero_extendqisi2
+ 1245 021a 01F03F01 		and	r1, r1, #63
+ 1246 021e 8842     		cmp	r0, r1
+ 1247 0220 0EDD     		ble	.L99
+ 460:radio/sx1276-Fsk.c ****             {
+ 461:radio/sx1276-Fsk.c ****                 SX1276ReadFifo( ( RFBuffer + RxBytesRead ), ( SX1276->RegFifoThresh & 0x3F ) );
+ 1248              		.loc 1 461 0
+ 1249 0222 1C48     		ldr	r0, .L120+8
+ 1250 0224 1844     		add	r0, r0, r3
+ 1251 0226 FFF7FEFF 		bl	SX1276ReadFifo
+ 1252              	.LVL88:
+ 462:radio/sx1276-Fsk.c ****                 RxBytesRead += ( SX1276->RegFifoThresh & 0x3F );
+ 1253              		.loc 1 462 0
+ 1254 022a 194B     		ldr	r3, .L120+4
+ 1255 022c 1B68     		ldr	r3, [r3]
+ 1256 022e 93F83530 		ldrb	r3, [r3, #53]	@ zero_extendqisi2
+ 1257 0232 2449     		ldr	r1, .L120+56
+ 1258 0234 03F03F02 		and	r2, r3, #63
+ 1259 0238 0B78     		ldrb	r3, [r1]	@ zero_extendqisi2
+ 1260 023a 1344     		add	r3, r3, r2
+ 1261 023c 0B70     		strb	r3, [r1]
+ 1262 023e 09E0     		b	.L96
+ 1263              	.L99:
+ 463:radio/sx1276-Fsk.c ****             }
+ 464:radio/sx1276-Fsk.c ****             else
+ 465:radio/sx1276-Fsk.c ****             {
+ 466:radio/sx1276-Fsk.c ****                 SX1276ReadFifo( ( RFBuffer + RxBytesRead ), RxPacketSize - RxBytesRead );
+ 1264              		.loc 1 466 0
+ 1265 0240 D11A     		subs	r1, r2, r3
+ 1266 0242 C9B2     		uxtb	r1, r1
+ 1267 0244 1348     		ldr	r0, .L120+8
+ 1268 0246 1844     		add	r0, r0, r3
+ 1269 0248 FFF7FEFF 		bl	SX1276ReadFifo
+ 1270              	.LVL89:
+ 467:radio/sx1276-Fsk.c ****                 RxBytesRead += ( RxPacketSize - RxBytesRead );
+ 1271              		.loc 1 467 0
+ 1272 024c 1E4B     		ldr	r3, .L120+60
+ 1273 024e 1A88     		ldrh	r2, [r3]
+ 1274 0250 1C4B     		ldr	r3, .L120+56
+ 1275 0252 1A70     		strb	r2, [r3]
+ 1276              	.L96:
+ 468:radio/sx1276-Fsk.c ****             }
+ 469:radio/sx1276-Fsk.c ****         }
+ 470:radio/sx1276-Fsk.c **** #endif
+ 471:radio/sx1276-Fsk.c ****         if( DIO0 == 1 ) // PayloadReady/CrcOk
+ 1277              		.loc 1 471 0
+ 1278 0254 FFF7FEFF 		bl	SX1276ReadDio0
+ 1279              	.LVL90:
+ 1280 0258 0128     		cmp	r0, #1
+ 1281 025a 65D1     		bne	.L100
+ARM GAS  /tmp/ccpwgW31.s 			page 32
+
+
+ 472:radio/sx1276-Fsk.c ****         {
+ 473:radio/sx1276-Fsk.c ****             RxTimeoutTimer = GET_TICK_COUNT( );
+ 1282              		.loc 1 473 0
+ 1283 025c FFF7FEFF 		bl	HAL_GetTick
+ 1284              	.LVL91:
+ 1285 0260 134B     		ldr	r3, .L120+36
+ 1286 0262 1860     		str	r0, [r3]
+ 474:radio/sx1276-Fsk.c ****             if( ( RxPacketSize == 0 ) && ( RxBytesRead == 0 ) ) // Read received packet size
+ 1287              		.loc 1 474 0
+ 1288 0264 184B     		ldr	r3, .L120+60
+ 1289 0266 1B88     		ldrh	r3, [r3]
+ 1290 0268 002B     		cmp	r3, #0
+ 1291 026a 4CD1     		bne	.L101
+ 1292              		.loc 1 474 0 is_stmt 0 discriminator 1
+ 1293 026c 154A     		ldr	r2, .L120+56
+ 1294 026e 1278     		ldrb	r2, [r2]	@ zero_extendqisi2
+ 1295 0270 002A     		cmp	r2, #0
+ 1296 0272 48D1     		bne	.L101
+ 475:radio/sx1276-Fsk.c ****             {
+ 476:radio/sx1276-Fsk.c ****                 if( ( SX1276->RegPacketConfig1 & RF_PACKETCONFIG1_PACKETFORMAT_VARIABLE ) == RF_PAC
+ 1297              		.loc 1 476 0 is_stmt 1
+ 1298 0274 064B     		ldr	r3, .L120+4
+ 1299 0276 1B68     		ldr	r3, [r3]
+ 1300 0278 93F93020 		ldrsb	r2, [r3, #48]
+ 1301 027c 002A     		cmp	r2, #0
+ 1302 027e 2BDA     		bge	.L102
+ 477:radio/sx1276-Fsk.c ****                 {
+ 478:radio/sx1276-Fsk.c ****                     SX1276ReadFifo( ( uint8_t* )&RxPacketSize, 1 );
+ 1303              		.loc 1 478 0
+ 1304 0280 0121     		movs	r1, #1
+ 1305 0282 1148     		ldr	r0, .L120+60
+ 1306 0284 FFF7FEFF 		bl	SX1276ReadFifo
+ 1307              	.LVL92:
+ 1308 0288 2AE0     		b	.L103
+ 1309              	.L121:
+ 1310 028a 00BF     		.align	2
+ 1311              	.L120:
+ 1312 028c 00000000 		.word	.LANCHOR1
+ 1313 0290 00000000 		.word	SX1276
+ 1314 0294 00000000 		.word	.LANCHOR7
+ 1315 0298 00002040 		.word	1075838976
+ 1316 029c 00000000 		.word	.LANCHOR2
+ 1317 02a0 00408F40 		.word	1083129856
+ 1318 02a4 0000F03F 		.word	1072693248
+ 1319 02a8 00000000 		.word	.LANCHOR9
+ 1320 02ac 00000000 		.word	.LANCHOR10
+ 1321 02b0 00000000 		.word	.LANCHOR11
+ 1322 02b4 00000000 		.word	.LANCHOR12
+ 1323 02b8 00000000 		.word	.LANCHOR13
+ 1324 02bc 00000000 		.word	.LANCHOR14
+ 1325 02c0 00000000 		.word	.LANCHOR15
+ 1326 02c4 00000000 		.word	.LANCHOR16
+ 1327 02c8 00000000 		.word	.LANCHOR6
+ 1328 02cc 00000000 		.word	.LANCHOR4
+ 1329 02d0 00000000 		.word	.LANCHOR5
+ 1330 02d4 00000000 		.word	.LANCHOR3
+ 1331              	.L102:
+ARM GAS  /tmp/ccpwgW31.s 			page 33
+
+
+ 479:radio/sx1276-Fsk.c ****                 }
+ 480:radio/sx1276-Fsk.c ****                 else
+ 481:radio/sx1276-Fsk.c ****                 {
+ 482:radio/sx1276-Fsk.c ****                     RxPacketSize = SX1276->RegPayloadLength;
+ 1332              		.loc 1 482 0
+ 1333 02d8 93F83220 		ldrb	r2, [r3, #50]	@ zero_extendqisi2
+ 1334 02dc 844B     		ldr	r3, .L122
+ 1335 02de 1A80     		strh	r2, [r3]	@ movhi
+ 1336              	.L103:
+ 483:radio/sx1276-Fsk.c ****                 }
+ 484:radio/sx1276-Fsk.c ****                 SX1276ReadFifo( RFBuffer + RxBytesRead, RxPacketSize - RxBytesRead );
+ 1337              		.loc 1 484 0
+ 1338 02e0 844C     		ldr	r4, .L122+4
+ 1339 02e2 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+ 1340 02e4 824D     		ldr	r5, .L122
+ 1341 02e6 2978     		ldrb	r1, [r5]	@ zero_extendqisi2
+ 1342 02e8 C91A     		subs	r1, r1, r3
+ 1343 02ea C9B2     		uxtb	r1, r1
+ 1344 02ec 8248     		ldr	r0, .L122+8
+ 1345 02ee 1844     		add	r0, r0, r3
+ 1346 02f0 FFF7FEFF 		bl	SX1276ReadFifo
+ 1347              	.LVL93:
+ 485:radio/sx1276-Fsk.c ****                 RxBytesRead += ( RxPacketSize - RxBytesRead );
+ 1348              		.loc 1 485 0
+ 1349 02f4 2B88     		ldrh	r3, [r5]
+ 1350 02f6 2370     		strb	r3, [r4]
+ 486:radio/sx1276-Fsk.c ****                 PacketDetected = true;
+ 1351              		.loc 1 486 0
+ 1352 02f8 0122     		movs	r2, #1
+ 1353 02fa 804B     		ldr	r3, .L122+12
+ 1354 02fc 1A70     		strb	r2, [r3]
+ 487:radio/sx1276-Fsk.c ****                 RFState = RF_STATE_RX_DONE;
+ 1355              		.loc 1 487 0
+ 1356 02fe 0422     		movs	r2, #4
+ 1357 0300 7F4B     		ldr	r3, .L122+16
+ 1358 0302 1A70     		strb	r2, [r3]
+ 1359 0304 10E0     		b	.L100
+ 1360              	.L101:
+ 488:radio/sx1276-Fsk.c ****             }
+ 489:radio/sx1276-Fsk.c ****             else
+ 490:radio/sx1276-Fsk.c ****             {
+ 491:radio/sx1276-Fsk.c ****                 SX1276ReadFifo( RFBuffer + RxBytesRead, RxPacketSize - RxBytesRead );
+ 1361              		.loc 1 491 0
+ 1362 0306 7B4C     		ldr	r4, .L122+4
+ 1363 0308 2278     		ldrb	r2, [r4]	@ zero_extendqisi2
+ 1364 030a 991A     		subs	r1, r3, r2
+ 1365 030c C9B2     		uxtb	r1, r1
+ 1366 030e 7A48     		ldr	r0, .L122+8
+ 1367 0310 1044     		add	r0, r0, r2
+ 1368 0312 FFF7FEFF 		bl	SX1276ReadFifo
+ 1369              	.LVL94:
+ 492:radio/sx1276-Fsk.c ****                 RxBytesRead += ( RxPacketSize - RxBytesRead );
+ 1370              		.loc 1 492 0
+ 1371 0316 764B     		ldr	r3, .L122
+ 1372 0318 1B88     		ldrh	r3, [r3]
+ 1373 031a 2370     		strb	r3, [r4]
+ 493:radio/sx1276-Fsk.c ****                 PacketDetected = true;
+ARM GAS  /tmp/ccpwgW31.s 			page 34
+
+
+ 1374              		.loc 1 493 0
+ 1375 031c 0122     		movs	r2, #1
+ 1376 031e 774B     		ldr	r3, .L122+12
+ 1377 0320 1A70     		strb	r2, [r3]
+ 494:radio/sx1276-Fsk.c ****                 RFState = RF_STATE_RX_DONE;
+ 1378              		.loc 1 494 0
+ 1379 0322 0422     		movs	r2, #4
+ 1380 0324 764B     		ldr	r3, .L122+16
+ 1381 0326 1A70     		strb	r2, [r3]
+ 1382              	.L100:
+ 495:radio/sx1276-Fsk.c ****             }
+ 496:radio/sx1276-Fsk.c ****         }
+ 497:radio/sx1276-Fsk.c ****         
+ 498:radio/sx1276-Fsk.c ****         // Packet timeout
+ 499:radio/sx1276-Fsk.c ****         if( ( PacketDetected == false ) && ( ( GET_TICK_COUNT( ) - RxTimeoutTimer ) > PacketTimeout
+ 1383              		.loc 1 499 0
+ 1384 0328 744B     		ldr	r3, .L122+12
+ 1385 032a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1386 032c 002B     		cmp	r3, #0
+ 1387 032e 40F0D780 		bne	.L115
+ 1388              		.loc 1 499 0 is_stmt 0 discriminator 1
+ 1389 0332 FFF7FEFF 		bl	HAL_GetTick
+ 1390              	.LVL95:
+ 1391 0336 734B     		ldr	r3, .L122+20
+ 1392 0338 1B68     		ldr	r3, [r3]
+ 1393 033a C01A     		subs	r0, r0, r3
+ 1394 033c 724A     		ldr	r2, .L122+24
+ 1395 033e 1268     		ldr	r2, [r2]
+ 1396 0340 9042     		cmp	r0, r2
+ 1397 0342 40F2CF80 		bls	.L116
+ 500:radio/sx1276-Fsk.c ****         {
+ 501:radio/sx1276-Fsk.c ****             RFState = RF_STATE_RX_TIMEOUT;
+ 1398              		.loc 1 501 0 is_stmt 1
+ 1399 0346 0522     		movs	r2, #5
+ 1400 0348 6D4B     		ldr	r3, .L122+16
+ 1401 034a 1A70     		strb	r2, [r3]
+ 360:radio/sx1276-Fsk.c **** 
+ 1402              		.loc 1 360 0
+ 1403 034c 0120     		movs	r0, #1
+ 1404 034e 38BD     		pop	{r3, r4, r5, pc}
+ 1405              	.L82:
+ 502:radio/sx1276-Fsk.c ****         }
+ 503:radio/sx1276-Fsk.c ****         break;
+ 504:radio/sx1276-Fsk.c ****     case RF_STATE_RX_DONE:
+ 505:radio/sx1276-Fsk.c ****         RxBytesRead = 0;
+ 1406              		.loc 1 505 0
+ 1407 0350 0022     		movs	r2, #0
+ 1408 0352 684B     		ldr	r3, .L122+4
+ 1409 0354 1A70     		strb	r2, [r3]
+ 506:radio/sx1276-Fsk.c ****         RFState = RF_STATE_RX_INIT;
+ 1410              		.loc 1 506 0
+ 1411 0356 0122     		movs	r2, #1
+ 1412 0358 694B     		ldr	r3, .L122+16
+ 1413 035a 1A70     		strb	r2, [r3]
+ 1414              	.LVL96:
+ 507:radio/sx1276-Fsk.c ****         result = RF_RX_DONE;
+ 1415              		.loc 1 507 0
+ARM GAS  /tmp/ccpwgW31.s 			page 35
+
+
+ 1416 035c 0220     		movs	r0, #2
+ 508:radio/sx1276-Fsk.c ****         break;
+ 1417              		.loc 1 508 0
+ 1418 035e 38BD     		pop	{r3, r4, r5, pc}
+ 1419              	.LVL97:
+ 1420              	.L83:
+ 509:radio/sx1276-Fsk.c ****     case RF_STATE_RX_TIMEOUT:
+ 510:radio/sx1276-Fsk.c ****         RxBytesRead = 0;
+ 1421              		.loc 1 510 0
+ 1422 0360 0023     		movs	r3, #0
+ 1423 0362 644A     		ldr	r2, .L122+4
+ 1424 0364 1370     		strb	r3, [r2]
+ 511:radio/sx1276-Fsk.c ****         RxPacketSize = 0;
+ 1425              		.loc 1 511 0
+ 1426 0366 624A     		ldr	r2, .L122
+ 1427 0368 1380     		strh	r3, [r2]	@ movhi
+ 512:radio/sx1276-Fsk.c ****         SX1276Write( REG_RXCONFIG, SX1276->RegRxConfig | RF_RXCONFIG_RESTARTRXWITHPLLLOCK );
+ 1428              		.loc 1 512 0
+ 1429 036a 684B     		ldr	r3, .L122+28
+ 1430 036c 1B68     		ldr	r3, [r3]
+ 1431 036e 597B     		ldrb	r1, [r3, #13]	@ zero_extendqisi2
+ 1432 0370 41F02001 		orr	r1, r1, #32
+ 1433 0374 0D20     		movs	r0, #13
+ 1434 0376 FFF7FEFF 		bl	SX1276Write
+ 1435              	.LVL98:
+ 513:radio/sx1276-Fsk.c ****         RFState = RF_STATE_RX_INIT;
+ 1436              		.loc 1 513 0
+ 1437 037a 0122     		movs	r2, #1
+ 1438 037c 604B     		ldr	r3, .L122+16
+ 1439 037e 1A70     		strb	r2, [r3]
+ 1440              	.LVL99:
+ 514:radio/sx1276-Fsk.c ****         result = RF_RX_TIMEOUT;
+ 1441              		.loc 1 514 0
+ 1442 0380 0320     		movs	r0, #3
+ 515:radio/sx1276-Fsk.c ****         break;
+ 1443              		.loc 1 515 0
+ 1444 0382 38BD     		pop	{r3, r4, r5, pc}
+ 1445              	.LVL100:
+ 1446              	.L84:
+ 516:radio/sx1276-Fsk.c ****     case RF_STATE_RX_LEN_ERROR:
+ 517:radio/sx1276-Fsk.c ****         RxBytesRead = 0;
+ 1447              		.loc 1 517 0
+ 1448 0384 0023     		movs	r3, #0
+ 1449 0386 5B4A     		ldr	r2, .L122+4
+ 1450 0388 1370     		strb	r3, [r2]
+ 518:radio/sx1276-Fsk.c ****         RxPacketSize = 0;
+ 1451              		.loc 1 518 0
+ 1452 038a 594A     		ldr	r2, .L122
+ 1453 038c 1380     		strh	r3, [r2]	@ movhi
+ 519:radio/sx1276-Fsk.c ****         SX1276Write( REG_RXCONFIG, SX1276->RegRxConfig | RF_RXCONFIG_RESTARTRXWITHPLLLOCK );
+ 1454              		.loc 1 519 0
+ 1455 038e 5F4B     		ldr	r3, .L122+28
+ 1456 0390 1B68     		ldr	r3, [r3]
+ 1457 0392 597B     		ldrb	r1, [r3, #13]	@ zero_extendqisi2
+ 1458 0394 41F02001 		orr	r1, r1, #32
+ 1459 0398 0D20     		movs	r0, #13
+ 1460 039a FFF7FEFF 		bl	SX1276Write
+ARM GAS  /tmp/ccpwgW31.s 			page 36
+
+
+ 1461              	.LVL101:
+ 520:radio/sx1276-Fsk.c ****         RFState = RF_STATE_RX_INIT;
+ 1462              		.loc 1 520 0
+ 1463 039e 0122     		movs	r2, #1
+ 1464 03a0 574B     		ldr	r3, .L122+16
+ 1465 03a2 1A70     		strb	r2, [r3]
+ 1466              	.LVL102:
+ 521:radio/sx1276-Fsk.c ****         result = RF_LEN_ERROR;
+ 1467              		.loc 1 521 0
+ 1468 03a4 0620     		movs	r0, #6
+ 522:radio/sx1276-Fsk.c ****         break;
+ 1469              		.loc 1 522 0
+ 1470 03a6 38BD     		pop	{r3, r4, r5, pc}
+ 1471              	.LVL103:
+ 1472              	.L85:
+ 523:radio/sx1276-Fsk.c ****     // Tx management
+ 524:radio/sx1276-Fsk.c ****     case RF_STATE_TX_INIT:
+ 525:radio/sx1276-Fsk.c ****         // Packet DIO mapping setup
+ 526:radio/sx1276-Fsk.c ****         //                           PacketSent,               FifoLevel,              FifoFull,   
+ 527:radio/sx1276-Fsk.c ****         SX1276->RegDioMapping1 = RF_DIOMAPPING1_DIO0_00 | RF_DIOMAPPING1_DIO1_00 | RF_DIOMAPPING1_D
+ 1473              		.loc 1 527 0
+ 1474 03a8 584D     		ldr	r5, .L122+28
+ 1475 03aa 2968     		ldr	r1, [r5]
+ 1476 03ac 0124     		movs	r4, #1
+ 1477 03ae 81F84040 		strb	r4, [r1, #64]
+ 528:radio/sx1276-Fsk.c ****         //                           LowBat,                   Data
+ 529:radio/sx1276-Fsk.c ****         SX1276->RegDioMapping2 = RF_DIOMAPPING2_DIO4_00 | RF_DIOMAPPING2_DIO5_10;
+ 1478              		.loc 1 529 0
+ 1479 03b2 2023     		movs	r3, #32
+ 1480 03b4 81F84130 		strb	r3, [r1, #65]
+ 530:radio/sx1276-Fsk.c ****         SX1276WriteBuffer( REG_DIOMAPPING1, &SX1276->RegDioMapping1, 2 );
+ 1481              		.loc 1 530 0
+ 1482 03b8 0222     		movs	r2, #2
+ 1483 03ba 4031     		adds	r1, r1, #64
+ 1484 03bc 4020     		movs	r0, #64
+ 1485 03be FFF7FEFF 		bl	SX1276WriteBuffer
+ 1486              	.LVL104:
+ 531:radio/sx1276-Fsk.c **** 
+ 532:radio/sx1276-Fsk.c ****         SX1276->RegFifoThresh = RF_FIFOTHRESH_TXSTARTCONDITION_FIFONOTEMPTY | 0x18; // 24 bytes of 
+ 1487              		.loc 1 532 0
+ 1488 03c2 2B68     		ldr	r3, [r5]
+ 1489 03c4 9821     		movs	r1, #152
+ 1490 03c6 83F83510 		strb	r1, [r3, #53]
+ 533:radio/sx1276-Fsk.c ****         SX1276Write( REG_FIFOTHRESH, SX1276->RegFifoThresh );
+ 1491              		.loc 1 533 0
+ 1492 03ca 3520     		movs	r0, #53
+ 1493 03cc FFF7FEFF 		bl	SX1276Write
+ 1494              	.LVL105:
+ 534:radio/sx1276-Fsk.c **** 
+ 535:radio/sx1276-Fsk.c ****         SX1276FskSetOpMode( RF_OPMODE_TRANSMITTER );
+ 1495              		.loc 1 535 0
+ 1496 03d0 0320     		movs	r0, #3
+ 1497 03d2 FFF7FEFF 		bl	SX1276FskSetOpMode
+ 1498              	.LVL106:
+ 536:radio/sx1276-Fsk.c ****         RFState = RF_STATE_TX_READY_WAIT;
+ 1499              		.loc 1 536 0
+ 1500 03d6 0822     		movs	r2, #8
+ARM GAS  /tmp/ccpwgW31.s 			page 37
+
+
+ 1501 03d8 494B     		ldr	r3, .L122+16
+ 1502 03da 1A70     		strb	r2, [r3]
+ 537:radio/sx1276-Fsk.c ****         TxBytesSent = 0;
+ 1503              		.loc 1 537 0
+ 1504 03dc 0022     		movs	r2, #0
+ 1505 03de 4C4B     		ldr	r3, .L122+32
+ 1506 03e0 1A70     		strb	r2, [r3]
+ 360:radio/sx1276-Fsk.c **** 
+ 1507              		.loc 1 360 0
+ 1508 03e2 2046     		mov	r0, r4
+ 538:radio/sx1276-Fsk.c ****         break;
+ 1509              		.loc 1 538 0
+ 1510 03e4 38BD     		pop	{r3, r4, r5, pc}
+ 1511              	.L86:
+ 539:radio/sx1276-Fsk.c ****     case RF_STATE_TX_READY_WAIT:
+ 540:radio/sx1276-Fsk.c ****         if( DIO3 == 1 )    // TxReady
+ 1512              		.loc 1 540 0
+ 1513 03e6 FFF7FEFF 		bl	SX1276ReadDio3
+ 1514              	.LVL107:
+ 1515 03ea 0128     		cmp	r0, #1
+ 1516 03ec 7CD1     		bne	.L117
+ 541:radio/sx1276-Fsk.c ****         {
+ 542:radio/sx1276-Fsk.c ****             if( ( SX1276->RegPacketConfig1 & RF_PACKETCONFIG1_PACKETFORMAT_VARIABLE ) == RF_PACKETC
+ 1517              		.loc 1 542 0
+ 1518 03ee 474B     		ldr	r3, .L122+28
+ 1519 03f0 1B68     		ldr	r3, [r3]
+ 1520 03f2 93F93030 		ldrsb	r3, [r3, #48]
+ 1521 03f6 002B     		cmp	r3, #0
+ 1522 03f8 03DA     		bge	.L104
+ 543:radio/sx1276-Fsk.c ****             {
+ 544:radio/sx1276-Fsk.c ****                 SX1276WriteFifo( ( uint8_t* )&TxPacketSize, 1 );
+ 1523              		.loc 1 544 0
+ 1524 03fa 0121     		movs	r1, #1
+ 1525 03fc 4548     		ldr	r0, .L122+36
+ 1526 03fe FFF7FEFF 		bl	SX1276WriteFifo
+ 1527              	.LVL108:
+ 1528              	.L104:
+ 545:radio/sx1276-Fsk.c ****             }
+ 546:radio/sx1276-Fsk.c ****             
+ 547:radio/sx1276-Fsk.c ****             if( ( TxPacketSize > 0 ) && ( TxPacketSize <= 64 ) )
+ 1529              		.loc 1 547 0
+ 1530 0402 444B     		ldr	r3, .L122+36
+ 1531 0404 1A88     		ldrh	r2, [r3]
+ 1532 0406 531E     		subs	r3, r2, #1
+ 1533 0408 9BB2     		uxth	r3, r3
+ 1534 040a 3F2B     		cmp	r3, #63
+ 1535 040c 02D8     		bhi	.L105
+ 548:radio/sx1276-Fsk.c ****             {
+ 549:radio/sx1276-Fsk.c ****                 DataChunkSize = TxPacketSize;
+ 1536              		.loc 1 549 0
+ 1537 040e 424B     		ldr	r3, .L122+40
+ 1538 0410 1A70     		strb	r2, [r3]
+ 1539 0412 02E0     		b	.L106
+ 1540              	.L105:
+ 550:radio/sx1276-Fsk.c ****             }
+ 551:radio/sx1276-Fsk.c ****             else
+ 552:radio/sx1276-Fsk.c ****             {
+ARM GAS  /tmp/ccpwgW31.s 			page 38
+
+
+ 553:radio/sx1276-Fsk.c ****                 DataChunkSize = 32;
+ 1541              		.loc 1 553 0
+ 1542 0414 2022     		movs	r2, #32
+ 1543 0416 404B     		ldr	r3, .L122+40
+ 1544 0418 1A70     		strb	r2, [r3]
+ 1545              	.L106:
+ 554:radio/sx1276-Fsk.c ****             }
+ 555:radio/sx1276-Fsk.c ****             
+ 556:radio/sx1276-Fsk.c ****             SX1276WriteFifo( RFBuffer, DataChunkSize );
+ 1546              		.loc 1 556 0
+ 1547 041a 3F4C     		ldr	r4, .L122+40
+ 1548 041c 2178     		ldrb	r1, [r4]	@ zero_extendqisi2
+ 1549 041e 3648     		ldr	r0, .L122+8
+ 1550 0420 FFF7FEFF 		bl	SX1276WriteFifo
+ 1551              	.LVL109:
+ 557:radio/sx1276-Fsk.c ****             TxBytesSent += DataChunkSize;
+ 1552              		.loc 1 557 0
+ 1553 0424 3A4A     		ldr	r2, .L122+32
+ 1554 0426 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1555 0428 2378     		ldrb	r3, [r4]	@ zero_extendqisi2
+ 1556 042a 0B44     		add	r3, r3, r1
+ 1557 042c 1370     		strb	r3, [r2]
+ 558:radio/sx1276-Fsk.c ****             TxTimeoutTimer = GET_TICK_COUNT( );
+ 1558              		.loc 1 558 0
+ 1559 042e FFF7FEFF 		bl	HAL_GetTick
+ 1560              	.LVL110:
+ 1561 0432 3A4B     		ldr	r3, .L122+44
+ 1562 0434 1860     		str	r0, [r3]
+ 559:radio/sx1276-Fsk.c ****             RFState = RF_STATE_TX_RUNNING;
+ 1563              		.loc 1 559 0
+ 1564 0436 0922     		movs	r2, #9
+ 1565 0438 314B     		ldr	r3, .L122+16
+ 1566 043a 1A70     		strb	r2, [r3]
+ 360:radio/sx1276-Fsk.c **** 
+ 1567              		.loc 1 360 0
+ 1568 043c 0120     		movs	r0, #1
+ 1569 043e 38BD     		pop	{r3, r4, r5, pc}
+ 1570              	.L87:
+ 560:radio/sx1276-Fsk.c ****         }
+ 561:radio/sx1276-Fsk.c ****         break;
+ 562:radio/sx1276-Fsk.c **** 
+ 563:radio/sx1276-Fsk.c ****     case RF_STATE_TX_RUNNING:
+ 564:radio/sx1276-Fsk.c ****         if( DIO1 == 0 )    // FifoLevel below thresold
+ 1571              		.loc 1 564 0
+ 1572 0440 FFF7FEFF 		bl	SX1276ReadDio1
+ 1573              	.LVL111:
+ 1574 0444 E8B9     		cbnz	r0, .L107
+ 565:radio/sx1276-Fsk.c ****         {  
+ 566:radio/sx1276-Fsk.c ****             if( ( TxPacketSize - TxBytesSent ) > DataChunkSize )
+ 1575              		.loc 1 566 0
+ 1576 0446 334B     		ldr	r3, .L122+36
+ 1577 0448 1A88     		ldrh	r2, [r3]
+ 1578 044a 314B     		ldr	r3, .L122+32
+ 1579 044c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1580 044e D01A     		subs	r0, r2, r3
+ 1581 0450 3149     		ldr	r1, .L122+40
+ 1582 0452 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ARM GAS  /tmp/ccpwgW31.s 			page 39
+
+
+ 1583 0454 8842     		cmp	r0, r1
+ 1584 0456 0ADD     		ble	.L108
+ 567:radio/sx1276-Fsk.c ****             {
+ 568:radio/sx1276-Fsk.c ****                 SX1276WriteFifo( ( RFBuffer + TxBytesSent ), DataChunkSize );
+ 1585              		.loc 1 568 0
+ 1586 0458 2748     		ldr	r0, .L122+8
+ 1587 045a 1844     		add	r0, r0, r3
+ 1588 045c FFF7FEFF 		bl	SX1276WriteFifo
+ 1589              	.LVL112:
+ 569:radio/sx1276-Fsk.c ****                 TxBytesSent += DataChunkSize;
+ 1590              		.loc 1 569 0
+ 1591 0460 2B4A     		ldr	r2, .L122+32
+ 1592 0462 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 1593 0464 2C4B     		ldr	r3, .L122+40
+ 1594 0466 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1595 0468 0B44     		add	r3, r3, r1
+ 1596 046a 1370     		strb	r3, [r2]
+ 1597 046c 09E0     		b	.L107
+ 1598              	.L108:
+ 570:radio/sx1276-Fsk.c ****             }
+ 571:radio/sx1276-Fsk.c ****             else 
+ 572:radio/sx1276-Fsk.c ****             {
+ 573:radio/sx1276-Fsk.c ****                 // we write the last chunk of data
+ 574:radio/sx1276-Fsk.c ****                 SX1276WriteFifo( RFBuffer + TxBytesSent, TxPacketSize - TxBytesSent );
+ 1599              		.loc 1 574 0
+ 1600 046e D11A     		subs	r1, r2, r3
+ 1601 0470 C9B2     		uxtb	r1, r1
+ 1602 0472 2148     		ldr	r0, .L122+8
+ 1603 0474 1844     		add	r0, r0, r3
+ 1604 0476 FFF7FEFF 		bl	SX1276WriteFifo
+ 1605              	.LVL113:
+ 575:radio/sx1276-Fsk.c ****                 TxBytesSent += TxPacketSize - TxBytesSent;
+ 1606              		.loc 1 575 0
+ 1607 047a 264B     		ldr	r3, .L122+36
+ 1608 047c 1A88     		ldrh	r2, [r3]
+ 1609 047e 244B     		ldr	r3, .L122+32
+ 1610 0480 1A70     		strb	r2, [r3]
+ 1611              	.L107:
+ 576:radio/sx1276-Fsk.c ****             }
+ 577:radio/sx1276-Fsk.c ****         }
+ 578:radio/sx1276-Fsk.c **** 
+ 579:radio/sx1276-Fsk.c ****         if( DIO0 == 1 ) // PacketSent
+ 1612              		.loc 1 579 0
+ 1613 0482 FFF7FEFF 		bl	SX1276ReadDio0
+ 1614              	.LVL114:
+ 1615 0486 0128     		cmp	r0, #1
+ 1616 0488 09D1     		bne	.L109
+ 580:radio/sx1276-Fsk.c ****         {
+ 581:radio/sx1276-Fsk.c ****             TxTimeoutTimer = GET_TICK_COUNT( );
+ 1617              		.loc 1 581 0
+ 1618 048a FFF7FEFF 		bl	HAL_GetTick
+ 1619              	.LVL115:
+ 1620 048e 234B     		ldr	r3, .L122+44
+ 1621 0490 1860     		str	r0, [r3]
+ 582:radio/sx1276-Fsk.c ****             RFState = RF_STATE_TX_DONE;
+ 1622              		.loc 1 582 0
+ 1623 0492 0A22     		movs	r2, #10
+ARM GAS  /tmp/ccpwgW31.s 			page 40
+
+
+ 1624 0494 1A4B     		ldr	r3, .L122+16
+ 1625 0496 1A70     		strb	r2, [r3]
+ 583:radio/sx1276-Fsk.c ****             SX1276FskSetOpMode( RF_OPMODE_STANDBY );
+ 1626              		.loc 1 583 0
+ 1627 0498 0120     		movs	r0, #1
+ 1628 049a FFF7FEFF 		bl	SX1276FskSetOpMode
+ 1629              	.LVL116:
+ 1630              	.L109:
+ 584:radio/sx1276-Fsk.c ****         }
+ 585:radio/sx1276-Fsk.c ****          
+ 586:radio/sx1276-Fsk.c ****         // Packet timeout
+ 587:radio/sx1276-Fsk.c ****         if( ( GET_TICK_COUNT( ) - TxTimeoutTimer ) > TICK_RATE_MS( 1000 ) )
+ 1631              		.loc 1 587 0
+ 1632 049e FFF7FEFF 		bl	HAL_GetTick
+ 1633              	.LVL117:
+ 1634 04a2 1E4B     		ldr	r3, .L122+44
+ 1635 04a4 1B68     		ldr	r3, [r3]
+ 1636 04a6 C01A     		subs	r0, r0, r3
+ 1637 04a8 B0F57A7F 		cmp	r0, #1000
+ 1638 04ac 1ED9     		bls	.L118
+ 588:radio/sx1276-Fsk.c ****         {
+ 589:radio/sx1276-Fsk.c ****             RFState = RF_STATE_TX_TIMEOUT;
+ 1639              		.loc 1 589 0
+ 1640 04ae 0B22     		movs	r2, #11
+ 1641 04b0 134B     		ldr	r3, .L122+16
+ 1642 04b2 1A70     		strb	r2, [r3]
+ 360:radio/sx1276-Fsk.c **** 
+ 1643              		.loc 1 360 0
+ 1644 04b4 0120     		movs	r0, #1
+ 1645 04b6 38BD     		pop	{r3, r4, r5, pc}
+ 1646              	.L88:
+ 590:radio/sx1276-Fsk.c ****         }
+ 591:radio/sx1276-Fsk.c ****         break;
+ 592:radio/sx1276-Fsk.c ****     case RF_STATE_TX_DONE:
+ 593:radio/sx1276-Fsk.c ****         RFState = RF_STATE_IDLE;
+ 1647              		.loc 1 593 0
+ 1648 04b8 0022     		movs	r2, #0
+ 1649 04ba 114B     		ldr	r3, .L122+16
+ 1650 04bc 1A70     		strb	r2, [r3]
+ 1651              	.LVL118:
+ 594:radio/sx1276-Fsk.c ****         result = RF_TX_DONE;
+ 1652              		.loc 1 594 0
+ 1653 04be 0420     		movs	r0, #4
+ 595:radio/sx1276-Fsk.c ****         break;
+ 1654              		.loc 1 595 0
+ 1655 04c0 38BD     		pop	{r3, r4, r5, pc}
+ 1656              	.LVL119:
+ 1657              	.L89:
+ 596:radio/sx1276-Fsk.c ****     case RF_STATE_TX_TIMEOUT:
+ 597:radio/sx1276-Fsk.c ****         RFState = RF_STATE_IDLE;
+ 1658              		.loc 1 597 0
+ 1659 04c2 0022     		movs	r2, #0
+ 1660 04c4 0E4B     		ldr	r3, .L122+16
+ 1661 04c6 1A70     		strb	r2, [r3]
+ 1662              	.LVL120:
+ 598:radio/sx1276-Fsk.c ****         result = RF_TX_TIMEOUT;
+ 1663              		.loc 1 598 0
+ARM GAS  /tmp/ccpwgW31.s 			page 41
+
+
+ 1664 04c8 0520     		movs	r0, #5
+ 599:radio/sx1276-Fsk.c ****         break;
+ 1665              		.loc 1 599 0
+ 1666 04ca 38BD     		pop	{r3, r4, r5, pc}
+ 1667              	.LVL121:
+ 1668              	.L110:
+ 360:radio/sx1276-Fsk.c **** 
+ 1669              		.loc 1 360 0
+ 1670 04cc 0120     		movs	r0, #1
+ 1671 04ce 38BD     		pop	{r3, r4, r5, pc}
+ 1672              	.L111:
+ 1673 04d0 0120     		movs	r0, #1
+ 1674 04d2 38BD     		pop	{r3, r4, r5, pc}
+ 1675              	.L112:
+ 1676 04d4 0120     		movs	r0, #1
+ 1677 04d6 38BD     		pop	{r3, r4, r5, pc}
+ 1678              	.L113:
+ 1679 04d8 0120     		movs	r0, #1
+ 1680 04da 38BD     		pop	{r3, r4, r5, pc}
+ 1681              	.L114:
+ 1682 04dc 0120     		movs	r0, #1
+ 1683 04de 38BD     		pop	{r3, r4, r5, pc}
+ 1684              	.L115:
+ 1685 04e0 0120     		movs	r0, #1
+ 1686 04e2 38BD     		pop	{r3, r4, r5, pc}
+ 1687              	.L116:
+ 1688 04e4 0120     		movs	r0, #1
+ 1689 04e6 38BD     		pop	{r3, r4, r5, pc}
+ 1690              	.L117:
+ 1691 04e8 0120     		movs	r0, #1
+ 1692 04ea 38BD     		pop	{r3, r4, r5, pc}
+ 1693              	.L118:
+ 1694 04ec 0120     		movs	r0, #1
+ 1695              	.LVL122:
+ 600:radio/sx1276-Fsk.c ****     default:
+ 601:radio/sx1276-Fsk.c ****         break;
+ 602:radio/sx1276-Fsk.c ****     }
+ 603:radio/sx1276-Fsk.c ****     return result;
+ 604:radio/sx1276-Fsk.c **** }
+ 1696              		.loc 1 604 0
+ 1697 04ee 38BD     		pop	{r3, r4, r5, pc}
+ 1698              	.L123:
+ 1699              		.align	2
+ 1700              	.L122:
+ 1701 04f0 00000000 		.word	.LANCHOR6
+ 1702 04f4 00000000 		.word	.LANCHOR16
+ 1703 04f8 00000000 		.word	.LANCHOR7
+ 1704 04fc 00000000 		.word	.LANCHOR15
+ 1705 0500 00000000 		.word	.LANCHOR1
+ 1706 0504 00000000 		.word	.LANCHOR11
+ 1707 0508 00000000 		.word	.LANCHOR9
+ 1708 050c 00000000 		.word	SX1276
+ 1709 0510 00000000 		.word	.LANCHOR17
+ 1710 0514 00000000 		.word	.LANCHOR8
+ 1711 0518 00000000 		.word	.LANCHOR18
+ 1712 051c 00000000 		.word	.LANCHOR19
+ 1713              		.cfi_endproc
+ARM GAS  /tmp/ccpwgW31.s 			page 42
+
+
+ 1714              	.LFE82:
+ 1716              		.comm	SX1276,4,4
+ 1717              		.global	FskSettings
+ 1718              		.section	.bss.RFBuffer,"aw",%nobits
+ 1719              		.align	2
+ 1720              		.set	.LANCHOR7,. + 0
+ 1723              	RFBuffer:
+ 1724 0000 00000000 		.space	256
+ 1724      00000000 
+ 1724      00000000 
+ 1724      00000000 
+ 1724      00000000 
+ 1725              		.section	.bss.PacketTimeout,"aw",%nobits
+ 1726              		.align	2
+ 1727              		.set	.LANCHOR9,. + 0
+ 1730              	PacketTimeout:
+ 1731 0000 00000000 		.space	4
+ 1732              		.section	.bss.Preamble2SyncTimer,"aw",%nobits
+ 1733              		.align	2
+ 1734              		.set	.LANCHOR12,. + 0
+ 1737              	Preamble2SyncTimer:
+ 1738 0000 00000000 		.space	4
+ 1739              		.section	.bss.RxPacketAfcValue,"aw",%nobits
+ 1740              		.align	2
+ 1741              		.set	.LANCHOR5,. + 0
+ 1744              	RxPacketAfcValue:
+ 1745 0000 00000000 		.space	4
+ 1746              		.section	.bss.RxPacketSize,"aw",%nobits
+ 1747              		.align	1
+ 1748              		.set	.LANCHOR6,. + 0
+ 1751              	RxPacketSize:
+ 1752 0000 0000     		.space	2
+ 1753              		.section	.data.RxGain,"aw",%progbits
+ 1754              		.set	.LANCHOR3,. + 0
+ 1757              	RxGain:
+ 1758 0000 01       		.byte	1
+ 1759              		.section	.bss.TxBytesSent,"aw",%nobits
+ 1760              		.set	.LANCHOR17,. + 0
+ 1763              	TxBytesSent:
+ 1764 0000 00       		.space	1
+ 1765              		.section	.bss.TxTimeoutTimer,"aw",%nobits
+ 1766              		.align	2
+ 1767              		.set	.LANCHOR19,. + 0
+ 1770              	TxTimeoutTimer:
+ 1771 0000 00000000 		.space	4
+ 1772              		.section	.bss.Preamble2SyncTimeout,"aw",%nobits
+ 1773              		.align	2
+ 1774              		.set	.LANCHOR10,. + 0
+ 1777              	Preamble2SyncTimeout:
+ 1778 0000 00000000 		.space	4
+ 1779              		.section	.bss.TxPacketSize,"aw",%nobits
+ 1780              		.align	1
+ 1781              		.set	.LANCHOR8,. + 0
+ 1784              	TxPacketSize:
+ 1785 0000 0000     		.space	2
+ 1786              		.section	.bss.RxPacketRssiValue,"aw",%nobits
+ 1787              		.align	3
+ARM GAS  /tmp/ccpwgW31.s 			page 43
+
+
+ 1788              		.set	.LANCHOR4,. + 0
+ 1791              	RxPacketRssiValue:
+ 1792 0000 00000000 		.space	8
+ 1792      00000000 
+ 1793              		.section	.bss.PreambleDetected,"aw",%nobits
+ 1794              		.set	.LANCHOR13,. + 0
+ 1797              	PreambleDetected:
+ 1798 0000 00       		.space	1
+ 1799              		.section	.data.antennaSwitchTxOnPrev.7727,"aw",%progbits
+ 1800              		.set	.LANCHOR0,. + 0
+ 1803              	antennaSwitchTxOnPrev.7727:
+ 1804 0000 01       		.byte	1
+ 1805              		.section	.bss.RFState,"aw",%nobits
+ 1806              		.set	.LANCHOR1,. + 0
+ 1809              	RFState:
+ 1810 0000 00       		.space	1
+ 1811              		.section	.bss.RxBytesRead,"aw",%nobits
+ 1812              		.set	.LANCHOR16,. + 0
+ 1815              	RxBytesRead:
+ 1816 0000 00       		.space	1
+ 1817              		.section	.data.FskSettings,"aw",%progbits
+ 1818              		.align	2
+ 1819              		.set	.LANCHOR2,. + 0
+ 1822              	FskSettings:
+ 1823 0000 8025DB33 		.word	870000000
+ 1824 0004 80250000 		.word	9600
+ 1825 0008 50C30000 		.word	50000
+ 1826 000c 14       		.byte	20
+ 1827 000d 000000   		.space	3
+ 1828 0010 A0860100 		.word	100000
+ 1829 0014 F0490200 		.word	150000
+ 1830 0018 01       		.byte	1
+ 1831 0019 01       		.byte	1
+ 1832 001a FF       		.byte	-1
+ 1833 001b 00       		.space	1
+ 1834              		.section	.data.DataChunkSize,"aw",%progbits
+ 1835              		.set	.LANCHOR18,. + 0
+ 1838              	DataChunkSize:
+ 1839 0000 20       		.byte	32
+ 1840              		.section	.bss.PacketDetected,"aw",%nobits
+ 1841              		.set	.LANCHOR15,. + 0
+ 1844              	PacketDetected:
+ 1845 0000 00       		.space	1
+ 1846              		.section	.bss.RxTimeoutTimer,"aw",%nobits
+ 1847              		.align	2
+ 1848              		.set	.LANCHOR11,. + 0
+ 1851              	RxTimeoutTimer:
+ 1852 0000 00000000 		.space	4
+ 1853              		.section	.bss.SyncWordDetected,"aw",%nobits
+ 1854              		.set	.LANCHOR14,. + 0
+ 1857              	SyncWordDetected:
+ 1858 0000 00       		.space	1
+ 1859              		.text
+ 1860              	.Letext0:
+ 1861              		.file 2 "/opt/gcc-arm-none-eabi-5_4-2016q3/lib/gcc/arm-none-eabi/5.4.1/include/stddef.h"
+ 1862              		.file 3 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/machine/_default_types.h"
+ 1863              		.file 4 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/sys/_stdint.h"
+ARM GAS  /tmp/ccpwgW31.s 			page 44
+
+
+ 1864              		.file 5 "radio/sx1276-Fsk.h"
+ 1865              		.file 6 "radio/radio.h"
+ 1866              		.file 7 "Drivers/CMSIS/Include/core_cm3.h"
+ 1867              		.file 8 "radio/sx1276.h"
+ 1868              		.file 9 "radio/sx1276-Hal.h"
+ 1869              		.file 10 "radio/sx1276-FskMisc.h"
+ 1870              		.file 11 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/math.h"
+ 1871              		.file 12 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ARM GAS  /tmp/ccpwgW31.s 			page 45
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 sx1276-Fsk.c
+     /tmp/ccpwgW31.s:20     .text.SX1276FskSetDefaults:00000000 $t
+     /tmp/ccpwgW31.s:25     .text.SX1276FskSetDefaults:00000000 SX1276FskSetDefaults
+     /tmp/ccpwgW31.s:48     .text.SX1276FskSetDefaults:00000010 $d
+                            *COM*:00000004 SX1276
+     /tmp/ccpwgW31.s:53     .text.SX1276FskSetOpMode:00000000 $t
+     /tmp/ccpwgW31.s:58     .text.SX1276FskSetOpMode:00000000 SX1276FskSetOpMode
+     /tmp/ccpwgW31.s:129    .text.SX1276FskSetOpMode:0000004c $d
+     /tmp/ccpwgW31.s:135    .text.SX1276FskInit:00000000 $t
+     /tmp/ccpwgW31.s:140    .text.SX1276FskInit:00000000 SX1276FskInit
+     /tmp/ccpwgW31.s:333    .text.SX1276FskInit:0000011c $d
+     /tmp/ccpwgW31.s:342    .text.SX1276FskGetOpMode:00000000 $t
+     /tmp/ccpwgW31.s:347    .text.SX1276FskGetOpMode:00000000 SX1276FskGetOpMode
+     /tmp/ccpwgW31.s:374    .text.SX1276FskGetOpMode:00000018 $d
+     /tmp/ccpwgW31.s:382    .text.SX1276FskReadFei:00000000 $t
+     /tmp/ccpwgW31.s:387    .text.SX1276FskReadFei:00000000 SX1276FskReadFei
+     /tmp/ccpwgW31.s:424    .text.SX1276FskReadFei:00000030 $d
+     /tmp/ccpwgW31.s:431    .text.SX1276FskReadAfc:00000000 $t
+     /tmp/ccpwgW31.s:436    .text.SX1276FskReadAfc:00000000 SX1276FskReadAfc
+     /tmp/ccpwgW31.s:473    .text.SX1276FskReadAfc:00000030 $d
+     /tmp/ccpwgW31.s:480    .text.SX1276FskReadRxGain:00000000 $t
+     /tmp/ccpwgW31.s:485    .text.SX1276FskReadRxGain:00000000 SX1276FskReadRxGain
+     /tmp/ccpwgW31.s:512    .text.SX1276FskReadRxGain:00000018 $d
+     /tmp/ccpwgW31.s:518    .text.SX1276FskReadRssi:00000000 $t
+     /tmp/ccpwgW31.s:523    .text.SX1276FskReadRssi:00000000 SX1276FskReadRssi
+     /tmp/ccpwgW31.s:559    .text.SX1276FskReadRssi:0000002c $d
+     /tmp/ccpwgW31.s:565    .text.SX1276FskGetPacketRxGain:00000000 $t
+     /tmp/ccpwgW31.s:570    .text.SX1276FskGetPacketRxGain:00000000 SX1276FskGetPacketRxGain
+     /tmp/ccpwgW31.s:584    .text.SX1276FskGetPacketRxGain:00000008 $d
+     /tmp/ccpwgW31.s:589    .text.SX1276FskGetPacketRssi:00000000 $t
+     /tmp/ccpwgW31.s:594    .text.SX1276FskGetPacketRssi:00000000 SX1276FskGetPacketRssi
+     /tmp/ccpwgW31.s:608    .text.SX1276FskGetPacketRssi:00000008 $d
+     /tmp/ccpwgW31.s:613    .text.SX1276FskGetPacketAfc:00000000 $t
+     /tmp/ccpwgW31.s:618    .text.SX1276FskGetPacketAfc:00000000 SX1276FskGetPacketAfc
+     /tmp/ccpwgW31.s:632    .text.SX1276FskGetPacketAfc:00000008 $d
+     /tmp/ccpwgW31.s:637    .text.SX1276FskGetRxPacket:00000000 $t
+     /tmp/ccpwgW31.s:642    .text.SX1276FskGetRxPacket:00000000 SX1276FskGetRxPacket
+     /tmp/ccpwgW31.s:671    .text.SX1276FskGetRxPacket:00000018 $d
+     /tmp/ccpwgW31.s:677    .text.SX1276FskSetTxPacket:00000000 $t
+     /tmp/ccpwgW31.s:682    .text.SX1276FskSetTxPacket:00000000 SX1276FskSetTxPacket
+     /tmp/ccpwgW31.s:713    .text.SX1276FskSetTxPacket:00000018 $d
+     /tmp/ccpwgW31.s:720    .text.SX1276FskGetPacketPayloadSize:00000000 $t
+     /tmp/ccpwgW31.s:725    .text.SX1276FskGetPacketPayloadSize:00000000 SX1276FskGetPacketPayloadSize
+     /tmp/ccpwgW31.s:785    .text.SX1276FskGetPacketPayloadSize:00000040 $d
+     /tmp/ccpwgW31.s:790    .text.SX1276FskGetPacketHeaderSize:00000000 $t
+     /tmp/ccpwgW31.s:795    .text.SX1276FskGetPacketHeaderSize:00000000 SX1276FskGetPacketHeaderSize
+     /tmp/ccpwgW31.s:823    .text.SX1276FskGetPacketHeaderSize:00000020 $d
+     /tmp/ccpwgW31.s:828    .text.SX1276FskGetRFState:00000000 $t
+     /tmp/ccpwgW31.s:833    .text.SX1276FskGetRFState:00000000 SX1276FskGetRFState
+     /tmp/ccpwgW31.s:847    .text.SX1276FskGetRFState:00000008 $d
+     /tmp/ccpwgW31.s:852    .text.SX1276FskSetRFState:00000000 $t
+     /tmp/ccpwgW31.s:857    .text.SX1276FskSetRFState:00000000 SX1276FskSetRFState
+     /tmp/ccpwgW31.s:872    .text.SX1276FskSetRFState:00000008 $d
+     /tmp/ccpwgW31.s:877    .text.SX1276FskStartRx:00000000 $t
+     /tmp/ccpwgW31.s:882    .text.SX1276FskStartRx:00000000 SX1276FskStartRx
+     /tmp/ccpwgW31.s:905    .text.SX1276FskProcess:00000000 $t
+ARM GAS  /tmp/ccpwgW31.s 			page 46
+
+
+     /tmp/ccpwgW31.s:910    .text.SX1276FskProcess:00000000 SX1276FskProcess
+     /tmp/ccpwgW31.s:932    .text.SX1276FskProcess:00000012 $d
+     /tmp/ccpwgW31.s:943    .text.SX1276FskProcess:00000028 $t
+     /tmp/ccpwgW31.s:1312   .text.SX1276FskProcess:0000028c $d
+     /tmp/ccpwgW31.s:1333   .text.SX1276FskProcess:000002d8 $t
+     /tmp/ccpwgW31.s:1701   .text.SX1276FskProcess:000004f0 $d
+     /tmp/ccpwgW31.s:1822   .data.FskSettings:00000000 FskSettings
+     /tmp/ccpwgW31.s:1719   .bss.RFBuffer:00000000 $d
+     /tmp/ccpwgW31.s:1723   .bss.RFBuffer:00000000 RFBuffer
+     /tmp/ccpwgW31.s:1726   .bss.PacketTimeout:00000000 $d
+     /tmp/ccpwgW31.s:1730   .bss.PacketTimeout:00000000 PacketTimeout
+     /tmp/ccpwgW31.s:1733   .bss.Preamble2SyncTimer:00000000 $d
+     /tmp/ccpwgW31.s:1737   .bss.Preamble2SyncTimer:00000000 Preamble2SyncTimer
+     /tmp/ccpwgW31.s:1740   .bss.RxPacketAfcValue:00000000 $d
+     /tmp/ccpwgW31.s:1744   .bss.RxPacketAfcValue:00000000 RxPacketAfcValue
+     /tmp/ccpwgW31.s:1747   .bss.RxPacketSize:00000000 $d
+     /tmp/ccpwgW31.s:1751   .bss.RxPacketSize:00000000 RxPacketSize
+     /tmp/ccpwgW31.s:1757   .data.RxGain:00000000 RxGain
+     /tmp/ccpwgW31.s:1763   .bss.TxBytesSent:00000000 TxBytesSent
+     /tmp/ccpwgW31.s:1764   .bss.TxBytesSent:00000000 $d
+     /tmp/ccpwgW31.s:1766   .bss.TxTimeoutTimer:00000000 $d
+     /tmp/ccpwgW31.s:1770   .bss.TxTimeoutTimer:00000000 TxTimeoutTimer
+     /tmp/ccpwgW31.s:1773   .bss.Preamble2SyncTimeout:00000000 $d
+     /tmp/ccpwgW31.s:1777   .bss.Preamble2SyncTimeout:00000000 Preamble2SyncTimeout
+     /tmp/ccpwgW31.s:1780   .bss.TxPacketSize:00000000 $d
+     /tmp/ccpwgW31.s:1784   .bss.TxPacketSize:00000000 TxPacketSize
+     /tmp/ccpwgW31.s:1787   .bss.RxPacketRssiValue:00000000 $d
+     /tmp/ccpwgW31.s:1791   .bss.RxPacketRssiValue:00000000 RxPacketRssiValue
+     /tmp/ccpwgW31.s:1797   .bss.PreambleDetected:00000000 PreambleDetected
+     /tmp/ccpwgW31.s:1798   .bss.PreambleDetected:00000000 $d
+     /tmp/ccpwgW31.s:1803   .data.antennaSwitchTxOnPrev.7727:00000000 antennaSwitchTxOnPrev.7727
+     /tmp/ccpwgW31.s:1809   .bss.RFState:00000000 RFState
+     /tmp/ccpwgW31.s:1810   .bss.RFState:00000000 $d
+     /tmp/ccpwgW31.s:1815   .bss.RxBytesRead:00000000 RxBytesRead
+     /tmp/ccpwgW31.s:1816   .bss.RxBytesRead:00000000 $d
+     /tmp/ccpwgW31.s:1818   .data.FskSettings:00000000 $d
+     /tmp/ccpwgW31.s:1838   .data.DataChunkSize:00000000 DataChunkSize
+     /tmp/ccpwgW31.s:1844   .bss.PacketDetected:00000000 PacketDetected
+     /tmp/ccpwgW31.s:1845   .bss.PacketDetected:00000000 $d
+     /tmp/ccpwgW31.s:1847   .bss.RxTimeoutTimer:00000000 $d
+     /tmp/ccpwgW31.s:1851   .bss.RxTimeoutTimer:00000000 RxTimeoutTimer
+     /tmp/ccpwgW31.s:1857   .bss.SyncWordDetected:00000000 SyncWordDetected
+     /tmp/ccpwgW31.s:1858   .bss.SyncWordDetected:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+SX1276Read
+SX1276WriteRxTx
+SX1276Write
+SX1276ReadBuffer
+SX1276FskGetPacketCrcOn
+SX1276WriteBuffer
+SX1276FskSetRFFrequency
+SX1276FskSetBitrate
+SX1276FskSetFdev
+SX1276FskSetDccBw
+SX1276FskSetRssiOffset
+ARM GAS  /tmp/ccpwgW31.s 			page 47
+
+
+SX1276FskSetPAOutput
+SX1276FskSetPa20dBm
+SX1276FskSetRFPower
+SX1276FskRxCalibrate
+SX1276Regs
+__aeabi_i2d
+__aeabi_dmul
+__aeabi_d2iz
+__aeabi_ui2d
+memcpy
+__aeabi_ddiv
+__aeabi_dadd
+__aeabi_d2uiz
+memset
+round
+HAL_GetTick
+SX1276ReadDio4
+SX1276ReadDio2
+SX1276ReadDio1
+SX1276ReadFifo
+SX1276ReadDio0
+SX1276ReadDio3
+SX1276WriteFifo

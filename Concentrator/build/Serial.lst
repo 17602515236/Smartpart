@@ -1,0 +1,398 @@
+ARM GAS  /tmp/ccXfg5Ui.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"Serial.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.new_Serial,"ax",%progbits
+  20              		.align	2
+  21              		.global	new_Serial
+  22              		.thumb
+  23              		.thumb_func
+  25              	new_Serial:
+  26              	.LFB64:
+  27              		.file 1 "app/Serial.c"
+   1:app/Serial.c  **** #include "Serial.h"
+   2:app/Serial.c  **** #include "string.h" 
+   3:app/Serial.c  **** 
+   4:app/Serial.c  **** void new_Serial(Serial_Handle *obj,UART_HandleTypeDef *huart)
+   5:app/Serial.c  **** {
+  28              		.loc 1 5 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 38B5     		push	{r3, r4, r5, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 16
+  36              		.cfi_offset 3, -16
+  37              		.cfi_offset 4, -12
+  38              		.cfi_offset 5, -8
+  39              		.cfi_offset 14, -4
+  40 0002 0446     		mov	r4, r0
+  41 0004 0D46     		mov	r5, r1
+   6:app/Serial.c  ****     memset(obj,0,sizeof(Serial_Handle));
+  42              		.loc 1 6 0
+  43 0006 8822     		movs	r2, #136
+  44 0008 0021     		movs	r1, #0
+  45              	.LVL1:
+  46 000a FFF7FEFF 		bl	memset
+  47              	.LVL2:
+   7:app/Serial.c  ****     obj->huart = huart;
+  48              		.loc 1 7 0
+  49 000e 2560     		str	r5, [r4]
+   8:app/Serial.c  ****     obj->DMA_Receive_Flags = Serial_No_Data;
+  50              		.loc 1 8 0
+ARM GAS  /tmp/ccXfg5Ui.s 			page 2
+
+
+  51 0010 0123     		movs	r3, #1
+  52 0012 2371     		strb	r3, [r4, #4]
+   9:app/Serial.c  ****     obj->DMA_Running_Flags = DMA_Stopping;
+  53              		.loc 1 9 0
+  54 0014 0323     		movs	r3, #3
+  55 0016 6371     		strb	r3, [r4, #5]
+  56 0018 38BD     		pop	{r3, r4, r5, pc}
+  57              		.cfi_endproc
+  58              	.LFE64:
+  60 001a 00BF     		.section	.text.Serial_Start_DMA_Receive,"ax",%progbits
+  61              		.align	2
+  62              		.global	Serial_Start_DMA_Receive
+  63              		.thumb
+  64              		.thumb_func
+  66              	Serial_Start_DMA_Receive:
+  67              	.LFB65:
+  10:app/Serial.c  **** }
+  11:app/Serial.c  **** 
+  12:app/Serial.c  **** void Serial_Start_DMA_Receive(Serial_Handle *obj)
+  13:app/Serial.c  **** {
+  68              		.loc 1 13 0
+  69              		.cfi_startproc
+  70              		@ args = 0, pretend = 0, frame = 0
+  71              		@ frame_needed = 0, uses_anonymous_args = 0
+  72              	.LVL3:
+  73 0000 38B5     		push	{r3, r4, r5, lr}
+  74              	.LCFI1:
+  75              		.cfi_def_cfa_offset 16
+  76              		.cfi_offset 3, -16
+  77              		.cfi_offset 4, -12
+  78              		.cfi_offset 5, -8
+  79              		.cfi_offset 14, -4
+  80 0002 0446     		mov	r4, r0
+  14:app/Serial.c  ****     memset(obj->Receive_Buff,0,Buff_Size);
+  81              		.loc 1 14 0
+  82 0004 851D     		adds	r5, r0, #6
+  83 0006 8022     		movs	r2, #128
+  84 0008 0021     		movs	r1, #0
+  85 000a 2846     		mov	r0, r5
+  86              	.LVL4:
+  87 000c FFF7FEFF 		bl	memset
+  88              	.LVL5:
+  15:app/Serial.c  ****     obj->DMA_Receive_Flags = Serial_No_Data;
+  89              		.loc 1 15 0
+  90 0010 0123     		movs	r3, #1
+  91 0012 2371     		strb	r3, [r4, #4]
+  16:app/Serial.c  ****     if(obj->DMA_Running_Flags == DMA_Stopping)
+  92              		.loc 1 16 0
+  93 0014 6379     		ldrb	r3, [r4, #5]	@ zero_extendqisi2
+  94 0016 032B     		cmp	r3, #3
+  95 0018 11D1     		bne	.L3
+  17:app/Serial.c  ****     {
+  18:app/Serial.c  ****         obj->DMA_Running_Flags = DMA_Running;
+  96              		.loc 1 18 0
+  97 001a 0223     		movs	r3, #2
+  98 001c 6371     		strb	r3, [r4, #5]
+  19:app/Serial.c  ****         __HAL_UART_CLEAR_FLAG(obj->huart, UART_FLAG_IDLE);
+ARM GAS  /tmp/ccXfg5Ui.s 			page 3
+
+
+  99              		.loc 1 19 0
+ 100 001e 2368     		ldr	r3, [r4]
+ 101 0020 1B68     		ldr	r3, [r3]
+ 102 0022 6FF01002 		mvn	r2, #16
+ 103 0026 1A60     		str	r2, [r3]
+  20:app/Serial.c  ****         __HAL_UART_ENABLE_IT(obj->huart, UART_IT_IDLE);
+ 104              		.loc 1 20 0
+ 105 0028 2368     		ldr	r3, [r4]
+ 106 002a 1A68     		ldr	r2, [r3]
+ 107 002c D368     		ldr	r3, [r2, #12]
+ 108 002e 43F01003 		orr	r3, r3, #16
+ 109 0032 D360     		str	r3, [r2, #12]
+  21:app/Serial.c  ****         HAL_UART_Receive_DMA(obj->huart, obj->Receive_Buff, Buff_Size);
+ 110              		.loc 1 21 0
+ 111 0034 8022     		movs	r2, #128
+ 112 0036 2946     		mov	r1, r5
+ 113 0038 2068     		ldr	r0, [r4]
+ 114 003a FFF7FEFF 		bl	HAL_UART_Receive_DMA
+ 115              	.LVL6:
+ 116              	.L3:
+ 117 003e 38BD     		pop	{r3, r4, r5, pc}
+ 118              		.cfi_endproc
+ 119              	.LFE65:
+ 121              		.section	.text.Serial_Stop_DMA_Receive,"ax",%progbits
+ 122              		.align	2
+ 123              		.global	Serial_Stop_DMA_Receive
+ 124              		.thumb
+ 125              		.thumb_func
+ 127              	Serial_Stop_DMA_Receive:
+ 128              	.LFB66:
+  22:app/Serial.c  ****     }
+  23:app/Serial.c  **** }
+  24:app/Serial.c  **** void Serial_Stop_DMA_Receive(Serial_Handle *obj)
+  25:app/Serial.c  **** {
+ 129              		.loc 1 25 0
+ 130              		.cfi_startproc
+ 131              		@ args = 0, pretend = 0, frame = 0
+ 132              		@ frame_needed = 0, uses_anonymous_args = 0
+ 133              	.LVL7:
+ 134 0000 08B5     		push	{r3, lr}
+ 135              	.LCFI2:
+ 136              		.cfi_def_cfa_offset 8
+ 137              		.cfi_offset 3, -8
+ 138              		.cfi_offset 14, -4
+  26:app/Serial.c  ****     obj->DMA_Receive_Flags = Serial_No_Data;
+ 139              		.loc 1 26 0
+ 140 0002 0123     		movs	r3, #1
+ 141 0004 0371     		strb	r3, [r0, #4]
+  27:app/Serial.c  ****     if(obj->DMA_Running_Flags == DMA_Running)
+ 142              		.loc 1 27 0
+ 143 0006 4379     		ldrb	r3, [r0, #5]	@ zero_extendqisi2
+ 144 0008 022B     		cmp	r3, #2
+ 145 000a 04D1     		bne	.L6
+  28:app/Serial.c  ****     {
+  29:app/Serial.c  ****         obj->DMA_Running_Flags = DMA_Stopping;
+ 146              		.loc 1 29 0
+ 147 000c 0323     		movs	r3, #3
+ARM GAS  /tmp/ccXfg5Ui.s 			page 4
+
+
+ 148 000e 4371     		strb	r3, [r0, #5]
+  30:app/Serial.c  ****         HAL_UART_DMAStop(obj->huart);
+ 149              		.loc 1 30 0
+ 150 0010 0068     		ldr	r0, [r0]
+ 151              	.LVL8:
+ 152 0012 FFF7FEFF 		bl	HAL_UART_DMAStop
+ 153              	.LVL9:
+ 154              	.L6:
+ 155 0016 08BD     		pop	{r3, pc}
+ 156              		.cfi_endproc
+ 157              	.LFE66:
+ 159              		.section	.text.Serial_Get_Running_Flags,"ax",%progbits
+ 160              		.align	2
+ 161              		.global	Serial_Get_Running_Flags
+ 162              		.thumb
+ 163              		.thumb_func
+ 165              	Serial_Get_Running_Flags:
+ 166              	.LFB67:
+  31:app/Serial.c  ****     }
+  32:app/Serial.c  **** }
+  33:app/Serial.c  **** 
+  34:app/Serial.c  **** int Serial_Get_Running_Flags(Serial_Handle *obj)
+  35:app/Serial.c  **** {
+ 167              		.loc 1 35 0
+ 168              		.cfi_startproc
+ 169              		@ args = 0, pretend = 0, frame = 0
+ 170              		@ frame_needed = 0, uses_anonymous_args = 0
+ 171              		@ link register save eliminated.
+ 172              	.LVL10:
+  36:app/Serial.c  ****     return obj->DMA_Running_Flags;
+  37:app/Serial.c  **** }
+ 173              		.loc 1 37 0
+ 174 0000 4079     		ldrb	r0, [r0, #5]	@ zero_extendqisi2
+ 175              	.LVL11:
+ 176 0002 7047     		bx	lr
+ 177              		.cfi_endproc
+ 178              	.LFE67:
+ 180              		.section	.text.Serial_Get_Receive_Flags,"ax",%progbits
+ 181              		.align	2
+ 182              		.global	Serial_Get_Receive_Flags
+ 183              		.thumb
+ 184              		.thumb_func
+ 186              	Serial_Get_Receive_Flags:
+ 187              	.LFB68:
+  38:app/Serial.c  **** 
+  39:app/Serial.c  **** int Serial_Get_Receive_Flags(Serial_Handle *obj)
+  40:app/Serial.c  **** {
+ 188              		.loc 1 40 0
+ 189              		.cfi_startproc
+ 190              		@ args = 0, pretend = 0, frame = 0
+ 191              		@ frame_needed = 0, uses_anonymous_args = 0
+ 192              		@ link register save eliminated.
+ 193              	.LVL12:
+  41:app/Serial.c  ****     return obj->DMA_Receive_Flags;
+  42:app/Serial.c  **** }
+ 194              		.loc 1 42 0
+ 195 0000 0079     		ldrb	r0, [r0, #4]	@ zero_extendqisi2
+ARM GAS  /tmp/ccXfg5Ui.s 			page 5
+
+
+ 196              	.LVL13:
+ 197 0002 7047     		bx	lr
+ 198              		.cfi_endproc
+ 199              	.LFE68:
+ 201              		.section	.text.Serial_Get_Receive_Buff,"ax",%progbits
+ 202              		.align	2
+ 203              		.global	Serial_Get_Receive_Buff
+ 204              		.thumb
+ 205              		.thumb_func
+ 207              	Serial_Get_Receive_Buff:
+ 208              	.LFB69:
+  43:app/Serial.c  **** 
+  44:app/Serial.c  **** uint8_t *Serial_Get_Receive_Buff(Serial_Handle *obj)
+  45:app/Serial.c  **** {
+ 209              		.loc 1 45 0
+ 210              		.cfi_startproc
+ 211              		@ args = 0, pretend = 0, frame = 0
+ 212              		@ frame_needed = 0, uses_anonymous_args = 0
+ 213              		@ link register save eliminated.
+ 214              	.LVL14:
+  46:app/Serial.c  ****     return obj->Receive_Buff;
+  47:app/Serial.c  **** }
+ 215              		.loc 1 47 0
+ 216 0000 0630     		adds	r0, r0, #6
+ 217              	.LVL15:
+ 218 0002 7047     		bx	lr
+ 219              		.cfi_endproc
+ 220              	.LFE69:
+ 222              		.section	.text.Serial_Get_Receive_Len,"ax",%progbits
+ 223              		.align	2
+ 224              		.global	Serial_Get_Receive_Len
+ 225              		.thumb
+ 226              		.thumb_func
+ 228              	Serial_Get_Receive_Len:
+ 229              	.LFB70:
+  48:app/Serial.c  **** 
+  49:app/Serial.c  **** uint16_t Serial_Get_Receive_Len(Serial_Handle *obj)
+  50:app/Serial.c  **** {
+ 230              		.loc 1 50 0
+ 231              		.cfi_startproc
+ 232              		@ args = 0, pretend = 0, frame = 0
+ 233              		@ frame_needed = 0, uses_anonymous_args = 0
+ 234              		@ link register save eliminated.
+ 235              	.LVL16:
+  51:app/Serial.c  ****     return obj->Receive_Len;
+  52:app/Serial.c  **** }
+ 236              		.loc 1 52 0
+ 237 0000 B0F88600 		ldrh	r0, [r0, #134]
+ 238              	.LVL17:
+ 239 0004 7047     		bx	lr
+ 240              		.cfi_endproc
+ 241              	.LFE70:
+ 243 0006 00BF     		.section	.text.Serial_Interrupt_Process,"ax",%progbits
+ 244              		.align	2
+ 245              		.global	Serial_Interrupt_Process
+ 246              		.thumb
+ 247              		.thumb_func
+ARM GAS  /tmp/ccXfg5Ui.s 			page 6
+
+
+ 249              	Serial_Interrupt_Process:
+ 250              	.LFB71:
+  53:app/Serial.c  **** 
+  54:app/Serial.c  **** void Serial_Interrupt_Process(Serial_Handle *obj)
+  55:app/Serial.c  **** {
+ 251              		.loc 1 55 0
+ 252              		.cfi_startproc
+ 253              		@ args = 0, pretend = 0, frame = 0
+ 254              		@ frame_needed = 0, uses_anonymous_args = 0
+ 255              		@ link register save eliminated.
+ 256              	.LVL18:
+  56:app/Serial.c  ****     __HAL_UART_CLEAR_FLAG(obj->huart,UART_FLAG_RXNE);
+ 257              		.loc 1 56 0
+ 258 0000 0368     		ldr	r3, [r0]
+ 259 0002 1B68     		ldr	r3, [r3]
+ 260 0004 6FF02002 		mvn	r2, #32
+ 261 0008 1A60     		str	r2, [r3]
+  57:app/Serial.c  ****     if(__HAL_UART_GET_FLAG(obj->huart,UART_FLAG_IDLE))
+ 262              		.loc 1 57 0
+ 263 000a 0368     		ldr	r3, [r0]
+ 264 000c 1B68     		ldr	r3, [r3]
+ 265 000e 1A68     		ldr	r2, [r3]
+ 266 0010 12F0100F 		tst	r2, #16
+ 267 0014 14D0     		beq	.L13
+  58:app/Serial.c  ****     {
+  59:app/Serial.c  ****         __HAL_UART_CLEAR_FLAG(obj->huart, UART_FLAG_IDLE);
+ 268              		.loc 1 59 0
+ 269 0016 6FF01002 		mvn	r2, #16
+ 270 001a 1A60     		str	r2, [r3]
+  60:app/Serial.c  ****         obj->Receive_Len = obj->huart->Instance->SR;
+ 271              		.loc 1 60 0
+ 272 001c 0368     		ldr	r3, [r0]
+ 273 001e 1A68     		ldr	r2, [r3]
+ 274 0020 1268     		ldr	r2, [r2]
+ 275 0022 A0F88620 		strh	r2, [r0, #134]	@ movhi
+  61:app/Serial.c  ****         obj->Receive_Len = obj->huart->Instance->DR;
+ 276              		.loc 1 61 0
+ 277 0026 1A68     		ldr	r2, [r3]
+ 278 0028 5268     		ldr	r2, [r2, #4]
+ 279 002a A0F88620 		strh	r2, [r0, #134]	@ movhi
+  62:app/Serial.c  ****         obj->Receive_Len = Buff_Size - obj->huart->hdmarx->Instance->CNDTR;
+ 280              		.loc 1 62 0
+ 281 002e 5B6B     		ldr	r3, [r3, #52]
+ 282 0030 1B68     		ldr	r3, [r3]
+ 283 0032 5B68     		ldr	r3, [r3, #4]
+ 284 0034 C3F18003 		rsb	r3, r3, #128
+ 285 0038 A0F88630 		strh	r3, [r0, #134]	@ movhi
+  63:app/Serial.c  ****         obj->DMA_Receive_Flags = Serial_Data_Ready;
+ 286              		.loc 1 63 0
+ 287 003c 0023     		movs	r3, #0
+ 288 003e 0371     		strb	r3, [r0, #4]
+ 289              	.L13:
+ 290 0040 7047     		bx	lr
+ 291              		.cfi_endproc
+ 292              	.LFE71:
+ 294 0042 00BF     		.text
+ 295              	.Letext0:
+ARM GAS  /tmp/ccXfg5Ui.s 			page 7
+
+
+ 296              		.file 2 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/machine/_default_types.h"
+ 297              		.file 3 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/sys/_stdint.h"
+ 298              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 299              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 300              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ 301              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 302              		.file 8 "app/Serial.h"
+ 303              		.file 9 "Drivers/CMSIS/Include/core_cm3.h"
+ARM GAS  /tmp/ccXfg5Ui.s 			page 8
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 Serial.c
+     /tmp/ccXfg5Ui.s:20     .text.new_Serial:00000000 $t
+     /tmp/ccXfg5Ui.s:25     .text.new_Serial:00000000 new_Serial
+     /tmp/ccXfg5Ui.s:61     .text.Serial_Start_DMA_Receive:00000000 $t
+     /tmp/ccXfg5Ui.s:66     .text.Serial_Start_DMA_Receive:00000000 Serial_Start_DMA_Receive
+     /tmp/ccXfg5Ui.s:122    .text.Serial_Stop_DMA_Receive:00000000 $t
+     /tmp/ccXfg5Ui.s:127    .text.Serial_Stop_DMA_Receive:00000000 Serial_Stop_DMA_Receive
+     /tmp/ccXfg5Ui.s:160    .text.Serial_Get_Running_Flags:00000000 $t
+     /tmp/ccXfg5Ui.s:165    .text.Serial_Get_Running_Flags:00000000 Serial_Get_Running_Flags
+     /tmp/ccXfg5Ui.s:181    .text.Serial_Get_Receive_Flags:00000000 $t
+     /tmp/ccXfg5Ui.s:186    .text.Serial_Get_Receive_Flags:00000000 Serial_Get_Receive_Flags
+     /tmp/ccXfg5Ui.s:202    .text.Serial_Get_Receive_Buff:00000000 $t
+     /tmp/ccXfg5Ui.s:207    .text.Serial_Get_Receive_Buff:00000000 Serial_Get_Receive_Buff
+     /tmp/ccXfg5Ui.s:223    .text.Serial_Get_Receive_Len:00000000 $t
+     /tmp/ccXfg5Ui.s:228    .text.Serial_Get_Receive_Len:00000000 Serial_Get_Receive_Len
+     /tmp/ccXfg5Ui.s:244    .text.Serial_Interrupt_Process:00000000 $t
+     /tmp/ccXfg5Ui.s:249    .text.Serial_Interrupt_Process:00000000 Serial_Interrupt_Process
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+memset
+HAL_UART_Receive_DMA
+HAL_UART_DMAStop

@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                "${workspaceFolder}/Inc/",
+                "${workspaceFolder}/app/",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                "${workspaceFolder}/Drivers/STM32F1xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/include",
+                "${workspaceFolder}/MQTTPacket/src"
+            ],
+            "defines": [
+                "STM32F103xE",
+                "PLATFORM=SX12xxEiger"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

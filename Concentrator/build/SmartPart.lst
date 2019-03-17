@@ -1,0 +1,318 @@
+ARM GAS  /tmp/ccz7AVXh.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"SmartPart.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.Lora_Process_Task,"ax",%progbits
+  20              		.align	2
+  21              		.global	Lora_Process_Task
+  22              		.thumb
+  23              		.thumb_func
+  25              	Lora_Process_Task:
+  26              	.LFB69:
+  27              		.file 1 "app/SmartPart.c"
+   1:app/SmartPart.c **** #include "SmartPart.h"
+   2:app/SmartPart.c **** #include "gpio.h"
+   3:app/SmartPart.c **** #include "FreeRTOS.h"
+   4:app/SmartPart.c **** #include "task.h"
+   5:app/SmartPart.c **** #include "Ra02.h"
+   6:app/SmartPart.c **** #include <stdio.h>
+   7:app/SmartPart.c **** #include <string.h>
+   8:app/SmartPart.c **** Network_Adapter *Adapter = NULL;
+   9:app/SmartPart.c **** 
+  10:app/SmartPart.c **** uint8_t Lora_Buff[64];
+  11:app/SmartPart.c **** void Lora_Process_Task(void *Para)
+  12:app/SmartPart.c **** {
+  28              		.loc 1 12 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 08B5     		push	{r3, lr}
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+  36              		.cfi_offset 3, -8
+  37              		.cfi_offset 14, -4
+  38              	.LVL1:
+  39              	.L2:
+  13:app/SmartPart.c ****     uint16_t count=0;
+  14:app/SmartPart.c ****     while(1)
+  15:app/SmartPart.c ****     {
+  16:app/SmartPart.c ****         if(Adapter->Get_Network_Status() == CONNECT_SERVER)
+  40              		.loc 1 16 0
+  41 0002 0A4B     		ldr	r3, .L6
+  42 0004 1B68     		ldr	r3, [r3]
+ARM GAS  /tmp/ccz7AVXh.s 			page 2
+
+
+  43 0006 DB69     		ldr	r3, [r3, #28]
+  44 0008 9847     		blx	r3
+  45              	.LVL2:
+  46 000a 0228     		cmp	r0, #2
+  47 000c F9D1     		bne	.L2
+  17:app/SmartPart.c ****         {
+  18:app/SmartPart.c ****             if ((count = Lora_Wait_Package(Lora_Buff,0xFFFF)) > 0)
+  48              		.loc 1 18 0
+  49 000e 4FF6FF71 		movw	r1, #65535
+  50 0012 0748     		ldr	r0, .L6+4
+  51 0014 FFF7FEFF 		bl	Lora_Wait_Package
+  52              	.LVL3:
+  53 0018 83B2     		uxth	r3, r0
+  54              	.LVL4:
+  55 001a 002B     		cmp	r3, #0
+  56 001c F1D0     		beq	.L2
+  19:app/SmartPart.c ****                 Adapter->write(Lora_Buff, count);
+  57              		.loc 1 19 0
+  58 001e 034B     		ldr	r3, .L6
+  59              	.LVL5:
+  60 0020 1B68     		ldr	r3, [r3]
+  61 0022 1B69     		ldr	r3, [r3, #16]
+  62 0024 81B2     		uxth	r1, r0
+  63              	.LVL6:
+  64 0026 0248     		ldr	r0, .L6+4
+  65 0028 9847     		blx	r3
+  66              	.LVL7:
+  67 002a EAE7     		b	.L2
+  68              	.L7:
+  69              		.align	2
+  70              	.L6:
+  71 002c 00000000 		.word	.LANCHOR0
+  72 0030 00000000 		.word	Lora_Buff
+  73              		.cfi_endproc
+  74              	.LFE69:
+  76              		.section	.text.Server_Lora_Task,"ax",%progbits
+  77              		.align	2
+  78              		.global	Server_Lora_Task
+  79              		.thumb
+  80              		.thumb_func
+  82              	Server_Lora_Task:
+  83              	.LFB70:
+  20:app/SmartPart.c ****         }
+  21:app/SmartPart.c ****     }
+  22:app/SmartPart.c **** }
+  23:app/SmartPart.c **** 
+  24:app/SmartPart.c **** uint8_t Buff[128];
+  25:app/SmartPart.c **** void Server_Lora_Task(void *Para)
+  26:app/SmartPart.c **** {
+  84              		.loc 1 26 0
+  85              		.cfi_startproc
+  86              		@ args = 0, pretend = 0, frame = 0
+  87              		@ frame_needed = 0, uses_anonymous_args = 0
+  88              	.LVL8:
+  89 0000 08B5     		push	{r3, lr}
+  90              	.LCFI1:
+  91              		.cfi_def_cfa_offset 8
+ARM GAS  /tmp/ccz7AVXh.s 			page 3
+
+
+  92              		.cfi_offset 3, -8
+  93              		.cfi_offset 14, -4
+  94              	.LVL9:
+  27:app/SmartPart.c ****     int bytes = 0;
+  28:app/SmartPart.c ****     if (Adapter->Get_Network_Status() == CONNECT_SERVER)
+  95              		.loc 1 28 0
+  96 0002 0A4B     		ldr	r3, .L11
+  97 0004 1B68     		ldr	r3, [r3]
+  98 0006 DB69     		ldr	r3, [r3, #28]
+  99 0008 9847     		blx	r3
+ 100              	.LVL10:
+ 101 000a 0228     		cmp	r0, #2
+ 102 000c 0DD1     		bne	.L8
+  29:app/SmartPart.c ****     {
+  30:app/SmartPart.c ****         if ((bytes = Adapter->read_nb(Buff, 128)) > 0)
+ 103              		.loc 1 30 0
+ 104 000e 074B     		ldr	r3, .L11
+ 105 0010 1B68     		ldr	r3, [r3]
+ 106 0012 5B69     		ldr	r3, [r3, #20]
+ 107 0014 8021     		movs	r1, #128
+ 108 0016 0648     		ldr	r0, .L11+4
+ 109 0018 9847     		blx	r3
+ 110              	.LVL11:
+ 111 001a 011E     		subs	r1, r0, #0
+ 112 001c 05DD     		ble	.L8
+  31:app/SmartPart.c ****             Transmit_Package(Buff,bytes,500,3);
+ 113              		.loc 1 31 0
+ 114 001e 0323     		movs	r3, #3
+ 115 0020 4FF4FA72 		mov	r2, #500
+ 116 0024 0248     		ldr	r0, .L11+4
+ 117              	.LVL12:
+ 118 0026 FFF7FEFF 		bl	Transmit_Package
+ 119              	.LVL13:
+ 120              	.L8:
+ 121 002a 08BD     		pop	{r3, pc}
+ 122              	.L12:
+ 123              		.align	2
+ 124              	.L11:
+ 125 002c 00000000 		.word	.LANCHOR0
+ 126 0030 00000000 		.word	Buff
+ 127              		.cfi_endproc
+ 128              	.LFE70:
+ 130              		.section	.text.SmartPart_Task,"ax",%progbits
+ 131              		.align	2
+ 132              		.global	SmartPart_Task
+ 133              		.thumb
+ 134              		.thumb_func
+ 136              	SmartPart_Task:
+ 137              	.LFB71:
+  32:app/SmartPart.c ****     }
+  33:app/SmartPart.c **** }
+  34:app/SmartPart.c **** void SmartPart_Task(void *param)
+  35:app/SmartPart.c **** {
+ 138              		.loc 1 35 0
+ 139              		.cfi_startproc
+ 140              		@ Volatile: function does not return.
+ 141              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  /tmp/ccz7AVXh.s 			page 4
+
+
+ 142              		@ frame_needed = 0, uses_anonymous_args = 0
+ 143              	.LVL14:
+ 144 0000 00B5     		push	{lr}
+ 145              	.LCFI2:
+ 146              		.cfi_def_cfa_offset 4
+ 147              		.cfi_offset 14, -4
+ 148 0002 83B0     		sub	sp, sp, #12
+ 149              	.LCFI3:
+ 150              		.cfi_def_cfa_offset 16
+  36:app/SmartPart.c ****     // const unsigned char *str="OK\n";
+  37:app/SmartPart.c ****     Adapter = Network_Adapter_Init();
+ 151              		.loc 1 37 0
+ 152 0004 FFF7FEFF 		bl	Network_Adapter_Init
+ 153              	.LVL15:
+ 154 0008 124B     		ldr	r3, .L18
+ 155 000a 1860     		str	r0, [r3]
+  38:app/SmartPart.c ****     xTaskCreate(Lora_Process_Task, "Lora_Process_Task", 64, NULL, 8, NULL);
+ 156              		.loc 1 38 0
+ 157 000c 0023     		movs	r3, #0
+ 158 000e 0193     		str	r3, [sp, #4]
+ 159 0010 0822     		movs	r2, #8
+ 160 0012 0092     		str	r2, [sp]
+ 161 0014 4022     		movs	r2, #64
+ 162 0016 1049     		ldr	r1, .L18+4
+ 163 0018 1048     		ldr	r0, .L18+8
+ 164 001a FFF7FEFF 		bl	xTaskCreate
+ 165              	.LVL16:
+ 166              	.L15:
+  39:app/SmartPart.c ****     while(1)
+  40:app/SmartPart.c ****     {
+  41:app/SmartPart.c ****         if(Adapter->Get_Network_Status() == NOINIT)
+ 167              		.loc 1 41 0
+ 168 001e 0D4B     		ldr	r3, .L18
+ 169 0020 1B68     		ldr	r3, [r3]
+ 170 0022 DB69     		ldr	r3, [r3, #28]
+ 171 0024 9847     		blx	r3
+ 172              	.LVL17:
+ 173 0026 18B9     		cbnz	r0, .L14
+  42:app/SmartPart.c ****             Adapter->Init();
+ 174              		.loc 1 42 0
+ 175 0028 0A4B     		ldr	r3, .L18
+ 176 002a 1B68     		ldr	r3, [r3]
+ 177 002c 5B68     		ldr	r3, [r3, #4]
+ 178 002e 9847     		blx	r3
+ 179              	.LVL18:
+ 180              	.L14:
+  43:app/SmartPart.c ****         if (Adapter->Get_Network_Status() == GOT_IP)
+ 181              		.loc 1 43 0
+ 182 0030 084B     		ldr	r3, .L18
+ 183 0032 1B68     		ldr	r3, [r3]
+ 184 0034 DB69     		ldr	r3, [r3, #28]
+ 185 0036 9847     		blx	r3
+ 186              	.LVL19:
+ 187 0038 0128     		cmp	r0, #1
+ 188 003a F0D1     		bne	.L15
+  44:app/SmartPart.c ****             Adapter->UDP_Connect("47.106.129.185", 9008, 0, 5000);
+ 189              		.loc 1 44 0
+ARM GAS  /tmp/ccz7AVXh.s 			page 5
+
+
+ 190 003c 054B     		ldr	r3, .L18
+ 191 003e 1B68     		ldr	r3, [r3]
+ 192 0040 DC68     		ldr	r4, [r3, #12]
+ 193 0042 41F28833 		movw	r3, #5000
+ 194 0046 0022     		movs	r2, #0
+ 195 0048 42F23031 		movw	r1, #9008
+ 196 004c 0448     		ldr	r0, .L18+12
+ 197 004e A047     		blx	r4
+ 198              	.LVL20:
+ 199 0050 E5E7     		b	.L15
+ 200              	.L19:
+ 201 0052 00BF     		.align	2
+ 202              	.L18:
+ 203 0054 00000000 		.word	.LANCHOR0
+ 204 0058 00000000 		.word	.LC0
+ 205 005c 00000000 		.word	Lora_Process_Task
+ 206 0060 14000000 		.word	.LC1
+ 207              		.cfi_endproc
+ 208              	.LFE71:
+ 210              		.comm	Buff,128,4
+ 211              		.comm	Lora_Buff,64,4
+ 212              		.global	Adapter
+ 213              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 214              		.align	2
+ 215              	.LC0:
+ 216 0000 4C6F7261 		.ascii	"Lora_Process_Task\000"
+ 216      5F50726F 
+ 216      63657373 
+ 216      5F546173 
+ 216      6B00
+ 217 0012 0000     		.space	2
+ 218              	.LC1:
+ 219 0014 34372E31 		.ascii	"47.106.129.185\000"
+ 219      30362E31 
+ 219      32392E31 
+ 219      383500
+ 220              		.section	.bss.Adapter,"aw",%nobits
+ 221              		.align	2
+ 222              		.set	.LANCHOR0,. + 0
+ 225              	Adapter:
+ 226 0000 00000000 		.space	4
+ 227              		.text
+ 228              	.Letext0:
+ 229              		.file 2 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/machine/_default_types.h"
+ 230              		.file 3 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/sys/_stdint.h"
+ 231              		.file 4 "app/Network_Adapter.h"
+ 232              		.file 5 "Drivers/CMSIS/Include/core_cm3.h"
+ 233              		.file 6 "app/Ra02.h"
+ 234              		.file 7 "Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+ARM GAS  /tmp/ccz7AVXh.s 			page 6
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 SmartPart.c
+     /tmp/ccz7AVXh.s:20     .text.Lora_Process_Task:00000000 $t
+     /tmp/ccz7AVXh.s:25     .text.Lora_Process_Task:00000000 Lora_Process_Task
+     /tmp/ccz7AVXh.s:71     .text.Lora_Process_Task:0000002c $d
+                            *COM*:00000040 Lora_Buff
+     /tmp/ccz7AVXh.s:77     .text.Server_Lora_Task:00000000 $t
+     /tmp/ccz7AVXh.s:82     .text.Server_Lora_Task:00000000 Server_Lora_Task
+     /tmp/ccz7AVXh.s:125    .text.Server_Lora_Task:0000002c $d
+                            *COM*:00000080 Buff
+     /tmp/ccz7AVXh.s:131    .text.SmartPart_Task:00000000 $t
+     /tmp/ccz7AVXh.s:136    .text.SmartPart_Task:00000000 SmartPart_Task
+     /tmp/ccz7AVXh.s:203    .text.SmartPart_Task:00000054 $d
+     /tmp/ccz7AVXh.s:225    .bss.Adapter:00000000 Adapter
+     /tmp/ccz7AVXh.s:214    .rodata.str1.4:00000000 $d
+     /tmp/ccz7AVXh.s:221    .bss.Adapter:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+Lora_Wait_Package
+Transmit_Package
+Network_Adapter_Init
+xTaskCreate
