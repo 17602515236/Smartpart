@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccJA5iXs.s 			page 1
+ARM GAS  /tmp/ccGYjd8U.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
   29:platform/sx12xxEiger/sx1276-Hal.c **** #include "spi.h"
   30:platform/sx12xxEiger/sx1276-Hal.c **** #include "../../radio/sx1276-Hal.h"
   31:platform/sx12xxEiger/sx1276-Hal.c **** 
-ARM GAS  /tmp/ccJA5iXs.s 			page 2
+ARM GAS  /tmp/ccGYjd8U.s 			page 2
 
 
   32:platform/sx12xxEiger/sx1276-Hal.c **** /*!
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
   86:platform/sx12xxEiger/sx1276-Hal.c **** #define DIO2_IOPORT                                 GPIOA
   87:platform/sx12xxEiger/sx1276-Hal.c **** #define DIO2_PIN                                    GPIO_Pin_2
   88:platform/sx12xxEiger/sx1276-Hal.c **** #elif defined( STM32F429_439xx )
-ARM GAS  /tmp/ccJA5iXs.s 			page 3
+ARM GAS  /tmp/ccGYjd8U.s 			page 3
 
 
   89:platform/sx12xxEiger/sx1276-Hal.c **** #define DIO2_IOPORT                                 GPIOA
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
   43              	SX1276SetReset:
   44              	.LFB65:
  130:platform/sx12xxEiger/sx1276-Hal.c **** /*
-ARM GAS  /tmp/ccJA5iXs.s 			page 4
+ARM GAS  /tmp/ccGYjd8U.s 			page 4
 
 
  131:platform/sx12xxEiger/sx1276-Hal.c ****     GPIO_InitTypeDef GPIO_InitStructure;
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  185:platform/sx12xxEiger/sx1276-Hal.c **** void SX1276SetReset( uint8_t state )
  186:platform/sx12xxEiger/sx1276-Hal.c **** {
   45              		.loc 1 186 0
-ARM GAS  /tmp/ccJA5iXs.s 			page 5
+ARM GAS  /tmp/ccGYjd8U.s 			page 5
 
 
   46              		.cfi_startproc
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  226:platform/sx12xxEiger/sx1276-Hal.c **** {
  227:platform/sx12xxEiger/sx1276-Hal.c ****     SX1276WriteBuffer( addr, &data, 1 );
  228:platform/sx12xxEiger/sx1276-Hal.c **** }
-ARM GAS  /tmp/ccJA5iXs.s 			page 6
+ARM GAS  /tmp/ccGYjd8U.s 			page 6
 
 
  229:platform/sx12xxEiger/sx1276-Hal.c **** 
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  242:platform/sx12xxEiger/sx1276-Hal.c ****     for( i = 0; i < size; i++ )
  101              		.loc 1 242 0 discriminator 3
  102 0026 0134     		adds	r4, r4, #1
-ARM GAS  /tmp/ccJA5iXs.s 			page 7
+ARM GAS  /tmp/ccGYjd8U.s 			page 7
 
 
  103              	.LVL9:
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  152              	.LVL15:
  228:platform/sx12xxEiger/sx1276-Hal.c **** 
  153              		.loc 1 228 0
-ARM GAS  /tmp/ccJA5iXs.s 			page 8
+ARM GAS  /tmp/ccGYjd8U.s 			page 8
 
 
  154 0012 03B0     		add	sp, sp, #12
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  198              		.loc 1 260 0
  199 001c 0024     		movs	r4, #0
  200 001e 05E0     		b	.L12
-ARM GAS  /tmp/ccJA5iXs.s 			page 9
+ARM GAS  /tmp/ccGYjd8U.s 			page 9
 
 
  201              	.LVL22:
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  248              		.cfi_offset 3, -8
  249              		.cfi_offset 14, -4
  232:platform/sx12xxEiger/sx1276-Hal.c **** }
-ARM GAS  /tmp/ccJA5iXs.s 			page 10
+ARM GAS  /tmp/ccGYjd8U.s 			page 10
 
 
  250              		.loc 1 232 0
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  299              		@ frame_needed = 0, uses_anonymous_args = 0
  300              	.LVL34:
  301 0000 08B5     		push	{r3, lr}
-ARM GAS  /tmp/ccJA5iXs.s 			page 11
+ARM GAS  /tmp/ccGYjd8U.s 			page 11
 
 
  302              	.LCFI7:
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  351              		.global	SX1276ReadDio1
  352              		.thumb
  353              		.thumb_func
-ARM GAS  /tmp/ccJA5iXs.s 			page 12
+ARM GAS  /tmp/ccGYjd8U.s 			page 12
 
 
  355              	SX1276ReadDio1:
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  400 0008 FFF7FEFF 		bl	HAL_GPIO_ReadPin
  401              	.LVL40:
  295:platform/sx12xxEiger/sx1276-Hal.c **** }
-ARM GAS  /tmp/ccJA5iXs.s 			page 13
+ARM GAS  /tmp/ccGYjd8U.s 			page 13
 
 
  402              		.loc 1 295 0
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  449              		.section	.text.SX1276ReadDio5,"ax",%progbits
  450              		.align	2
  451              		.global	SX1276ReadDio5
-ARM GAS  /tmp/ccJA5iXs.s 			page 14
+ARM GAS  /tmp/ccGYjd8U.s 			page 14
 
 
  452              		.thumb
@@ -828,46 +828,46 @@ ARM GAS  /tmp/ccJA5iXs.s 			page 1
  491              		.file 5 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
  492              		.file 6 "Inc/spi.h"
  493              		.file 7 "Drivers/CMSIS/Include/core_cm3.h"
-ARM GAS  /tmp/ccJA5iXs.s 			page 15
+ARM GAS  /tmp/ccGYjd8U.s 			page 15
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sx1276-Hal.c
-     /tmp/ccJA5iXs.s:20     .text.SX1276InitIo:00000000 $t
-     /tmp/ccJA5iXs.s:25     .text.SX1276InitIo:00000000 SX1276InitIo
-     /tmp/ccJA5iXs.s:38     .text.SX1276SetReset:00000000 $t
-     /tmp/ccJA5iXs.s:43     .text.SX1276SetReset:00000000 SX1276SetReset
-     /tmp/ccJA5iXs.s:56     .text.SX1276WriteBuffer:00000000 $t
-     /tmp/ccJA5iXs.s:61     .text.SX1276WriteBuffer:00000000 SX1276WriteBuffer
-     /tmp/ccJA5iXs.s:121    .text.SX1276WriteBuffer:0000003c $d
-     /tmp/ccJA5iXs.s:126    .text.SX1276Write:00000000 $t
-     /tmp/ccJA5iXs.s:131    .text.SX1276Write:00000000 SX1276Write
-     /tmp/ccJA5iXs.s:163    .text.SX1276ReadBuffer:00000000 $t
-     /tmp/ccJA5iXs.s:168    .text.SX1276ReadBuffer:00000000 SX1276ReadBuffer
-     /tmp/ccJA5iXs.s:228    .text.SX1276ReadBuffer:00000040 $d
-     /tmp/ccJA5iXs.s:233    .text.SX1276Read:00000000 $t
-     /tmp/ccJA5iXs.s:238    .text.SX1276Read:00000000 SX1276Read
-     /tmp/ccJA5iXs.s:259    .text.SX1276WriteFifo:00000000 $t
-     /tmp/ccJA5iXs.s:264    .text.SX1276WriteFifo:00000000 SX1276WriteFifo
-     /tmp/ccJA5iXs.s:289    .text.SX1276ReadFifo:00000000 $t
-     /tmp/ccJA5iXs.s:294    .text.SX1276ReadFifo:00000000 SX1276ReadFifo
-     /tmp/ccJA5iXs.s:319    .text.SX1276ReadDio0:00000000 $t
-     /tmp/ccJA5iXs.s:324    .text.SX1276ReadDio0:00000000 SX1276ReadDio0
-     /tmp/ccJA5iXs.s:345    .text.SX1276ReadDio0:00000010 $d
-     /tmp/ccJA5iXs.s:350    .text.SX1276ReadDio1:00000000 $t
-     /tmp/ccJA5iXs.s:355    .text.SX1276ReadDio1:00000000 SX1276ReadDio1
-     /tmp/ccJA5iXs.s:376    .text.SX1276ReadDio1:00000010 $d
-     /tmp/ccJA5iXs.s:381    .text.SX1276ReadDio2:00000000 $t
-     /tmp/ccJA5iXs.s:386    .text.SX1276ReadDio2:00000000 SX1276ReadDio2
-     /tmp/ccJA5iXs.s:407    .text.SX1276ReadDio2:00000010 $d
-     /tmp/ccJA5iXs.s:412    .text.SX1276ReadDio3:00000000 $t
-     /tmp/ccJA5iXs.s:417    .text.SX1276ReadDio3:00000000 SX1276ReadDio3
-     /tmp/ccJA5iXs.s:431    .text.SX1276ReadDio4:00000000 $t
-     /tmp/ccJA5iXs.s:436    .text.SX1276ReadDio4:00000000 SX1276ReadDio4
-     /tmp/ccJA5iXs.s:450    .text.SX1276ReadDio5:00000000 $t
-     /tmp/ccJA5iXs.s:455    .text.SX1276ReadDio5:00000000 SX1276ReadDio5
-     /tmp/ccJA5iXs.s:469    .text.SX1276WriteRxTx:00000000 $t
-     /tmp/ccJA5iXs.s:474    .text.SX1276WriteRxTx:00000000 SX1276WriteRxTx
+     /tmp/ccGYjd8U.s:20     .text.SX1276InitIo:00000000 $t
+     /tmp/ccGYjd8U.s:25     .text.SX1276InitIo:00000000 SX1276InitIo
+     /tmp/ccGYjd8U.s:38     .text.SX1276SetReset:00000000 $t
+     /tmp/ccGYjd8U.s:43     .text.SX1276SetReset:00000000 SX1276SetReset
+     /tmp/ccGYjd8U.s:56     .text.SX1276WriteBuffer:00000000 $t
+     /tmp/ccGYjd8U.s:61     .text.SX1276WriteBuffer:00000000 SX1276WriteBuffer
+     /tmp/ccGYjd8U.s:121    .text.SX1276WriteBuffer:0000003c $d
+     /tmp/ccGYjd8U.s:126    .text.SX1276Write:00000000 $t
+     /tmp/ccGYjd8U.s:131    .text.SX1276Write:00000000 SX1276Write
+     /tmp/ccGYjd8U.s:163    .text.SX1276ReadBuffer:00000000 $t
+     /tmp/ccGYjd8U.s:168    .text.SX1276ReadBuffer:00000000 SX1276ReadBuffer
+     /tmp/ccGYjd8U.s:228    .text.SX1276ReadBuffer:00000040 $d
+     /tmp/ccGYjd8U.s:233    .text.SX1276Read:00000000 $t
+     /tmp/ccGYjd8U.s:238    .text.SX1276Read:00000000 SX1276Read
+     /tmp/ccGYjd8U.s:259    .text.SX1276WriteFifo:00000000 $t
+     /tmp/ccGYjd8U.s:264    .text.SX1276WriteFifo:00000000 SX1276WriteFifo
+     /tmp/ccGYjd8U.s:289    .text.SX1276ReadFifo:00000000 $t
+     /tmp/ccGYjd8U.s:294    .text.SX1276ReadFifo:00000000 SX1276ReadFifo
+     /tmp/ccGYjd8U.s:319    .text.SX1276ReadDio0:00000000 $t
+     /tmp/ccGYjd8U.s:324    .text.SX1276ReadDio0:00000000 SX1276ReadDio0
+     /tmp/ccGYjd8U.s:345    .text.SX1276ReadDio0:00000010 $d
+     /tmp/ccGYjd8U.s:350    .text.SX1276ReadDio1:00000000 $t
+     /tmp/ccGYjd8U.s:355    .text.SX1276ReadDio1:00000000 SX1276ReadDio1
+     /tmp/ccGYjd8U.s:376    .text.SX1276ReadDio1:00000010 $d
+     /tmp/ccGYjd8U.s:381    .text.SX1276ReadDio2:00000000 $t
+     /tmp/ccGYjd8U.s:386    .text.SX1276ReadDio2:00000000 SX1276ReadDio2
+     /tmp/ccGYjd8U.s:407    .text.SX1276ReadDio2:00000010 $d
+     /tmp/ccGYjd8U.s:412    .text.SX1276ReadDio3:00000000 $t
+     /tmp/ccGYjd8U.s:417    .text.SX1276ReadDio3:00000000 SX1276ReadDio3
+     /tmp/ccGYjd8U.s:431    .text.SX1276ReadDio4:00000000 $t
+     /tmp/ccGYjd8U.s:436    .text.SX1276ReadDio4:00000000 SX1276ReadDio4
+     /tmp/ccGYjd8U.s:450    .text.SX1276ReadDio5:00000000 $t
+     /tmp/ccGYjd8U.s:455    .text.SX1276ReadDio5:00000000 SX1276ReadDio5
+     /tmp/ccGYjd8U.s:469    .text.SX1276WriteRxTx:00000000 $t
+     /tmp/ccGYjd8U.s:474    .text.SX1276WriteRxTx:00000000 SX1276WriteRxTx
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

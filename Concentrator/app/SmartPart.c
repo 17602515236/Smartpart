@@ -16,7 +16,7 @@ void Lora_Process_Task(void *Para)
         if(Adapter->Get_Network_Status() == CONNECT_SERVER)
         {
             if ((count = Lora_Wait_Package(Lora_Buff,0xFFFF)) > 0)
-                Adapter->write(Lora_Buff, count);
+                Adapter->write(&Lora_Buff[1], count);
         }
     }
 }
@@ -35,6 +35,7 @@ void SmartPart_Task(void *param)
 {
     // const unsigned char *str="OK\n";
     Adapter = Network_Adapter_Init();
+    Lora_Init();
     xTaskCreate(Lora_Process_Task, "Lora_Process_Task", 64, NULL, 8, NULL);
     while(1)
     {

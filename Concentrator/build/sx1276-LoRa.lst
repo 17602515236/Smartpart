@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccLTOrtJ.s 			page 1
+ARM GAS  /tmp/ccKccuti.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
   29:radio/sx1276-LoRa.c **** #include "sx1276-Hal.h"
   30:radio/sx1276-LoRa.c **** #include "sx1276.h"
   31:radio/sx1276-LoRa.c **** 
-ARM GAS  /tmp/ccLTOrtJ.s 			page 2
+ARM GAS  /tmp/ccKccuti.s 			page 2
 
 
   32:radio/sx1276-LoRa.c **** #include "sx1276-LoRaMisc.h"
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
   86:radio/sx1276-LoRa.c ****     905500000,
   87:radio/sx1276-LoRa.c ****     916000000,
   88:radio/sx1276-LoRa.c ****     903000000,
-ARM GAS  /tmp/ccLTOrtJ.s 			page 3
+ARM GAS  /tmp/ccKccuti.s 			page 3
 
 
   89:radio/sx1276-LoRa.c ****     905000000,
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  143:radio/sx1276-LoRa.c ****  * PacketTimeout Stores the Rx window time value for packet reception
  144:radio/sx1276-LoRa.c ****  */
  145:radio/sx1276-LoRa.c **** static uint32_t PacketTimeout;
-ARM GAS  /tmp/ccLTOrtJ.s 			page 4
+ARM GAS  /tmp/ccKccuti.s 			page 4
 
 
  146:radio/sx1276-LoRa.c **** 
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  200:radio/sx1276-LoRa.c ****     {
  201:radio/sx1276-LoRa.c ****         SX1276LoRaSetPAOutput( RFLR_PACONFIG_PASELECT_RFO );
  202:radio/sx1276-LoRa.c ****         SX1276LoRaSetPa20dBm( false );
-ARM GAS  /tmp/ccLTOrtJ.s 			page 5
+ARM GAS  /tmp/ccKccuti.s 			page 5
 
 
  203:radio/sx1276-LoRa.c ****         LoRaSettings.Power = 14;
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
   67              		.cfi_offset 4, -8
   68              		.cfi_offset 14, -4
  220:radio/sx1276-LoRa.c ****     SX1276SetReset( RADIO_RESET_ON );
-ARM GAS  /tmp/ccLTOrtJ.s 			page 6
+ARM GAS  /tmp/ccKccuti.s 			page 6
 
 
   69              		.loc 1 220 0
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  233:radio/sx1276-LoRa.c **** void SX1276LoRaSetOpMode( uint8_t opMode )
  234:radio/sx1276-LoRa.c **** {
  113              		.loc 1 234 0
-ARM GAS  /tmp/ccLTOrtJ.s 			page 7
+ARM GAS  /tmp/ccKccuti.s 			page 7
 
 
  114              		.cfi_startproc
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  253:radio/sx1276-LoRa.c ****             antennaSwitchTxOnPrev = antennaSwitchTxOn;
  149              		.loc 1 253 0
  150 0024 0A4A     		ldr	r2, .L16+4
-ARM GAS  /tmp/ccLTOrtJ.s 			page 8
+ARM GAS  /tmp/ccKccuti.s 			page 8
 
 
  151 0026 1370     		strb	r3, [r2]
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  201              		.cfi_def_cfa_offset 8
  202              		.cfi_offset 4, -8
  203              		.cfi_offset 14, -4
-ARM GAS  /tmp/ccLTOrtJ.s 			page 9
+ARM GAS  /tmp/ccKccuti.s 			page 9
 
 
  154:radio/sx1276-LoRa.c **** 
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  248 0046 FFF7FEFF 		bl	SX1276LoRaSetSignalBandwidth
  249              	.LVL22:
  171:radio/sx1276-LoRa.c ****     SX1276LoRaSetSymbTimeout( 0x3FF );
-ARM GAS  /tmp/ccLTOrtJ.s 			page 10
+ARM GAS  /tmp/ccKccuti.s 			page 10
 
 
  250              		.loc 1 171 0
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  294              	.LVL31:
  188:radio/sx1276-LoRa.c ****         SX1276LoRaSetRFPower( LoRaSettings.Power );
  295              		.loc 1 188 0
-ARM GAS  /tmp/ccLTOrtJ.s 			page 11
+ARM GAS  /tmp/ccKccuti.s 			page 11
 
 
  296 008e 1420     		movs	r0, #20
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  266:radio/sx1276-LoRa.c ****     return SX1276LR->RegOpMode & ~RFLR_OPMODE_MASK;
  343              		.loc 1 266 0
  344 000e 2368     		ldr	r3, [r4]
-ARM GAS  /tmp/ccLTOrtJ.s 			page 12
+ARM GAS  /tmp/ccKccuti.s 			page 12
 
 
  345 0010 5878     		ldrb	r0, [r3, #1]	@ zero_extendqisi2
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  395              		.section	.text.SX1276LoRaReadRssi,"ax",%progbits
  396              		.align	2
  397              		.global	SX1276LoRaReadRssi
-ARM GAS  /tmp/ccLTOrtJ.s 			page 13
+ARM GAS  /tmp/ccKccuti.s 			page 13
 
 
  398              		.thumb
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  440 0030 D87E     		ldrb	r0, [r3, #27]	@ zero_extendqisi2
  441 0032 FFF7FEFF 		bl	__aeabi_ui2d
  442              	.LVL39:
-ARM GAS  /tmp/ccLTOrtJ.s 			page 14
+ARM GAS  /tmp/ccKccuti.s 			page 14
 
 
  443 0036 04A3     		adr	r3, .L36
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  294:radio/sx1276-LoRa.c **** 
  295:radio/sx1276-LoRa.c **** int8_t SX1276LoRaGetPacketSnr( void )
  296:radio/sx1276-LoRa.c **** {
-ARM GAS  /tmp/ccLTOrtJ.s 			page 15
+ARM GAS  /tmp/ccKccuti.s 			page 15
 
 
  493              		.loc 1 296 0
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  307:radio/sx1276-LoRa.c ****     SX1276LoRaSetRFState( RFLR_STATE_RX_INIT );
  308:radio/sx1276-LoRa.c **** }
  309:radio/sx1276-LoRa.c **** 
-ARM GAS  /tmp/ccLTOrtJ.s 			page 16
+ARM GAS  /tmp/ccKccuti.s 			page 16
 
 
  310:radio/sx1276-LoRa.c **** void SX1276LoRaGetRxPacket( void *buffer, uint16_t *size )
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  588              		.cfi_offset 3, -8
  589              		.cfi_offset 14, -4
  590 0002 0A46     		mov	r2, r1
-ARM GAS  /tmp/ccLTOrtJ.s 			page 17
+ARM GAS  /tmp/ccKccuti.s 			page 17
 
 
  319:radio/sx1276-LoRa.c ****     TxPacketSize = size;
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  637              	.LFE77:
  639              		.section	.text.SX1276LoRaSetRFState,"ax",%progbits
  640              		.align	2
-ARM GAS  /tmp/ccLTOrtJ.s 			page 18
+ARM GAS  /tmp/ccKccuti.s 			page 18
 
 
  641              		.global	SX1276LoRaSetRFState
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  693              		.align	2
  694              		.global	SX1276LoRaProcess
  695              		.thumb
-ARM GAS  /tmp/ccLTOrtJ.s 			page 19
+ARM GAS  /tmp/ccKccuti.s 			page 19
 
 
  696              		.thumb_func
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  349:radio/sx1276-LoRa.c ****     case RFLR_STATE_IDLE:
  350:radio/sx1276-LoRa.c ****         break;
  351:radio/sx1276-LoRa.c ****     case RFLR_STATE_RX_INIT:
-ARM GAS  /tmp/ccLTOrtJ.s 			page 20
+ARM GAS  /tmp/ccKccuti.s 			page 20
 
 
  352:radio/sx1276-LoRa.c ****         
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  770              	.LVL54:
  771 0068 04E0     		b	.L76
  772              	.L75:
-ARM GAS  /tmp/ccLTOrtJ.s 			page 21
+ARM GAS  /tmp/ccKccuti.s 			page 21
 
 
  371:radio/sx1276-LoRa.c ****         }
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  390:radio/sx1276-LoRa.c ****         else // Rx continuous mode
  391:radio/sx1276-LoRa.c ****         {
  392:radio/sx1276-LoRa.c ****             SX1276LR->RegFifoAddrPtr = SX1276LR->RegFifoRxBaseAddr;
-ARM GAS  /tmp/ccLTOrtJ.s 			page 22
+ARM GAS  /tmp/ccKccuti.s 			page 22
 
 
  808              		.loc 1 392 0
@@ -1318,7 +1318,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  847              		.loc 1 406 0
  848 00e0 FFF7FEFF 		bl	SX1276ReadDio0
  849              	.LVL62:
-ARM GAS  /tmp/ccLTOrtJ.s 			page 23
+ARM GAS  /tmp/ccKccuti.s 			page 23
 
 
  850 00e4 0128     		cmp	r0, #1
@@ -1378,7 +1378,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  419:radio/sx1276-LoRa.c ****         {
  420:radio/sx1276-LoRa.c ****             RxTimeoutTimer = GET_TICK_COUNT( );
  892              		.loc 1 420 0
-ARM GAS  /tmp/ccLTOrtJ.s 			page 24
+ARM GAS  /tmp/ccKccuti.s 			page 24
 
 
  893 012a FFF7FEFF 		bl	HAL_GetTick
@@ -1438,7 +1438,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  933              		.loc 1 434 0
  934 0170 FFF7FEFF 		bl	HAL_GetTick
  935              	.LVL73:
-ARM GAS  /tmp/ccLTOrtJ.s 			page 25
+ARM GAS  /tmp/ccKccuti.s 			page 25
 
 
  936 0174 524B     		ldr	r3, .L107+40
@@ -1498,7 +1498,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  974 01b4 3C4B     		ldr	r3, .L107+16
  975 01b6 1870     		strb	r0, [r3]
  976 01b8 D0E1     		b	.L64
-ARM GAS  /tmp/ccLTOrtJ.s 			page 26
+ARM GAS  /tmp/ccKccuti.s 			page 26
 
 
  977              	.L84:
@@ -1558,7 +1558,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1009              	.L86:
  1010              	.LBE2:
  471:radio/sx1276-LoRa.c ****             }
-ARM GAS  /tmp/ccLTOrtJ.s 			page 27
+ARM GAS  /tmp/ccKccuti.s 			page 27
 
 
  472:radio/sx1276-LoRa.c ****         }
@@ -1618,7 +1618,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1052              		.loc 1 484 0
  1053 0238 1C4B     		ldr	r3, .L107+20
  1054 023a 1B68     		ldr	r3, [r3]
-ARM GAS  /tmp/ccLTOrtJ.s 			page 28
+ARM GAS  /tmp/ccKccuti.s 			page 28
 
 
  1055 023c 987E     		ldrb	r0, [r3, #26]	@ zero_extendqisi2
@@ -1678,7 +1678,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1102 02a0 00000000 		.word	0
  1103 02a4 00A06340 		.word	1080270848
  1104 02a8 00000000 		.word	.LANCHOR1
-ARM GAS  /tmp/ccLTOrtJ.s 			page 29
+ARM GAS  /tmp/ccKccuti.s 			page 29
 
 
  1105 02ac 00000000 		.word	SX1276LR
@@ -1738,7 +1738,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  504:radio/sx1276-LoRa.c ****             if( LoRaSettings.ImplicitHeaderOn == true )
  1147              		.loc 1 504 0
  1148 0310 994B     		ldr	r3, .L109+24
-ARM GAS  /tmp/ccLTOrtJ.s 			page 30
+ARM GAS  /tmp/ccKccuti.s 			page 30
 
 
  1149 0312 5B7A     		ldrb	r3, [r3, #9]	@ zero_extendqisi2
@@ -1798,7 +1798,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  520:radio/sx1276-LoRa.c ****             if( LoRaSettings.ImplicitHeaderOn == true )
  1188              		.loc 1 520 0
  1189 0352 894B     		ldr	r3, .L109+24
-ARM GAS  /tmp/ccLTOrtJ.s 			page 31
+ARM GAS  /tmp/ccKccuti.s 			page 31
 
 
  1190 0354 5B7A     		ldrb	r3, [r3, #9]	@ zero_extendqisi2
@@ -1858,7 +1858,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  533:radio/sx1276-LoRa.c ****                 SX1276ReadFifo( RFBuffer, SX1276LR->RegNbRxBytes );
  1232              		.loc 1 533 0
  1233 039a 2368     		ldr	r3, [r4]
-ARM GAS  /tmp/ccLTOrtJ.s 			page 32
+ARM GAS  /tmp/ccKccuti.s 			page 32
 
 
  1234 039c D97C     		ldrb	r1, [r3, #19]	@ zero_extendqisi2
@@ -1918,7 +1918,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  553:radio/sx1276-LoRa.c ****         SX1276LoRaSetOpMode( RFLR_OPMODE_STANDBY );
  1268              		.loc 1 553 0
  1269 03c6 0120     		movs	r0, #1
-ARM GAS  /tmp/ccLTOrtJ.s 			page 33
+ARM GAS  /tmp/ccKccuti.s 			page 33
 
 
  1270 03c8 FFF7FEFF 		bl	SX1276LoRaSetOpMode
@@ -1978,7 +1978,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  573:radio/sx1276-LoRa.c ****                                         RFLR_IRQFLAGS_RXDONE |
  574:radio/sx1276-LoRa.c ****                                         RFLR_IRQFLAGS_PAYLOADCRCERROR |
  575:radio/sx1276-LoRa.c ****                                         RFLR_IRQFLAGS_VALIDHEADER |
-ARM GAS  /tmp/ccLTOrtJ.s 			page 34
+ARM GAS  /tmp/ccKccuti.s 			page 34
 
 
  576:radio/sx1276-LoRa.c ****                                         //RFLR_IRQFLAGS_TXDONE |
@@ -2038,7 +2038,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1342 0444 5973     		strb	r1, [r3, #13]
  593:radio/sx1276-LoRa.c ****         SX1276Write( REG_LR_FIFOADDRPTR, SX1276LR->RegFifoAddrPtr );
  1343              		.loc 1 593 0
-ARM GAS  /tmp/ccLTOrtJ.s 			page 35
+ARM GAS  /tmp/ccKccuti.s 			page 35
 
 
  1344 0446 0D20     		movs	r0, #13
@@ -2098,7 +2098,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1382 0484 06D1     		bne	.L98
  609:radio/sx1276-LoRa.c ****         {
  610:radio/sx1276-LoRa.c ****             // Clear Irq
-ARM GAS  /tmp/ccLTOrtJ.s 			page 36
+ARM GAS  /tmp/ccKccuti.s 			page 36
 
 
  611:radio/sx1276-LoRa.c ****             SX1276Write( REG_LR_IRQFLAGS, RFLR_IRQFLAGS_TXDONE  );
@@ -2158,7 +2158,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1424 04c8 0120     		movs	r0, #1
  1425 04ca 47E0     		b	.L64
  1426              	.L72:
-ARM GAS  /tmp/ccLTOrtJ.s 			page 37
+ARM GAS  /tmp/ccKccuti.s 			page 37
 
 
  623:radio/sx1276-LoRa.c ****         }
@@ -2218,7 +2218,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1457 04f2 0023     		movs	r3, #0
  1458 04f4 81F83D30 		strb	r3, [r1, #61]
  647:radio/sx1276-LoRa.c ****                                     // CAD Detected              ModeReady
-ARM GAS  /tmp/ccLTOrtJ.s 			page 38
+ARM GAS  /tmp/ccKccuti.s 			page 38
 
 
  648:radio/sx1276-LoRa.c ****         SX1276LR->RegDioMapping2 = RFLR_DIOMAPPING2_DIO4_00 | RFLR_DIOMAPPING2_DIO5_00;
@@ -2278,7 +2278,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1497 0530 1220     		movs	r0, #18
  1498 0532 FFF7FEFF 		bl	SX1276Write
  1499              	.LVL131:
-ARM GAS  /tmp/ccLTOrtJ.s 			page 39
+ARM GAS  /tmp/ccKccuti.s 			page 39
 
 
  663:radio/sx1276-LoRa.c ****                 // CAD detected, we have a LoRa preamble
@@ -2338,7 +2338,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  680:radio/sx1276-LoRa.c **** }
  1536              		.loc 1 680 0
  1537 055c 02B0     		add	sp, sp, #8
-ARM GAS  /tmp/ccLTOrtJ.s 			page 40
+ARM GAS  /tmp/ccKccuti.s 			page 40
 
 
  1538              	.LCFI13:
@@ -2398,7 +2398,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1601              	TxPacketSize:
  1602 0000 0000     		.space	2
  1603              		.section	.data.LoRaSettings,"aw",%progbits
-ARM GAS  /tmp/ccLTOrtJ.s 			page 41
+ARM GAS  /tmp/ccKccuti.s 			page 41
 
 
  1604              		.align	2
@@ -2458,7 +2458,7 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1668 004c 809AF436 		.word	922000000
  1669 0050 001F1337 		.word	924000000
  1670 0054 E050DA35 		.word	903500000
-ARM GAS  /tmp/ccLTOrtJ.s 			page 42
+ARM GAS  /tmp/ccKccuti.s 			page 42
 
 
  1671 0058 40466B36 		.word	913000000
@@ -2508,87 +2508,87 @@ ARM GAS  /tmp/ccLTOrtJ.s 			page 1
  1716              		.file 9 "radio/sx1276.h"
  1717              		.file 10 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
  1718              		.file 11 "radio/sx1276-LoRaMisc.h"
-ARM GAS  /tmp/ccLTOrtJ.s 			page 43
+ARM GAS  /tmp/ccKccuti.s 			page 43
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sx1276-LoRa.c
-     /tmp/ccLTOrtJ.s:20     .text.SX1276LoRaSetDefaults:00000000 $t
-     /tmp/ccLTOrtJ.s:25     .text.SX1276LoRaSetDefaults:00000000 SX1276LoRaSetDefaults
-     /tmp/ccLTOrtJ.s:48     .text.SX1276LoRaSetDefaults:00000010 $d
+     /tmp/ccKccuti.s:20     .text.SX1276LoRaSetDefaults:00000000 $t
+     /tmp/ccKccuti.s:25     .text.SX1276LoRaSetDefaults:00000000 SX1276LoRaSetDefaults
+     /tmp/ccKccuti.s:48     .text.SX1276LoRaSetDefaults:00000010 $d
                             *COM*:00000004 SX1276LR
-     /tmp/ccLTOrtJ.s:53     .text.SX1276LoRaReset:00000000 $t
-     /tmp/ccLTOrtJ.s:58     .text.SX1276LoRaReset:00000000 SX1276LoRaReset
-     /tmp/ccLTOrtJ.s:106    .text.SX1276LoRaSetOpMode:00000000 $t
-     /tmp/ccLTOrtJ.s:111    .text.SX1276LoRaSetOpMode:00000000 SX1276LoRaSetOpMode
-     /tmp/ccLTOrtJ.s:182    .text.SX1276LoRaSetOpMode:0000004c $d
-     /tmp/ccLTOrtJ.s:188    .text.SX1276LoRaInit:00000000 $t
-     /tmp/ccLTOrtJ.s:193    .text.SX1276LoRaInit:00000000 SX1276LoRaInit
-     /tmp/ccLTOrtJ.s:311    .text.SX1276LoRaInit:000000a0 $d
-     /tmp/ccLTOrtJ.s:320    .text.SX1276LoRaGetOpMode:00000000 $t
-     /tmp/ccLTOrtJ.s:325    .text.SX1276LoRaGetOpMode:00000000 SX1276LoRaGetOpMode
-     /tmp/ccLTOrtJ.s:352    .text.SX1276LoRaGetOpMode:00000018 $d
-     /tmp/ccLTOrtJ.s:357    .text.SX1276LoRaReadRxGain:00000000 $t
-     /tmp/ccLTOrtJ.s:362    .text.SX1276LoRaReadRxGain:00000000 SX1276LoRaReadRxGain
-     /tmp/ccLTOrtJ.s:389    .text.SX1276LoRaReadRxGain:00000018 $d
-     /tmp/ccLTOrtJ.s:396    .text.SX1276LoRaReadRssi:00000000 $t
-     /tmp/ccLTOrtJ.s:401    .text.SX1276LoRaReadRssi:00000000 SX1276LoRaReadRssi
-     /tmp/ccLTOrtJ.s:452    .text.SX1276LoRaReadRssi:00000048 $d
-     /tmp/ccLTOrtJ.s:462    .text.SX1276LoRaGetPacketRxGain:00000000 $t
-     /tmp/ccLTOrtJ.s:467    .text.SX1276LoRaGetPacketRxGain:00000000 SX1276LoRaGetPacketRxGain
-     /tmp/ccLTOrtJ.s:481    .text.SX1276LoRaGetPacketRxGain:00000008 $d
-     /tmp/ccLTOrtJ.s:486    .text.SX1276LoRaGetPacketSnr:00000000 $t
-     /tmp/ccLTOrtJ.s:491    .text.SX1276LoRaGetPacketSnr:00000000 SX1276LoRaGetPacketSnr
-     /tmp/ccLTOrtJ.s:505    .text.SX1276LoRaGetPacketSnr:00000008 $d
-     /tmp/ccLTOrtJ.s:510    .text.SX1276LoRaGetPacketRssi:00000000 $t
-     /tmp/ccLTOrtJ.s:515    .text.SX1276LoRaGetPacketRssi:00000000 SX1276LoRaGetPacketRssi
-     /tmp/ccLTOrtJ.s:529    .text.SX1276LoRaGetPacketRssi:00000008 $d
-     /tmp/ccLTOrtJ.s:534    .text.SX1276LoRaGetRxPacket:00000000 $t
-     /tmp/ccLTOrtJ.s:539    .text.SX1276LoRaGetRxPacket:00000000 SX1276LoRaGetRxPacket
-     /tmp/ccLTOrtJ.s:567    .text.SX1276LoRaGetRxPacket:00000014 $d
-     /tmp/ccLTOrtJ.s:573    .text.SX1276LoRaSetTxPacket:00000000 $t
-     /tmp/ccLTOrtJ.s:578    .text.SX1276LoRaSetTxPacket:00000000 SX1276LoRaSetTxPacket
-     /tmp/ccLTOrtJ.s:609    .text.SX1276LoRaSetTxPacket:00000018 $d
-     /tmp/ccLTOrtJ.s:616    .text.SX1276LoRaGetRFState:00000000 $t
-     /tmp/ccLTOrtJ.s:621    .text.SX1276LoRaGetRFState:00000000 SX1276LoRaGetRFState
-     /tmp/ccLTOrtJ.s:635    .text.SX1276LoRaGetRFState:00000008 $d
-     /tmp/ccLTOrtJ.s:640    .text.SX1276LoRaSetRFState:00000000 $t
-     /tmp/ccLTOrtJ.s:645    .text.SX1276LoRaSetRFState:00000000 SX1276LoRaSetRFState
-     /tmp/ccLTOrtJ.s:660    .text.SX1276LoRaSetRFState:00000008 $d
-     /tmp/ccLTOrtJ.s:665    .text.SX1276LoRaStartRx:00000000 $t
-     /tmp/ccLTOrtJ.s:670    .text.SX1276LoRaStartRx:00000000 SX1276LoRaStartRx
-     /tmp/ccLTOrtJ.s:693    .text.SX1276LoRaProcess:00000000 $t
-     /tmp/ccLTOrtJ.s:698    .text.SX1276LoRaProcess:00000000 SX1276LoRaProcess
-     /tmp/ccLTOrtJ.s:723    .text.SX1276LoRaProcess:00000014 $d
-     /tmp/ccLTOrtJ.s:733    .text.SX1276LoRaProcess:00000028 $t
-     /tmp/ccLTOrtJ.s:1100   .text.SX1276LoRaProcess:00000298 $d
-     /tmp/ccLTOrtJ.s:1118   .text.SX1276LoRaProcess:000002d8 $t
-     /tmp/ccLTOrtJ.s:1545   .text.SX1276LoRaProcess:00000560 $d
-     /tmp/ccLTOrtJ.s:1608   .data.LoRaSettings:00000000 LoRaSettings
-     /tmp/ccLTOrtJ.s:1648   .rodata.HoppingFrequencies:00000000 HoppingFrequencies
-     /tmp/ccLTOrtJ.s:1564   .bss.RFBuffer:00000000 $d
-     /tmp/ccLTOrtJ.s:1568   .bss.RFBuffer:00000000 RFBuffer
-ARM GAS  /tmp/ccLTOrtJ.s 			page 44
+     /tmp/ccKccuti.s:53     .text.SX1276LoRaReset:00000000 $t
+     /tmp/ccKccuti.s:58     .text.SX1276LoRaReset:00000000 SX1276LoRaReset
+     /tmp/ccKccuti.s:106    .text.SX1276LoRaSetOpMode:00000000 $t
+     /tmp/ccKccuti.s:111    .text.SX1276LoRaSetOpMode:00000000 SX1276LoRaSetOpMode
+     /tmp/ccKccuti.s:182    .text.SX1276LoRaSetOpMode:0000004c $d
+     /tmp/ccKccuti.s:188    .text.SX1276LoRaInit:00000000 $t
+     /tmp/ccKccuti.s:193    .text.SX1276LoRaInit:00000000 SX1276LoRaInit
+     /tmp/ccKccuti.s:311    .text.SX1276LoRaInit:000000a0 $d
+     /tmp/ccKccuti.s:320    .text.SX1276LoRaGetOpMode:00000000 $t
+     /tmp/ccKccuti.s:325    .text.SX1276LoRaGetOpMode:00000000 SX1276LoRaGetOpMode
+     /tmp/ccKccuti.s:352    .text.SX1276LoRaGetOpMode:00000018 $d
+     /tmp/ccKccuti.s:357    .text.SX1276LoRaReadRxGain:00000000 $t
+     /tmp/ccKccuti.s:362    .text.SX1276LoRaReadRxGain:00000000 SX1276LoRaReadRxGain
+     /tmp/ccKccuti.s:389    .text.SX1276LoRaReadRxGain:00000018 $d
+     /tmp/ccKccuti.s:396    .text.SX1276LoRaReadRssi:00000000 $t
+     /tmp/ccKccuti.s:401    .text.SX1276LoRaReadRssi:00000000 SX1276LoRaReadRssi
+     /tmp/ccKccuti.s:452    .text.SX1276LoRaReadRssi:00000048 $d
+     /tmp/ccKccuti.s:462    .text.SX1276LoRaGetPacketRxGain:00000000 $t
+     /tmp/ccKccuti.s:467    .text.SX1276LoRaGetPacketRxGain:00000000 SX1276LoRaGetPacketRxGain
+     /tmp/ccKccuti.s:481    .text.SX1276LoRaGetPacketRxGain:00000008 $d
+     /tmp/ccKccuti.s:486    .text.SX1276LoRaGetPacketSnr:00000000 $t
+     /tmp/ccKccuti.s:491    .text.SX1276LoRaGetPacketSnr:00000000 SX1276LoRaGetPacketSnr
+     /tmp/ccKccuti.s:505    .text.SX1276LoRaGetPacketSnr:00000008 $d
+     /tmp/ccKccuti.s:510    .text.SX1276LoRaGetPacketRssi:00000000 $t
+     /tmp/ccKccuti.s:515    .text.SX1276LoRaGetPacketRssi:00000000 SX1276LoRaGetPacketRssi
+     /tmp/ccKccuti.s:529    .text.SX1276LoRaGetPacketRssi:00000008 $d
+     /tmp/ccKccuti.s:534    .text.SX1276LoRaGetRxPacket:00000000 $t
+     /tmp/ccKccuti.s:539    .text.SX1276LoRaGetRxPacket:00000000 SX1276LoRaGetRxPacket
+     /tmp/ccKccuti.s:567    .text.SX1276LoRaGetRxPacket:00000014 $d
+     /tmp/ccKccuti.s:573    .text.SX1276LoRaSetTxPacket:00000000 $t
+     /tmp/ccKccuti.s:578    .text.SX1276LoRaSetTxPacket:00000000 SX1276LoRaSetTxPacket
+     /tmp/ccKccuti.s:609    .text.SX1276LoRaSetTxPacket:00000018 $d
+     /tmp/ccKccuti.s:616    .text.SX1276LoRaGetRFState:00000000 $t
+     /tmp/ccKccuti.s:621    .text.SX1276LoRaGetRFState:00000000 SX1276LoRaGetRFState
+     /tmp/ccKccuti.s:635    .text.SX1276LoRaGetRFState:00000008 $d
+     /tmp/ccKccuti.s:640    .text.SX1276LoRaSetRFState:00000000 $t
+     /tmp/ccKccuti.s:645    .text.SX1276LoRaSetRFState:00000000 SX1276LoRaSetRFState
+     /tmp/ccKccuti.s:660    .text.SX1276LoRaSetRFState:00000008 $d
+     /tmp/ccKccuti.s:665    .text.SX1276LoRaStartRx:00000000 $t
+     /tmp/ccKccuti.s:670    .text.SX1276LoRaStartRx:00000000 SX1276LoRaStartRx
+     /tmp/ccKccuti.s:693    .text.SX1276LoRaProcess:00000000 $t
+     /tmp/ccKccuti.s:698    .text.SX1276LoRaProcess:00000000 SX1276LoRaProcess
+     /tmp/ccKccuti.s:723    .text.SX1276LoRaProcess:00000014 $d
+     /tmp/ccKccuti.s:733    .text.SX1276LoRaProcess:00000028 $t
+     /tmp/ccKccuti.s:1100   .text.SX1276LoRaProcess:00000298 $d
+     /tmp/ccKccuti.s:1118   .text.SX1276LoRaProcess:000002d8 $t
+     /tmp/ccKccuti.s:1545   .text.SX1276LoRaProcess:00000560 $d
+     /tmp/ccKccuti.s:1608   .data.LoRaSettings:00000000 LoRaSettings
+     /tmp/ccKccuti.s:1648   .rodata.HoppingFrequencies:00000000 HoppingFrequencies
+     /tmp/ccKccuti.s:1564   .bss.RFBuffer:00000000 $d
+     /tmp/ccKccuti.s:1568   .bss.RFBuffer:00000000 RFBuffer
+ARM GAS  /tmp/ccKccuti.s 			page 44
 
 
-     /tmp/ccLTOrtJ.s:1571   .bss.PacketTimeout:00000000 $d
-     /tmp/ccLTOrtJ.s:1575   .bss.PacketTimeout:00000000 PacketTimeout
-     /tmp/ccLTOrtJ.s:1581   .bss.RxPacketSnrEstimate:00000000 RxPacketSnrEstimate
-     /tmp/ccLTOrtJ.s:1582   .bss.RxPacketSnrEstimate:00000000 $d
-     /tmp/ccLTOrtJ.s:1584   .bss.RxPacketSize:00000000 $d
-     /tmp/ccLTOrtJ.s:1588   .bss.RxPacketSize:00000000 RxPacketSize
-     /tmp/ccLTOrtJ.s:1594   .data.antennaSwitchTxOnPrev.7215:00000000 antennaSwitchTxOnPrev.7215
-     /tmp/ccLTOrtJ.s:1597   .bss.TxPacketSize:00000000 $d
-     /tmp/ccLTOrtJ.s:1601   .bss.TxPacketSize:00000000 TxPacketSize
-     /tmp/ccLTOrtJ.s:1604   .data.LoRaSettings:00000000 $d
-     /tmp/ccLTOrtJ.s:1628   .bss.RFLRState:00000000 RFLRState
-     /tmp/ccLTOrtJ.s:1629   .bss.RFLRState:00000000 $d
-     /tmp/ccLTOrtJ.s:1634   .data.RxGain:00000000 RxGain
-     /tmp/ccLTOrtJ.s:1637   .bss.RxTimeoutTimer:00000000 $d
-     /tmp/ccLTOrtJ.s:1641   .bss.RxTimeoutTimer:00000000 RxTimeoutTimer
-     /tmp/ccLTOrtJ.s:1644   .rodata.HoppingFrequencies:00000000 $d
-     /tmp/ccLTOrtJ.s:1701   .bss.RxPacketRssiValue:00000000 $d
-     /tmp/ccLTOrtJ.s:1705   .bss.RxPacketRssiValue:00000000 RxPacketRssiValue
+     /tmp/ccKccuti.s:1571   .bss.PacketTimeout:00000000 $d
+     /tmp/ccKccuti.s:1575   .bss.PacketTimeout:00000000 PacketTimeout
+     /tmp/ccKccuti.s:1581   .bss.RxPacketSnrEstimate:00000000 RxPacketSnrEstimate
+     /tmp/ccKccuti.s:1582   .bss.RxPacketSnrEstimate:00000000 $d
+     /tmp/ccKccuti.s:1584   .bss.RxPacketSize:00000000 $d
+     /tmp/ccKccuti.s:1588   .bss.RxPacketSize:00000000 RxPacketSize
+     /tmp/ccKccuti.s:1594   .data.antennaSwitchTxOnPrev.7215:00000000 antennaSwitchTxOnPrev.7215
+     /tmp/ccKccuti.s:1597   .bss.TxPacketSize:00000000 $d
+     /tmp/ccKccuti.s:1601   .bss.TxPacketSize:00000000 TxPacketSize
+     /tmp/ccKccuti.s:1604   .data.LoRaSettings:00000000 $d
+     /tmp/ccKccuti.s:1628   .bss.RFLRState:00000000 RFLRState
+     /tmp/ccKccuti.s:1629   .bss.RFLRState:00000000 $d
+     /tmp/ccKccuti.s:1634   .data.RxGain:00000000 RxGain
+     /tmp/ccKccuti.s:1637   .bss.RxTimeoutTimer:00000000 $d
+     /tmp/ccKccuti.s:1641   .bss.RxTimeoutTimer:00000000 RxTimeoutTimer
+     /tmp/ccKccuti.s:1644   .rodata.HoppingFrequencies:00000000 $d
+     /tmp/ccKccuti.s:1701   .bss.RxPacketRssiValue:00000000 $d
+     /tmp/ccKccuti.s:1705   .bss.RxPacketRssiValue:00000000 RxPacketRssiValue
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

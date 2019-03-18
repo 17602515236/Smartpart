@@ -32,6 +32,7 @@ build/Ra02.o: app/Ra02.c app/Ra02.h platform/platform.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
+ Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
  Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 
 app/Ra02.h:
@@ -117,5 +118,7 @@ Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
 Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
 
 Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h:
+
+Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
 
 Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:

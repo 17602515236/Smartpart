@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccpwgW31.s 			page 1
+ARM GAS  /tmp/ccdLk6oo.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
   29:radio/sx1276-Fsk.c **** 
   30:radio/sx1276-Fsk.c **** #include "sx1276-Hal.h"
   31:radio/sx1276-Fsk.c **** #include "sx1276.h"
-ARM GAS  /tmp/ccpwgW31.s 			page 2
+ARM GAS  /tmp/ccdLk6oo.s 			page 2
 
 
   32:radio/sx1276-Fsk.c **** 
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
   86:radio/sx1276-Fsk.c **** 
   87:radio/sx1276-Fsk.c **** /*!
   88:radio/sx1276-Fsk.c ****  * Preamble2SyncTimeout
-ARM GAS  /tmp/ccpwgW31.s 			page 3
+ARM GAS  /tmp/ccdLk6oo.s 			page 3
 
 
   89:radio/sx1276-Fsk.c ****  * Preamble2SyncTimeout = ( ( 8 * ( PremableSize + SyncSize ) / RFBitrate ) * 1000.0 ) + 1
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  143:radio/sx1276-Fsk.c ****     SX1276->RegPreambleDetect = RF_PREAMBLEDETECT_DETECTOR_ON | RF_PREAMBLEDETECT_DETECTORSIZE_2 |
  144:radio/sx1276-Fsk.c ****                                 RF_PREAMBLEDETECT_DETECTORTOL_10;
  145:radio/sx1276-Fsk.c **** 
-ARM GAS  /tmp/ccpwgW31.s 			page 4
+ARM GAS  /tmp/ccdLk6oo.s 			page 4
 
 
  146:radio/sx1276-Fsk.c ****     SX1276->RegRssiThresh = 0xFF;
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  200:radio/sx1276-Fsk.c ****     {
  201:radio/sx1276-Fsk.c ****         SX1276FskSetPAOutput( RF_PACONFIG_PASELECT_RFO );
  202:radio/sx1276-Fsk.c ****         SX1276FskSetPa20dBm( false );
-ARM GAS  /tmp/ccpwgW31.s 			page 5
+ARM GAS  /tmp/ccdLk6oo.s 			page 5
 
 
  203:radio/sx1276-Fsk.c ****         FskSettings.Power = 14;
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
   64              	.LVL1:
  223:radio/sx1276-Fsk.c ****     static uint8_t opModePrev = RF_OPMODE_STANDBY;
  224:radio/sx1276-Fsk.c ****     static bool antennaSwitchTxOnPrev = true;
-ARM GAS  /tmp/ccpwgW31.s 			page 6
+ARM GAS  /tmp/ccdLk6oo.s 			page 6
 
 
  225:radio/sx1276-Fsk.c ****     bool antennaSwitchTxOn = false;
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  100 0028 1846     		mov	r0, r3
  101              	.LVL3:
  102 002a FFF7FEFF 		bl	SX1276WriteRxTx
-ARM GAS  /tmp/ccpwgW31.s 			page 7
+ARM GAS  /tmp/ccdLk6oo.s 			page 7
 
 
  103              	.LVL4:
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  153              		.loc 1 114 0
  154 0002 0024     		movs	r4, #0
  155 0004 454B     		ldr	r3, .L20
-ARM GAS  /tmp/ccpwgW31.s 			page 8
+ARM GAS  /tmp/ccdLk6oo.s 			page 8
 
 
  156 0006 1C70     		strb	r4, [r3]
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  200 004a 5A73     		strb	r2, [r3, #13]
  201 004c 03E0     		b	.L16
  202              	.L15:
-ARM GAS  /tmp/ccpwgW31.s 			page 9
+ARM GAS  /tmp/ccdLk6oo.s 			page 9
 
 
  137:radio/sx1276-Fsk.c ****                               RF_RXCONFIG_AGCAUTO_ON | RF_RXCONFIG_RXTRIGER_PREAMBLEDETECT;
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  162:radio/sx1276-Fsk.c **** 
  245              		.loc 1 162 0
  246 0098 2B68     		ldr	r3, [r5]
-ARM GAS  /tmp/ccpwgW31.s 			page 10
+ARM GAS  /tmp/ccdLk6oo.s 			page 10
 
 
  247 009a A27E     		ldrb	r2, [r4, #26]	@ zero_extendqisi2
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  292 00e4 FFF7FEFF 		bl	SX1276FskSetPAOutput
  293              	.LVL20:
  180:radio/sx1276-Fsk.c ****         FskSettings.Power = 14;
-ARM GAS  /tmp/ccpwgW31.s 			page 11
+ARM GAS  /tmp/ccdLk6oo.s 			page 11
 
 
  294              		.loc 1 180 0
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  341              		.section	.text.SX1276FskGetOpMode,"ax",%progbits
  342              		.align	2
  343              		.global	SX1276FskGetOpMode
-ARM GAS  /tmp/ccpwgW31.s 			page 12
+ARM GAS  /tmp/ccdLk6oo.s 			page 12
 
 
  344              		.thumb
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  389              		.loc 1 258 0
  390              		.cfi_startproc
  391              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  /tmp/ccpwgW31.s 			page 13
+ARM GAS  /tmp/ccdLk6oo.s 			page 13
 
 
  392              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  441              		@ frame_needed = 0, uses_anonymous_args = 0
  442 0000 10B5     		push	{r4, lr}
  443              	.LCFI6:
-ARM GAS  /tmp/ccpwgW31.s 			page 14
+ARM GAS  /tmp/ccdLk6oo.s 			page 14
 
 
  444              		.cfi_def_cfa_offset 8
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  494              		.cfi_offset 4, -8
  495              		.cfi_offset 14, -4
  272:radio/sx1276-Fsk.c ****     SX1276Read( REG_LNA, &SX1276->RegLna );
-ARM GAS  /tmp/ccpwgW31.s 			page 15
+ARM GAS  /tmp/ccdLk6oo.s 			page 15
 
 
  496              		.loc 1 272 0
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  544 0012 FFF7FEFF 		bl	__aeabi_ui2d
  545              	.LVL39:
  546 0016 0022     		movs	r2, #0
-ARM GAS  /tmp/ccpwgW31.s 			page 16
+ARM GAS  /tmp/ccdLk6oo.s 			page 16
 
 
  547 0018 054B     		ldr	r3, .L40+4
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  596              		.loc 1 289 0
  597              		.cfi_startproc
  598              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  /tmp/ccpwgW31.s 			page 17
+ARM GAS  /tmp/ccdLk6oo.s 			page 17
 
 
  599              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  303:radio/sx1276-Fsk.c **** void SX1276FskGetRxPacket( void *buffer, uint16_t *size )
  304:radio/sx1276-Fsk.c **** {
  644              		.loc 1 304 0
-ARM GAS  /tmp/ccpwgW31.s 			page 18
+ARM GAS  /tmp/ccdLk6oo.s 			page 18
 
 
  645              		.cfi_startproc
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  694 0002 0A46     		mov	r2, r1
  312:radio/sx1276-Fsk.c ****     TxPacketSize = size;
  695              		.loc 1 312 0
-ARM GAS  /tmp/ccpwgW31.s 			page 19
+ARM GAS  /tmp/ccdLk6oo.s 			page 19
 
 
  696 0004 044B     		ldr	r3, .L57
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  737              		.loc 1 327 0
  738 0002 0F4B     		ldr	r3, .L63
  739 0004 1C68     		ldr	r4, [r3]
-ARM GAS  /tmp/ccpwgW31.s 			page 20
+ARM GAS  /tmp/ccdLk6oo.s 			page 20
 
 
  740 0006 94F82730 		ldrb	r3, [r4, #39]	@ zero_extendqisi2
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  787              	.LFE78:
  789              		.section	.text.SX1276FskGetPacketHeaderSize,"ax",%progbits
  790              		.align	2
-ARM GAS  /tmp/ccpwgW31.s 			page 21
+ARM GAS  /tmp/ccdLk6oo.s 			page 21
 
 
  791              		.global	SX1276FskGetPacketHeaderSize
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  348:radio/sx1276-Fsk.c **** uint8_t SX1276FskGetRFState( void )
  349:radio/sx1276-Fsk.c **** {
  835              		.loc 1 349 0
-ARM GAS  /tmp/ccpwgW31.s 			page 22
+ARM GAS  /tmp/ccdLk6oo.s 			page 22
 
 
  836              		.cfi_startproc
@@ -1318,7 +1318,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  887              		@ frame_needed = 0, uses_anonymous_args = 0
  888 0000 08B5     		push	{r3, lr}
  889              	.LCFI13:
-ARM GAS  /tmp/ccpwgW31.s 			page 23
+ARM GAS  /tmp/ccdLk6oo.s 			page 23
 
 
  890              		.cfi_def_cfa_offset 8
@@ -1378,7 +1378,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  938 001e CB01     		.2byte	(.L85-.L79)/2
  939 0020 EA01     		.2byte	(.L86-.L79)/2
  940 0022 1702     		.2byte	(.L87-.L79)/2
-ARM GAS  /tmp/ccpwgW31.s 			page 24
+ARM GAS  /tmp/ccdLk6oo.s 			page 24
 
 
  941 0024 5302     		.2byte	(.L88-.L79)/2
@@ -1438,7 +1438,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  385:radio/sx1276-Fsk.c ****         memset( RFBuffer, 0, ( size_t )RF_BUFFER_SIZE );
  973              		.loc 1 385 0
  974 005a 4FF48072 		mov	r2, #256
-ARM GAS  /tmp/ccpwgW31.s 			page 25
+ARM GAS  /tmp/ccdLk6oo.s 			page 25
 
 
  975 005e 0021     		movs	r1, #0
@@ -1498,7 +1498,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1022              	.LVL74:
  1023 00b8 7D4B     		ldr	r3, .L120+36
  1024 00ba 1860     		str	r0, [r3]
-ARM GAS  /tmp/ccpwgW31.s 			page 26
+ARM GAS  /tmp/ccdLk6oo.s 			page 26
 
 
  1025 00bc 7D4B     		ldr	r3, .L120+40
@@ -1558,7 +1558,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1065 00f6 09D1     		bne	.L92
  1066              		.loc 1 405 0 is_stmt 0 discriminator 1
  1067 00f8 6F4B     		ldr	r3, .L120+44
-ARM GAS  /tmp/ccpwgW31.s 			page 27
+ARM GAS  /tmp/ccdLk6oo.s 			page 27
 
 
  1068 00fa 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
@@ -1618,7 +1618,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1110 013c 654B     		ldr	r3, .L120+72
  1111 013e 1870     		strb	r0, [r3]
  418:radio/sx1276-Fsk.c ****         
-ARM GAS  /tmp/ccpwgW31.s 			page 28
+ARM GAS  /tmp/ccdLk6oo.s 			page 28
 
 
  419:radio/sx1276-Fsk.c ****             Preamble2SyncTimer = RxTimeoutTimer = GET_TICK_COUNT( );
@@ -1678,7 +1678,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  430:radio/sx1276-Fsk.c ****         if( ( SyncWordDetected == false ) &&
  1155              		.loc 1 430 0
  1156 0186 4D4B     		ldr	r3, .L120+48
-ARM GAS  /tmp/ccpwgW31.s 			page 29
+ARM GAS  /tmp/ccdLk6oo.s 			page 29
 
 
  1157 0188 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
@@ -1738,7 +1738,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1196              		.loc 1 441 0
  1197 01cc 0622     		movs	r2, #6
  1198 01ce 2F4B     		ldr	r3, .L120
-ARM GAS  /tmp/ccpwgW31.s 			page 30
+ARM GAS  /tmp/ccdLk6oo.s 			page 30
 
 
  1199 01d0 1A70     		strb	r2, [r3]
@@ -1798,7 +1798,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  458:radio/sx1276-Fsk.c **** 
  459:radio/sx1276-Fsk.c ****             if( ( RxPacketSize - RxBytesRead ) > ( SX1276->RegFifoThresh & 0x3F ) )
  1236              		.loc 1 459 0
-ARM GAS  /tmp/ccpwgW31.s 			page 31
+ARM GAS  /tmp/ccdLk6oo.s 			page 31
 
 
  1237 0208 2F4B     		ldr	r3, .L120+60
@@ -1858,7 +1858,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1279              	.LVL90:
  1280 0258 0128     		cmp	r0, #1
  1281 025a 65D1     		bne	.L100
-ARM GAS  /tmp/ccpwgW31.s 			page 32
+ARM GAS  /tmp/ccdLk6oo.s 			page 32
 
 
  472:radio/sx1276-Fsk.c ****         {
@@ -1918,7 +1918,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1329 02d0 00000000 		.word	.LANCHOR5
  1330 02d4 00000000 		.word	.LANCHOR3
  1331              	.L102:
-ARM GAS  /tmp/ccpwgW31.s 			page 33
+ARM GAS  /tmp/ccdLk6oo.s 			page 33
 
 
  479:radio/sx1276-Fsk.c ****                 }
@@ -1978,7 +1978,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1372 0318 1B88     		ldrh	r3, [r3]
  1373 031a 2370     		strb	r3, [r4]
  493:radio/sx1276-Fsk.c ****                 PacketDetected = true;
-ARM GAS  /tmp/ccpwgW31.s 			page 34
+ARM GAS  /tmp/ccdLk6oo.s 			page 34
 
 
  1374              		.loc 1 493 0
@@ -2038,7 +2038,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1414              	.LVL96:
  507:radio/sx1276-Fsk.c ****         result = RF_RX_DONE;
  1415              		.loc 1 507 0
-ARM GAS  /tmp/ccpwgW31.s 			page 35
+ARM GAS  /tmp/ccdLk6oo.s 			page 35
 
 
  1416 035c 0220     		movs	r0, #2
@@ -2098,7 +2098,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1458 0394 41F02001 		orr	r1, r1, #32
  1459 0398 0D20     		movs	r0, #13
  1460 039a FFF7FEFF 		bl	SX1276Write
-ARM GAS  /tmp/ccpwgW31.s 			page 36
+ARM GAS  /tmp/ccdLk6oo.s 			page 36
 
 
  1461              	.LVL101:
@@ -2158,7 +2158,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  536:radio/sx1276-Fsk.c ****         RFState = RF_STATE_TX_READY_WAIT;
  1499              		.loc 1 536 0
  1500 03d6 0822     		movs	r2, #8
-ARM GAS  /tmp/ccpwgW31.s 			page 37
+ARM GAS  /tmp/ccdLk6oo.s 			page 37
 
 
  1501 03d8 494B     		ldr	r3, .L122+16
@@ -2218,7 +2218,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  550:radio/sx1276-Fsk.c ****             }
  551:radio/sx1276-Fsk.c ****             else
  552:radio/sx1276-Fsk.c ****             {
-ARM GAS  /tmp/ccpwgW31.s 			page 38
+ARM GAS  /tmp/ccdLk6oo.s 			page 38
 
 
  553:radio/sx1276-Fsk.c ****                 DataChunkSize = 32;
@@ -2278,7 +2278,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1580 044e D01A     		subs	r0, r2, r3
  1581 0450 3149     		ldr	r1, .L122+40
  1582 0452 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
-ARM GAS  /tmp/ccpwgW31.s 			page 39
+ARM GAS  /tmp/ccdLk6oo.s 			page 39
 
 
  1583 0454 8842     		cmp	r0, r1
@@ -2338,7 +2338,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  582:radio/sx1276-Fsk.c ****             RFState = RF_STATE_TX_DONE;
  1622              		.loc 1 582 0
  1623 0492 0A22     		movs	r2, #10
-ARM GAS  /tmp/ccpwgW31.s 			page 40
+ARM GAS  /tmp/ccdLk6oo.s 			page 40
 
 
  1624 0494 1A4B     		ldr	r3, .L122+16
@@ -2398,7 +2398,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1662              	.LVL120:
  598:radio/sx1276-Fsk.c ****         result = RF_TX_TIMEOUT;
  1663              		.loc 1 598 0
-ARM GAS  /tmp/ccpwgW31.s 			page 41
+ARM GAS  /tmp/ccdLk6oo.s 			page 41
 
 
  1664 04c8 0520     		movs	r0, #5
@@ -2458,7 +2458,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1711 0518 00000000 		.word	.LANCHOR18
  1712 051c 00000000 		.word	.LANCHOR19
  1713              		.cfi_endproc
-ARM GAS  /tmp/ccpwgW31.s 			page 42
+ARM GAS  /tmp/ccdLk6oo.s 			page 42
 
 
  1714              	.LFE82:
@@ -2518,7 +2518,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1785 0000 0000     		.space	2
  1786              		.section	.bss.RxPacketRssiValue,"aw",%nobits
  1787              		.align	3
-ARM GAS  /tmp/ccpwgW31.s 			page 43
+ARM GAS  /tmp/ccdLk6oo.s 			page 43
 
 
  1788              		.set	.LANCHOR4,. + 0
@@ -2578,7 +2578,7 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1861              		.file 2 "/opt/gcc-arm-none-eabi-5_4-2016q3/lib/gcc/arm-none-eabi/5.4.1/include/stddef.h"
  1862              		.file 3 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/machine/_default_types.h"
  1863              		.file 4 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/sys/_stdint.h"
-ARM GAS  /tmp/ccpwgW31.s 			page 44
+ARM GAS  /tmp/ccdLk6oo.s 			page 44
 
 
  1864              		.file 5 "radio/sx1276-Fsk.h"
@@ -2589,112 +2589,112 @@ ARM GAS  /tmp/ccpwgW31.s 			page 1
  1869              		.file 10 "radio/sx1276-FskMisc.h"
  1870              		.file 11 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/math.h"
  1871              		.file 12 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
-ARM GAS  /tmp/ccpwgW31.s 			page 45
+ARM GAS  /tmp/ccdLk6oo.s 			page 45
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sx1276-Fsk.c
-     /tmp/ccpwgW31.s:20     .text.SX1276FskSetDefaults:00000000 $t
-     /tmp/ccpwgW31.s:25     .text.SX1276FskSetDefaults:00000000 SX1276FskSetDefaults
-     /tmp/ccpwgW31.s:48     .text.SX1276FskSetDefaults:00000010 $d
+     /tmp/ccdLk6oo.s:20     .text.SX1276FskSetDefaults:00000000 $t
+     /tmp/ccdLk6oo.s:25     .text.SX1276FskSetDefaults:00000000 SX1276FskSetDefaults
+     /tmp/ccdLk6oo.s:48     .text.SX1276FskSetDefaults:00000010 $d
                             *COM*:00000004 SX1276
-     /tmp/ccpwgW31.s:53     .text.SX1276FskSetOpMode:00000000 $t
-     /tmp/ccpwgW31.s:58     .text.SX1276FskSetOpMode:00000000 SX1276FskSetOpMode
-     /tmp/ccpwgW31.s:129    .text.SX1276FskSetOpMode:0000004c $d
-     /tmp/ccpwgW31.s:135    .text.SX1276FskInit:00000000 $t
-     /tmp/ccpwgW31.s:140    .text.SX1276FskInit:00000000 SX1276FskInit
-     /tmp/ccpwgW31.s:333    .text.SX1276FskInit:0000011c $d
-     /tmp/ccpwgW31.s:342    .text.SX1276FskGetOpMode:00000000 $t
-     /tmp/ccpwgW31.s:347    .text.SX1276FskGetOpMode:00000000 SX1276FskGetOpMode
-     /tmp/ccpwgW31.s:374    .text.SX1276FskGetOpMode:00000018 $d
-     /tmp/ccpwgW31.s:382    .text.SX1276FskReadFei:00000000 $t
-     /tmp/ccpwgW31.s:387    .text.SX1276FskReadFei:00000000 SX1276FskReadFei
-     /tmp/ccpwgW31.s:424    .text.SX1276FskReadFei:00000030 $d
-     /tmp/ccpwgW31.s:431    .text.SX1276FskReadAfc:00000000 $t
-     /tmp/ccpwgW31.s:436    .text.SX1276FskReadAfc:00000000 SX1276FskReadAfc
-     /tmp/ccpwgW31.s:473    .text.SX1276FskReadAfc:00000030 $d
-     /tmp/ccpwgW31.s:480    .text.SX1276FskReadRxGain:00000000 $t
-     /tmp/ccpwgW31.s:485    .text.SX1276FskReadRxGain:00000000 SX1276FskReadRxGain
-     /tmp/ccpwgW31.s:512    .text.SX1276FskReadRxGain:00000018 $d
-     /tmp/ccpwgW31.s:518    .text.SX1276FskReadRssi:00000000 $t
-     /tmp/ccpwgW31.s:523    .text.SX1276FskReadRssi:00000000 SX1276FskReadRssi
-     /tmp/ccpwgW31.s:559    .text.SX1276FskReadRssi:0000002c $d
-     /tmp/ccpwgW31.s:565    .text.SX1276FskGetPacketRxGain:00000000 $t
-     /tmp/ccpwgW31.s:570    .text.SX1276FskGetPacketRxGain:00000000 SX1276FskGetPacketRxGain
-     /tmp/ccpwgW31.s:584    .text.SX1276FskGetPacketRxGain:00000008 $d
-     /tmp/ccpwgW31.s:589    .text.SX1276FskGetPacketRssi:00000000 $t
-     /tmp/ccpwgW31.s:594    .text.SX1276FskGetPacketRssi:00000000 SX1276FskGetPacketRssi
-     /tmp/ccpwgW31.s:608    .text.SX1276FskGetPacketRssi:00000008 $d
-     /tmp/ccpwgW31.s:613    .text.SX1276FskGetPacketAfc:00000000 $t
-     /tmp/ccpwgW31.s:618    .text.SX1276FskGetPacketAfc:00000000 SX1276FskGetPacketAfc
-     /tmp/ccpwgW31.s:632    .text.SX1276FskGetPacketAfc:00000008 $d
-     /tmp/ccpwgW31.s:637    .text.SX1276FskGetRxPacket:00000000 $t
-     /tmp/ccpwgW31.s:642    .text.SX1276FskGetRxPacket:00000000 SX1276FskGetRxPacket
-     /tmp/ccpwgW31.s:671    .text.SX1276FskGetRxPacket:00000018 $d
-     /tmp/ccpwgW31.s:677    .text.SX1276FskSetTxPacket:00000000 $t
-     /tmp/ccpwgW31.s:682    .text.SX1276FskSetTxPacket:00000000 SX1276FskSetTxPacket
-     /tmp/ccpwgW31.s:713    .text.SX1276FskSetTxPacket:00000018 $d
-     /tmp/ccpwgW31.s:720    .text.SX1276FskGetPacketPayloadSize:00000000 $t
-     /tmp/ccpwgW31.s:725    .text.SX1276FskGetPacketPayloadSize:00000000 SX1276FskGetPacketPayloadSize
-     /tmp/ccpwgW31.s:785    .text.SX1276FskGetPacketPayloadSize:00000040 $d
-     /tmp/ccpwgW31.s:790    .text.SX1276FskGetPacketHeaderSize:00000000 $t
-     /tmp/ccpwgW31.s:795    .text.SX1276FskGetPacketHeaderSize:00000000 SX1276FskGetPacketHeaderSize
-     /tmp/ccpwgW31.s:823    .text.SX1276FskGetPacketHeaderSize:00000020 $d
-     /tmp/ccpwgW31.s:828    .text.SX1276FskGetRFState:00000000 $t
-     /tmp/ccpwgW31.s:833    .text.SX1276FskGetRFState:00000000 SX1276FskGetRFState
-     /tmp/ccpwgW31.s:847    .text.SX1276FskGetRFState:00000008 $d
-     /tmp/ccpwgW31.s:852    .text.SX1276FskSetRFState:00000000 $t
-     /tmp/ccpwgW31.s:857    .text.SX1276FskSetRFState:00000000 SX1276FskSetRFState
-     /tmp/ccpwgW31.s:872    .text.SX1276FskSetRFState:00000008 $d
-     /tmp/ccpwgW31.s:877    .text.SX1276FskStartRx:00000000 $t
-     /tmp/ccpwgW31.s:882    .text.SX1276FskStartRx:00000000 SX1276FskStartRx
-     /tmp/ccpwgW31.s:905    .text.SX1276FskProcess:00000000 $t
-ARM GAS  /tmp/ccpwgW31.s 			page 46
+     /tmp/ccdLk6oo.s:53     .text.SX1276FskSetOpMode:00000000 $t
+     /tmp/ccdLk6oo.s:58     .text.SX1276FskSetOpMode:00000000 SX1276FskSetOpMode
+     /tmp/ccdLk6oo.s:129    .text.SX1276FskSetOpMode:0000004c $d
+     /tmp/ccdLk6oo.s:135    .text.SX1276FskInit:00000000 $t
+     /tmp/ccdLk6oo.s:140    .text.SX1276FskInit:00000000 SX1276FskInit
+     /tmp/ccdLk6oo.s:333    .text.SX1276FskInit:0000011c $d
+     /tmp/ccdLk6oo.s:342    .text.SX1276FskGetOpMode:00000000 $t
+     /tmp/ccdLk6oo.s:347    .text.SX1276FskGetOpMode:00000000 SX1276FskGetOpMode
+     /tmp/ccdLk6oo.s:374    .text.SX1276FskGetOpMode:00000018 $d
+     /tmp/ccdLk6oo.s:382    .text.SX1276FskReadFei:00000000 $t
+     /tmp/ccdLk6oo.s:387    .text.SX1276FskReadFei:00000000 SX1276FskReadFei
+     /tmp/ccdLk6oo.s:424    .text.SX1276FskReadFei:00000030 $d
+     /tmp/ccdLk6oo.s:431    .text.SX1276FskReadAfc:00000000 $t
+     /tmp/ccdLk6oo.s:436    .text.SX1276FskReadAfc:00000000 SX1276FskReadAfc
+     /tmp/ccdLk6oo.s:473    .text.SX1276FskReadAfc:00000030 $d
+     /tmp/ccdLk6oo.s:480    .text.SX1276FskReadRxGain:00000000 $t
+     /tmp/ccdLk6oo.s:485    .text.SX1276FskReadRxGain:00000000 SX1276FskReadRxGain
+     /tmp/ccdLk6oo.s:512    .text.SX1276FskReadRxGain:00000018 $d
+     /tmp/ccdLk6oo.s:518    .text.SX1276FskReadRssi:00000000 $t
+     /tmp/ccdLk6oo.s:523    .text.SX1276FskReadRssi:00000000 SX1276FskReadRssi
+     /tmp/ccdLk6oo.s:559    .text.SX1276FskReadRssi:0000002c $d
+     /tmp/ccdLk6oo.s:565    .text.SX1276FskGetPacketRxGain:00000000 $t
+     /tmp/ccdLk6oo.s:570    .text.SX1276FskGetPacketRxGain:00000000 SX1276FskGetPacketRxGain
+     /tmp/ccdLk6oo.s:584    .text.SX1276FskGetPacketRxGain:00000008 $d
+     /tmp/ccdLk6oo.s:589    .text.SX1276FskGetPacketRssi:00000000 $t
+     /tmp/ccdLk6oo.s:594    .text.SX1276FskGetPacketRssi:00000000 SX1276FskGetPacketRssi
+     /tmp/ccdLk6oo.s:608    .text.SX1276FskGetPacketRssi:00000008 $d
+     /tmp/ccdLk6oo.s:613    .text.SX1276FskGetPacketAfc:00000000 $t
+     /tmp/ccdLk6oo.s:618    .text.SX1276FskGetPacketAfc:00000000 SX1276FskGetPacketAfc
+     /tmp/ccdLk6oo.s:632    .text.SX1276FskGetPacketAfc:00000008 $d
+     /tmp/ccdLk6oo.s:637    .text.SX1276FskGetRxPacket:00000000 $t
+     /tmp/ccdLk6oo.s:642    .text.SX1276FskGetRxPacket:00000000 SX1276FskGetRxPacket
+     /tmp/ccdLk6oo.s:671    .text.SX1276FskGetRxPacket:00000018 $d
+     /tmp/ccdLk6oo.s:677    .text.SX1276FskSetTxPacket:00000000 $t
+     /tmp/ccdLk6oo.s:682    .text.SX1276FskSetTxPacket:00000000 SX1276FskSetTxPacket
+     /tmp/ccdLk6oo.s:713    .text.SX1276FskSetTxPacket:00000018 $d
+     /tmp/ccdLk6oo.s:720    .text.SX1276FskGetPacketPayloadSize:00000000 $t
+     /tmp/ccdLk6oo.s:725    .text.SX1276FskGetPacketPayloadSize:00000000 SX1276FskGetPacketPayloadSize
+     /tmp/ccdLk6oo.s:785    .text.SX1276FskGetPacketPayloadSize:00000040 $d
+     /tmp/ccdLk6oo.s:790    .text.SX1276FskGetPacketHeaderSize:00000000 $t
+     /tmp/ccdLk6oo.s:795    .text.SX1276FskGetPacketHeaderSize:00000000 SX1276FskGetPacketHeaderSize
+     /tmp/ccdLk6oo.s:823    .text.SX1276FskGetPacketHeaderSize:00000020 $d
+     /tmp/ccdLk6oo.s:828    .text.SX1276FskGetRFState:00000000 $t
+     /tmp/ccdLk6oo.s:833    .text.SX1276FskGetRFState:00000000 SX1276FskGetRFState
+     /tmp/ccdLk6oo.s:847    .text.SX1276FskGetRFState:00000008 $d
+     /tmp/ccdLk6oo.s:852    .text.SX1276FskSetRFState:00000000 $t
+     /tmp/ccdLk6oo.s:857    .text.SX1276FskSetRFState:00000000 SX1276FskSetRFState
+     /tmp/ccdLk6oo.s:872    .text.SX1276FskSetRFState:00000008 $d
+     /tmp/ccdLk6oo.s:877    .text.SX1276FskStartRx:00000000 $t
+     /tmp/ccdLk6oo.s:882    .text.SX1276FskStartRx:00000000 SX1276FskStartRx
+     /tmp/ccdLk6oo.s:905    .text.SX1276FskProcess:00000000 $t
+ARM GAS  /tmp/ccdLk6oo.s 			page 46
 
 
-     /tmp/ccpwgW31.s:910    .text.SX1276FskProcess:00000000 SX1276FskProcess
-     /tmp/ccpwgW31.s:932    .text.SX1276FskProcess:00000012 $d
-     /tmp/ccpwgW31.s:943    .text.SX1276FskProcess:00000028 $t
-     /tmp/ccpwgW31.s:1312   .text.SX1276FskProcess:0000028c $d
-     /tmp/ccpwgW31.s:1333   .text.SX1276FskProcess:000002d8 $t
-     /tmp/ccpwgW31.s:1701   .text.SX1276FskProcess:000004f0 $d
-     /tmp/ccpwgW31.s:1822   .data.FskSettings:00000000 FskSettings
-     /tmp/ccpwgW31.s:1719   .bss.RFBuffer:00000000 $d
-     /tmp/ccpwgW31.s:1723   .bss.RFBuffer:00000000 RFBuffer
-     /tmp/ccpwgW31.s:1726   .bss.PacketTimeout:00000000 $d
-     /tmp/ccpwgW31.s:1730   .bss.PacketTimeout:00000000 PacketTimeout
-     /tmp/ccpwgW31.s:1733   .bss.Preamble2SyncTimer:00000000 $d
-     /tmp/ccpwgW31.s:1737   .bss.Preamble2SyncTimer:00000000 Preamble2SyncTimer
-     /tmp/ccpwgW31.s:1740   .bss.RxPacketAfcValue:00000000 $d
-     /tmp/ccpwgW31.s:1744   .bss.RxPacketAfcValue:00000000 RxPacketAfcValue
-     /tmp/ccpwgW31.s:1747   .bss.RxPacketSize:00000000 $d
-     /tmp/ccpwgW31.s:1751   .bss.RxPacketSize:00000000 RxPacketSize
-     /tmp/ccpwgW31.s:1757   .data.RxGain:00000000 RxGain
-     /tmp/ccpwgW31.s:1763   .bss.TxBytesSent:00000000 TxBytesSent
-     /tmp/ccpwgW31.s:1764   .bss.TxBytesSent:00000000 $d
-     /tmp/ccpwgW31.s:1766   .bss.TxTimeoutTimer:00000000 $d
-     /tmp/ccpwgW31.s:1770   .bss.TxTimeoutTimer:00000000 TxTimeoutTimer
-     /tmp/ccpwgW31.s:1773   .bss.Preamble2SyncTimeout:00000000 $d
-     /tmp/ccpwgW31.s:1777   .bss.Preamble2SyncTimeout:00000000 Preamble2SyncTimeout
-     /tmp/ccpwgW31.s:1780   .bss.TxPacketSize:00000000 $d
-     /tmp/ccpwgW31.s:1784   .bss.TxPacketSize:00000000 TxPacketSize
-     /tmp/ccpwgW31.s:1787   .bss.RxPacketRssiValue:00000000 $d
-     /tmp/ccpwgW31.s:1791   .bss.RxPacketRssiValue:00000000 RxPacketRssiValue
-     /tmp/ccpwgW31.s:1797   .bss.PreambleDetected:00000000 PreambleDetected
-     /tmp/ccpwgW31.s:1798   .bss.PreambleDetected:00000000 $d
-     /tmp/ccpwgW31.s:1803   .data.antennaSwitchTxOnPrev.7727:00000000 antennaSwitchTxOnPrev.7727
-     /tmp/ccpwgW31.s:1809   .bss.RFState:00000000 RFState
-     /tmp/ccpwgW31.s:1810   .bss.RFState:00000000 $d
-     /tmp/ccpwgW31.s:1815   .bss.RxBytesRead:00000000 RxBytesRead
-     /tmp/ccpwgW31.s:1816   .bss.RxBytesRead:00000000 $d
-     /tmp/ccpwgW31.s:1818   .data.FskSettings:00000000 $d
-     /tmp/ccpwgW31.s:1838   .data.DataChunkSize:00000000 DataChunkSize
-     /tmp/ccpwgW31.s:1844   .bss.PacketDetected:00000000 PacketDetected
-     /tmp/ccpwgW31.s:1845   .bss.PacketDetected:00000000 $d
-     /tmp/ccpwgW31.s:1847   .bss.RxTimeoutTimer:00000000 $d
-     /tmp/ccpwgW31.s:1851   .bss.RxTimeoutTimer:00000000 RxTimeoutTimer
-     /tmp/ccpwgW31.s:1857   .bss.SyncWordDetected:00000000 SyncWordDetected
-     /tmp/ccpwgW31.s:1858   .bss.SyncWordDetected:00000000 $d
+     /tmp/ccdLk6oo.s:910    .text.SX1276FskProcess:00000000 SX1276FskProcess
+     /tmp/ccdLk6oo.s:932    .text.SX1276FskProcess:00000012 $d
+     /tmp/ccdLk6oo.s:943    .text.SX1276FskProcess:00000028 $t
+     /tmp/ccdLk6oo.s:1312   .text.SX1276FskProcess:0000028c $d
+     /tmp/ccdLk6oo.s:1333   .text.SX1276FskProcess:000002d8 $t
+     /tmp/ccdLk6oo.s:1701   .text.SX1276FskProcess:000004f0 $d
+     /tmp/ccdLk6oo.s:1822   .data.FskSettings:00000000 FskSettings
+     /tmp/ccdLk6oo.s:1719   .bss.RFBuffer:00000000 $d
+     /tmp/ccdLk6oo.s:1723   .bss.RFBuffer:00000000 RFBuffer
+     /tmp/ccdLk6oo.s:1726   .bss.PacketTimeout:00000000 $d
+     /tmp/ccdLk6oo.s:1730   .bss.PacketTimeout:00000000 PacketTimeout
+     /tmp/ccdLk6oo.s:1733   .bss.Preamble2SyncTimer:00000000 $d
+     /tmp/ccdLk6oo.s:1737   .bss.Preamble2SyncTimer:00000000 Preamble2SyncTimer
+     /tmp/ccdLk6oo.s:1740   .bss.RxPacketAfcValue:00000000 $d
+     /tmp/ccdLk6oo.s:1744   .bss.RxPacketAfcValue:00000000 RxPacketAfcValue
+     /tmp/ccdLk6oo.s:1747   .bss.RxPacketSize:00000000 $d
+     /tmp/ccdLk6oo.s:1751   .bss.RxPacketSize:00000000 RxPacketSize
+     /tmp/ccdLk6oo.s:1757   .data.RxGain:00000000 RxGain
+     /tmp/ccdLk6oo.s:1763   .bss.TxBytesSent:00000000 TxBytesSent
+     /tmp/ccdLk6oo.s:1764   .bss.TxBytesSent:00000000 $d
+     /tmp/ccdLk6oo.s:1766   .bss.TxTimeoutTimer:00000000 $d
+     /tmp/ccdLk6oo.s:1770   .bss.TxTimeoutTimer:00000000 TxTimeoutTimer
+     /tmp/ccdLk6oo.s:1773   .bss.Preamble2SyncTimeout:00000000 $d
+     /tmp/ccdLk6oo.s:1777   .bss.Preamble2SyncTimeout:00000000 Preamble2SyncTimeout
+     /tmp/ccdLk6oo.s:1780   .bss.TxPacketSize:00000000 $d
+     /tmp/ccdLk6oo.s:1784   .bss.TxPacketSize:00000000 TxPacketSize
+     /tmp/ccdLk6oo.s:1787   .bss.RxPacketRssiValue:00000000 $d
+     /tmp/ccdLk6oo.s:1791   .bss.RxPacketRssiValue:00000000 RxPacketRssiValue
+     /tmp/ccdLk6oo.s:1797   .bss.PreambleDetected:00000000 PreambleDetected
+     /tmp/ccdLk6oo.s:1798   .bss.PreambleDetected:00000000 $d
+     /tmp/ccdLk6oo.s:1803   .data.antennaSwitchTxOnPrev.7727:00000000 antennaSwitchTxOnPrev.7727
+     /tmp/ccdLk6oo.s:1809   .bss.RFState:00000000 RFState
+     /tmp/ccdLk6oo.s:1810   .bss.RFState:00000000 $d
+     /tmp/ccdLk6oo.s:1815   .bss.RxBytesRead:00000000 RxBytesRead
+     /tmp/ccdLk6oo.s:1816   .bss.RxBytesRead:00000000 $d
+     /tmp/ccdLk6oo.s:1818   .data.FskSettings:00000000 $d
+     /tmp/ccdLk6oo.s:1838   .data.DataChunkSize:00000000 DataChunkSize
+     /tmp/ccdLk6oo.s:1844   .bss.PacketDetected:00000000 PacketDetected
+     /tmp/ccdLk6oo.s:1845   .bss.PacketDetected:00000000 $d
+     /tmp/ccdLk6oo.s:1847   .bss.RxTimeoutTimer:00000000 $d
+     /tmp/ccdLk6oo.s:1851   .bss.RxTimeoutTimer:00000000 RxTimeoutTimer
+     /tmp/ccdLk6oo.s:1857   .bss.SyncWordDetected:00000000 SyncWordDetected
+     /tmp/ccdLk6oo.s:1858   .bss.SyncWordDetected:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS
@@ -2709,7 +2709,7 @@ SX1276FskSetBitrate
 SX1276FskSetFdev
 SX1276FskSetDccBw
 SX1276FskSetRssiOffset
-ARM GAS  /tmp/ccpwgW31.s 			page 47
+ARM GAS  /tmp/ccdLk6oo.s 			page 47
 
 
 SX1276FskSetPAOutput

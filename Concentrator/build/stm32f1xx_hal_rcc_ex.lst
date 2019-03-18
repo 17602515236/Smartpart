@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccGdLGT2.s 			page 1
+ARM GAS  /tmp/ccT2Dh4W.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
   29:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
   30:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
   31:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-ARM GAS  /tmp/ccGdLGT2.s 			page 2
+ARM GAS  /tmp/ccT2Dh4W.s 			page 2
 
 
   32:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
   86:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****     [..]
   87:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****     This subsection provides a set of functions allowing to control the RCC Clocks 
   88:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****     frequencies.
-ARM GAS  /tmp/ccGdLGT2.s 			page 3
+ARM GAS  /tmp/ccT2Dh4W.s 			page 3
 
 
   89:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****     [..] 
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  126:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   /*------------------------------- RTC/LCD Configuration ------------------------*/ 
  127:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   if ((((PeriphClkInit->PeriphClockSelection) & RCC_PERIPHCLK_RTC) == RCC_PERIPHCLK_RTC))
   45              		.loc 1 127 0
-ARM GAS  /tmp/ccGdLGT2.s 			page 4
+ARM GAS  /tmp/ccT2Dh4W.s 			page 4
 
 
   46 0006 0368     		ldr	r3, [r0]
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  145:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       /* Enable write access to Backup domain */
  146:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       SET_BIT(PWR->CR, PWR_CR_DBP);
   82              		.loc 1 146 0
-ARM GAS  /tmp/ccGdLGT2.s 			page 5
+ARM GAS  /tmp/ccT2Dh4W.s 			page 5
 
 
   83 003c 334A     		ldr	r2, .L17+4
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  120 006e 02F44072 		and	r2, r2, #768
  121 0072 9342     		cmp	r3, r2
  122 0074 1CD0     		beq	.L8
-ARM GAS  /tmp/ccGdLGT2.s 			page 6
+ARM GAS  /tmp/ccT2Dh4W.s 			page 6
 
 
  163:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****     {
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  179:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****         {
  158              		.loc 1 179 0
  159 00a6 184B     		ldr	r3, .L17
-ARM GAS  /tmp/ccGdLGT2.s 			page 7
+ARM GAS  /tmp/ccT2Dh4W.s 			page 7
 
 
  160 00a8 1B6A     		ldr	r3, [r3, #32]
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  191 00dc 4B60     		str	r3, [r1, #4]
  192              	.L11:
  205:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   }
-ARM GAS  /tmp/ccGdLGT2.s 			page 8
+ARM GAS  /tmp/ccT2Dh4W.s 			page 8
 
 
  206:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c **** 
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  260:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       /* Enable the main PLLI2S. */
  261:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       __HAL_RCC_PLLI2S_ENABLE();
  262:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       
-ARM GAS  /tmp/ccGdLGT2.s 			page 9
+ARM GAS  /tmp/ccT2Dh4W.s 			page 9
 
 
  263:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       /* Get Start Tick*/
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  209              	.LBB4:
  155:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****         }
  210              		.loc 1 155 0
-ARM GAS  /tmp/ccGdLGT2.s 			page 10
+ARM GAS  /tmp/ccT2Dh4W.s 			page 10
 
 
  211 00f8 0320     		movs	r0, #3
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  313:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   
  314:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   /* Set all possible values for the extended clock type parameter------------*/
  315:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   PeriphClkInit->PeriphClockSelection = RCC_PERIPHCLK_RTC;
-ARM GAS  /tmp/ccGdLGT2.s 			page 11
+ARM GAS  /tmp/ccT2Dh4W.s 			page 11
 
 
  254              		.loc 1 315 0
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  352:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   PeriphClkInit->PeriphClockSelection |= RCC_PERIPHCLK_USB;
  272              		.loc 1 352 0
  273 001a 1322     		movs	r2, #19
-ARM GAS  /tmp/ccGdLGT2.s 			page 12
+ARM GAS  /tmp/ccT2Dh4W.s 			page 12
 
 
  274 001c 0260     		str	r2, [r0]
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  388:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   *            @arg @ref RCC_PERIPHCLK_I2S3 I2S3 peripheral clock
  389:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   *            @arg @ref RCC_PERIPHCLK_I2S2 I2S2 peripheral clock
  390:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   *            @arg @ref RCC_PERIPHCLK_I2S3 I2S3 peripheral clock
-ARM GAS  /tmp/ccGdLGT2.s 			page 13
+ARM GAS  /tmp/ccT2Dh4W.s 			page 13
 
 
  391:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   *            @arg @ref RCC_PERIPHCLK_I2S3 I2S3 peripheral clock
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  416:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c **** 
  417:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   uint32_t prediv1 = 0U, pllclk = 0U, pllmul = 0U;
  418:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c **** #endif /* STM32F102x6 || STM32F102xB || STM32F103x6 || STM32F103xB || STM32F103xE || STM32F103xG */
-ARM GAS  /tmp/ccGdLGT2.s 			page 14
+ARM GAS  /tmp/ccT2Dh4W.s 			page 14
 
 
  419:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   uint32_t temp_reg = 0U, frequency = 0U;
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  352 0046 2C49     		ldr	r1, .L39+4
  353 0048 4968     		ldr	r1, [r1, #4]
  354 004a C1F34041 		ubfx	r1, r1, #17, #1
-ARM GAS  /tmp/ccGdLGT2.s 			page 15
+ARM GAS  /tmp/ccT2Dh4W.s 			page 15
 
 
  355 004e 06A8     		add	r0, sp, #24
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  374 006a 00E0     		b	.L28
  375              	.LVL39:
  376              	.L32:
-ARM GAS  /tmp/ccGdLGT2.s 			page 16
+ARM GAS  /tmp/ccT2Dh4W.s 			page 16
 
 
  417:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c **** #endif /* STM32F102x6 || STM32F102xB || STM32F103x6 || STM32F103xB || STM32F103xE || STM32F103xG */
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  513:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****   case RCC_PERIPHCLK_I2S2:  
  514:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****     {
  515:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c **** #if defined(STM32F103xE) || defined(STM32F103xG)
-ARM GAS  /tmp/ccGdLGT2.s 			page 17
+ARM GAS  /tmp/ccT2Dh4W.s 			page 17
 
 
  516:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       /* SYSCLK used as source clock for I2S2 */
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  399 0086 1B6A     		ldr	r3, [r3, #32]
  400              	.LVL45:
  568:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c **** 
-ARM GAS  /tmp/ccGdLGT2.s 			page 18
+ARM GAS  /tmp/ccT2Dh4W.s 			page 18
 
 
  569:Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c ****       /* Check if LSE is ready if RTC clock selection is LSE */
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  431 00bc FFF7FEFF 		bl	HAL_RCC_GetPCLK2Freq
  432              	.LVL48:
  433 00c0 0D4B     		ldr	r3, .L39+4
-ARM GAS  /tmp/ccGdLGT2.s 			page 19
+ARM GAS  /tmp/ccT2Dh4W.s 			page 19
 
 
  434 00c2 5B68     		ldr	r3, [r3, #4]
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  474              		@ sp needed
  475 00f0 70BD     		pop	{r4, r5, r6, pc}
  476              	.LVL55:
-ARM GAS  /tmp/ccGdLGT2.s 			page 20
+ARM GAS  /tmp/ccT2Dh4W.s 			page 20
 
 
  477              	.L40:
@@ -1185,21 +1185,21 @@ ARM GAS  /tmp/ccGdLGT2.s 			page 1
  519              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
  520              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h"
  521              		.file 10 "Drivers/CMSIS/Include/core_cm3.h"
-ARM GAS  /tmp/ccGdLGT2.s 			page 21
+ARM GAS  /tmp/ccT2Dh4W.s 			page 21
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 stm32f1xx_hal_rcc_ex.c
-     /tmp/ccGdLGT2.s:20     .text.HAL_RCCEx_PeriphCLKConfig:00000000 $t
-     /tmp/ccGdLGT2.s:25     .text.HAL_RCCEx_PeriphCLKConfig:00000000 HAL_RCCEx_PeriphCLKConfig
-     /tmp/ccGdLGT2.s:234    .text.HAL_RCCEx_PeriphCLKConfig:00000108 $d
-     /tmp/ccGdLGT2.s:241    .text.HAL_RCCEx_GetPeriphCLKConfig:00000000 $t
-     /tmp/ccGdLGT2.s:246    .text.HAL_RCCEx_GetPeriphCLKConfig:00000000 HAL_RCCEx_GetPeriphCLKConfig
-     /tmp/ccGdLGT2.s:283    .text.HAL_RCCEx_GetPeriphCLKConfig:00000028 $d
-     /tmp/ccGdLGT2.s:288    .text.HAL_RCCEx_GetPeriphCLKFreq:00000000 $t
-     /tmp/ccGdLGT2.s:293    .text.HAL_RCCEx_GetPeriphCLKFreq:00000000 HAL_RCCEx_GetPeriphCLKFreq
-     /tmp/ccGdLGT2.s:480    .text.HAL_RCCEx_GetPeriphCLKFreq:000000f4 $d
-     /tmp/ccGdLGT2.s:489    .rodata:00000000 $d
+     /tmp/ccT2Dh4W.s:20     .text.HAL_RCCEx_PeriphCLKConfig:00000000 $t
+     /tmp/ccT2Dh4W.s:25     .text.HAL_RCCEx_PeriphCLKConfig:00000000 HAL_RCCEx_PeriphCLKConfig
+     /tmp/ccT2Dh4W.s:234    .text.HAL_RCCEx_PeriphCLKConfig:00000108 $d
+     /tmp/ccT2Dh4W.s:241    .text.HAL_RCCEx_GetPeriphCLKConfig:00000000 $t
+     /tmp/ccT2Dh4W.s:246    .text.HAL_RCCEx_GetPeriphCLKConfig:00000000 HAL_RCCEx_GetPeriphCLKConfig
+     /tmp/ccT2Dh4W.s:283    .text.HAL_RCCEx_GetPeriphCLKConfig:00000028 $d
+     /tmp/ccT2Dh4W.s:288    .text.HAL_RCCEx_GetPeriphCLKFreq:00000000 $t
+     /tmp/ccT2Dh4W.s:293    .text.HAL_RCCEx_GetPeriphCLKFreq:00000000 HAL_RCCEx_GetPeriphCLKFreq
+     /tmp/ccT2Dh4W.s:480    .text.HAL_RCCEx_GetPeriphCLKFreq:000000f4 $d
+     /tmp/ccT2Dh4W.s:489    .rodata:00000000 $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

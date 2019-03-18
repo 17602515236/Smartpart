@@ -1,4 +1,4 @@
-ARM GAS  /tmp/cctmlbV6.s 			page 1
+ARM GAS  /tmp/ccphlqUx.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
   24:radio/sx1276-FskMisc.c ****  * \date       May 6 2013
   25:radio/sx1276-FskMisc.c ****  * \author     Gregory Cristian
   26:radio/sx1276-FskMisc.c ****  *
-ARM GAS  /tmp/cctmlbV6.s 			page 2
+ARM GAS  /tmp/ccphlqUx.s 			page 2
 
 
   27:radio/sx1276-FskMisc.c ****  * Last modified by Miguel Luis on Jun 19 2013
@@ -118,7 +118,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
   81:radio/sx1276-FskMisc.c ****     SX1276Read( REG_IMAGECAL, &SX1276->RegImageCal );    
   82:radio/sx1276-FskMisc.c ****     SX1276->RegImageCal = ( SX1276->RegImageCal & RF_IMAGECAL_IMAGECAL_MASK ) | RF_IMAGECAL_IMAGECA
   83:radio/sx1276-FskMisc.c ****     SX1276Write( REG_IMAGECAL, SX1276->RegImageCal );
-ARM GAS  /tmp/cctmlbV6.s 			page 3
+ARM GAS  /tmp/ccphlqUx.s 			page 3
 
 
   84:radio/sx1276-FskMisc.c **** 
@@ -178,7 +178,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  138:radio/sx1276-FskMisc.c **** }
  139:radio/sx1276-FskMisc.c **** 
  140:radio/sx1276-FskMisc.c **** void SX1276FskSetRFPower( int8_t power )
-ARM GAS  /tmp/cctmlbV6.s 			page 4
+ARM GAS  /tmp/ccphlqUx.s 			page 4
 
 
  141:radio/sx1276-FskMisc.c **** {
@@ -238,7 +238,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  195:radio/sx1276-FskMisc.c **** 
  196:radio/sx1276-FskMisc.c ****     if( ( SX1276->RegPaConfig & RF_PACONFIG_PASELECT_PABOOST ) == RF_PACONFIG_PASELECT_PABOOST )
  197:radio/sx1276-FskMisc.c ****     {
-ARM GAS  /tmp/cctmlbV6.s 			page 5
+ARM GAS  /tmp/ccphlqUx.s 			page 5
 
 
  198:radio/sx1276-FskMisc.c ****         if( ( SX1276->RegPaDac & 0x07 ) == 0x07 )
@@ -298,7 +298,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
   42              		.cfi_offset 5, -32
   43              		.cfi_offset 6, -28
   44              		.cfi_offset 7, -24
-ARM GAS  /tmp/cctmlbV6.s 			page 6
+ARM GAS  /tmp/ccphlqUx.s 			page 6
 
 
   45              		.cfi_offset 8, -20
@@ -358,7 +358,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
   86 0042 17A1     		adr	r1, .L10
   87 0044 D1E90001 		ldrd	r0, [r1]
   88 0048 FFF7FEFF 		bl	__aeabi_ddiv
-ARM GAS  /tmp/cctmlbV6.s 			page 7
+ARM GAS  /tmp/ccphlqUx.s 			page 7
 
 
   89              	.LVL7:
@@ -418,7 +418,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  131 0088 1024     		movs	r4, #16
  132              	.LVL18:
  133              	.L6:
-ARM GAS  /tmp/cctmlbV6.s 			page 8
+ARM GAS  /tmp/ccphlqUx.s 			page 8
 
 
  251:radio/sx1276-FskMisc.c ****         {
@@ -478,7 +478,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  182 0002 0646     		mov	r6, r0
  226:radio/sx1276-FskMisc.c ****     }
  183              		.loc 1 226 0
-ARM GAS  /tmp/cctmlbV6.s 			page 9
+ARM GAS  /tmp/ccphlqUx.s 			page 9
 
 
  184 0004 881C     		adds	r0, r1, #2
@@ -538,7 +538,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  238              		.cfi_offset 14, -4
   45:radio/sx1276-FskMisc.c **** 
  239              		.loc 1 45 0
-ARM GAS  /tmp/cctmlbV6.s 			page 10
+ARM GAS  /tmp/ccphlqUx.s 			page 10
 
 
  240 0002 0F4B     		ldr	r3, .L18+8
@@ -598,7 +598,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  290              		@ frame_needed = 0, uses_anonymous_args = 0
  291 0000 10B5     		push	{r4, lr}
  292              	.LCFI5:
-ARM GAS  /tmp/cctmlbV6.s 			page 11
+ARM GAS  /tmp/ccphlqUx.s 			page 11
 
 
  293              		.cfi_def_cfa_offset 8
@@ -658,7 +658,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  344              		.cfi_startproc
  345              		@ args = 0, pretend = 0, frame = 8
  346              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  /tmp/cctmlbV6.s 			page 12
+ARM GAS  /tmp/ccphlqUx.s 			page 12
 
 
  347 0000 30B5     		push	{r4, r5, lr}
@@ -718,7 +718,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  393 0042 FFF7FEFF 		bl	SX1276Write
  394              	.LVL47:
   85:radio/sx1276-FskMisc.c ****     // rx_cal_run goes low when calibration in finished
-ARM GAS  /tmp/cctmlbV6.s 			page 13
+ARM GAS  /tmp/ccphlqUx.s 			page 13
 
 
  395              		.loc 1 85 0
@@ -778,7 +778,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  443              		.align	2
  444              		.global	SX1276FskSetBitrate
  445              		.thumb
-ARM GAS  /tmp/cctmlbV6.s 			page 14
+ARM GAS  /tmp/ccphlqUx.s 			page 14
 
 
  446              		.thumb_func
@@ -838,7 +838,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  495              	.L32:
  496 0038 00000000 		.word	0
  497 003c 80847E41 		.word	1098810496
-ARM GAS  /tmp/cctmlbV6.s 			page 15
+ARM GAS  /tmp/ccphlqUx.s 			page 15
 
 
  498 0040 00000000 		.word	FskSettings
@@ -898,7 +898,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  549              	.L37:
  550              		.align	3
  551              	.L36:
-ARM GAS  /tmp/cctmlbV6.s 			page 16
+ARM GAS  /tmp/ccphlqUx.s 			page 16
 
 
  552 0038 00000000 		.word	0
@@ -958,7 +958,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  603              		.loc 1 126 0
  604 002a 2168     		ldr	r1, [r4]
  605 002c 0B79     		ldrb	r3, [r1, #4]	@ zero_extendqisi2
-ARM GAS  /tmp/cctmlbV6.s 			page 17
+ARM GAS  /tmp/ccphlqUx.s 			page 17
 
 
  606 002e 23F03F02 		bic	r2, r3, #63
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  657 0012 1879     		ldrb	r0, [r3, #4]	@ zero_extendqisi2
  658 0014 5B79     		ldrb	r3, [r3, #5]	@ zero_extendqisi2
  135:radio/sx1276-FskMisc.c **** 
-ARM GAS  /tmp/cctmlbV6.s 			page 18
+ARM GAS  /tmp/ccphlqUx.s 			page 18
 
 
  659              		.loc 1 135 0
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  712              	.LVL79:
  143:radio/sx1276-FskMisc.c ****     
  713              		.loc 1 143 0
-ARM GAS  /tmp/cctmlbV6.s 			page 19
+ARM GAS  /tmp/ccphlqUx.s 			page 19
 
 
  714 0010 2968     		ldr	r1, [r5]
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  758 0054 0224     		movs	r4, #2
  759              	.L52:
  760              	.LVL84:
-ARM GAS  /tmp/cctmlbV6.s 			page 20
+ARM GAS  /tmp/ccphlqUx.s 			page 20
 
 
  166:radio/sx1276-FskMisc.c ****             {
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  804 0094 1B68     		ldr	r3, [r3]
  805 0096 597A     		ldrb	r1, [r3, #9]	@ zero_extendqisi2
  806 0098 0920     		movs	r0, #9
-ARM GAS  /tmp/cctmlbV6.s 			page 21
+ARM GAS  /tmp/ccphlqUx.s 			page 21
 
 
  807 009a FFF7FEFF 		bl	SX1276Write
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  857              		.loc 1 198 0
  858 0022 92F84D20 		ldrb	r2, [r2, #77]	@ zero_extendqisi2
  859 0026 02F00702 		and	r2, r2, #7
-ARM GAS  /tmp/cctmlbV6.s 			page 22
+ARM GAS  /tmp/ccphlqUx.s 			page 22
 
 
  860 002a 072A     		cmp	r2, #7
@@ -1318,7 +1318,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  909              		.cfi_def_cfa_offset 12
  910              		.cfi_offset 4, -12
  911              		.cfi_offset 5, -8
-ARM GAS  /tmp/cctmlbV6.s 			page 23
+ARM GAS  /tmp/ccphlqUx.s 			page 23
 
 
  912              		.cfi_offset 14, -4
@@ -1378,7 +1378,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  951 003a 142B     		cmp	r3, #20
  952 003c 0BD0     		beq	.L76
  953 003e 182B     		cmp	r3, #24
-ARM GAS  /tmp/cctmlbV6.s 			page 24
+ARM GAS  /tmp/ccphlqUx.s 			page 24
 
 
  954 0040 13D0     		beq	.L77
@@ -1438,7 +1438,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  990              		.loc 1 305 0
  991 0086 2178     		ldrb	r1, [r4]	@ zero_extendqisi2
  992 0088 1220     		movs	r0, #18
-ARM GAS  /tmp/cctmlbV6.s 			page 25
+ARM GAS  /tmp/ccphlqUx.s 			page 25
 
 
  993 008a FFF7FEFF 		bl	SX1276Write
@@ -1498,7 +1498,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1038              	.LCFI18:
  1039              		.cfi_def_cfa_offset 8
  1040              		.cfi_offset 4, -8
-ARM GAS  /tmp/cctmlbV6.s 			page 26
+ARM GAS  /tmp/ccphlqUx.s 			page 26
 
 
  1041              		.cfi_offset 14, -4
@@ -1558,7 +1558,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1076              		.loc 1 333 0
  1077 0022 01F00701 		and	r1, r1, #7
  1078 0026 FFF7FEFF 		bl	SX1276FskComputeRxBw
-ARM GAS  /tmp/cctmlbV6.s 			page 27
+ARM GAS  /tmp/ccphlqUx.s 			page 27
 
 
  1079              	.LVL112:
@@ -1618,7 +1618,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1123              		.cfi_offset 4, -12
  1124              		.cfi_offset 5, -8
  1125              		.cfi_offset 14, -4
-ARM GAS  /tmp/cctmlbV6.s 			page 28
+ARM GAS  /tmp/ccphlqUx.s 			page 28
 
 
  1126 0002 0446     		mov	r4, r0
@@ -1678,7 +1678,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1174              		.cfi_offset 14, -4
  354:radio/sx1276-FskMisc.c ****     SX1276Read( REG_PACKETCONFIG1, &SX1276->RegPacketConfig1 );
  1175              		.loc 1 354 0
-ARM GAS  /tmp/cctmlbV6.s 			page 29
+ARM GAS  /tmp/ccphlqUx.s 			page 29
 
 
  1176 0002 074C     		ldr	r4, .L101
@@ -1738,7 +1738,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1225 000c FFF7FEFF 		bl	SX1276Read
  1226              	.LVL122:
  362:radio/sx1276-FskMisc.c ****     SX1276->RegRxConfig = ( SX1276->RegRxConfig & RF_RXCONFIG_AFCAUTO_MASK ) | ( enable << 4 );
-ARM GAS  /tmp/cctmlbV6.s 			page 30
+ARM GAS  /tmp/ccphlqUx.s 			page 30
 
 
  1227              		.loc 1 362 0
@@ -1798,7 +1798,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1275 000e 2368     		ldr	r3, [r4]
  1276 0010 587B     		ldrb	r0, [r3, #13]	@ zero_extendqisi2
  1277 0012 C0F30010 		ubfx	r0, r0, #4, #1
-ARM GAS  /tmp/cctmlbV6.s 			page 31
+ARM GAS  /tmp/ccphlqUx.s 			page 31
 
 
  1278 0016 024B     		ldr	r3, .L109+4
@@ -1858,7 +1858,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1326 001c 00000000 		.word	SX1276
  1327 0020 00000000 		.word	FskSettings
  1328              		.cfi_endproc
-ARM GAS  /tmp/cctmlbV6.s 			page 32
+ARM GAS  /tmp/ccphlqUx.s 			page 32
 
 
  1329              	.LFE81:
@@ -1918,7 +1918,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  388:radio/sx1276-FskMisc.c **** void SX1276FskSetPa20dBm( bool enale )
  389:radio/sx1276-FskMisc.c **** {
  1378              		.loc 1 389 0
-ARM GAS  /tmp/cctmlbV6.s 			page 33
+ARM GAS  /tmp/ccphlqUx.s 			page 33
 
 
  1379              		.cfi_startproc
@@ -1978,7 +1978,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1420              	.L121:
  403:radio/sx1276-FskMisc.c ****     }
  404:radio/sx1276-FskMisc.c ****     SX1276Write( REG_PADAC, SX1276->RegPaDac );
-ARM GAS  /tmp/cctmlbV6.s 			page 34
+ARM GAS  /tmp/ccphlqUx.s 			page 34
 
 
  1421              		.loc 1 404 0
@@ -2038,7 +2038,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1469 0022 00BF     		.align	2
  1470              	.L127:
  1471 0024 00000000 		.word	SX1276
-ARM GAS  /tmp/cctmlbV6.s 			page 35
+ARM GAS  /tmp/ccphlqUx.s 			page 35
 
 
  1472              		.cfi_endproc
@@ -2098,7 +2098,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1523              		.align	2
  1524              		.global	SX1276FskGetPAOutput
  1525              		.thumb
-ARM GAS  /tmp/cctmlbV6.s 			page 36
+ARM GAS  /tmp/ccphlqUx.s 			page 36
 
 
  1526              		.thumb_func
@@ -2158,7 +2158,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1572 0000 38B5     		push	{r3, r4, r5, lr}
  1573              	.LCFI29:
  1574              		.cfi_def_cfa_offset 16
-ARM GAS  /tmp/cctmlbV6.s 			page 37
+ARM GAS  /tmp/ccphlqUx.s 			page 37
 
 
  1575              		.cfi_offset 3, -16
@@ -2218,7 +2218,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  437:radio/sx1276-FskMisc.c ****     SX1276Read( REG_PARAMP, &SX1276->RegPaRamp );
  1624              		.loc 1 437 0
  1625 0002 054C     		ldr	r4, .L143
-ARM GAS  /tmp/cctmlbV6.s 			page 38
+ARM GAS  /tmp/ccphlqUx.s 			page 38
 
 
  1626 0004 2168     		ldr	r1, [r4]
@@ -2278,7 +2278,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  446:radio/sx1276-FskMisc.c ****         offset = ( ~offset & 0x1F );
  1674              		.loc 1 446 0
  1675 0014 E443     		mvns	r4, r4
-ARM GAS  /tmp/cctmlbV6.s 			page 39
+ARM GAS  /tmp/ccphlqUx.s 			page 39
 
 
  1676 0016 04F01F04 		and	r4, r4, #31
@@ -2338,7 +2338,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1722 0004 2168     		ldr	r1, [r4]
  1723 0006 0E31     		adds	r1, r1, #14
  1724 0008 0E20     		movs	r0, #14
-ARM GAS  /tmp/cctmlbV6.s 			page 40
+ARM GAS  /tmp/ccphlqUx.s 			page 40
 
 
  1725 000a FFF7FEFF 		bl	SX1276Read
@@ -2398,7 +2398,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1769              		.cfi_offset 3, -16
  1770              		.cfi_offset 4, -12
  1771              		.cfi_offset 5, -8
-ARM GAS  /tmp/cctmlbV6.s 			page 41
+ARM GAS  /tmp/ccphlqUx.s 			page 41
 
 
  1772              		.cfi_offset 14, -4
@@ -2458,7 +2458,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  486:radio/sx1276-FskMisc.c ****     // Wait 1ms
  487:radio/sx1276-FskMisc.c ****     startTick = GET_TICK_COUNT( );
  1809              		.loc 1 487 0
-ARM GAS  /tmp/cctmlbV6.s 			page 42
+ARM GAS  /tmp/ccphlqUx.s 			page 42
 
 
  1810 003e FFF7FEFF 		bl	HAL_GetTick
@@ -2518,7 +2518,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  501:radio/sx1276-FskMisc.c ****     {
  502:radio/sx1276-FskMisc.c ****         temp *= -1;
  1851              		.loc 1 502 0
-ARM GAS  /tmp/cctmlbV6.s 			page 43
+ARM GAS  /tmp/ccphlqUx.s 			page 43
 
 
  1852 0084 6442     		negs	r4, r4
@@ -2578,7 +2578,7 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1896 000c 10BD     		pop	{r4, pc}
  1897              		.cfi_endproc
  1898              	.LFE92:
-ARM GAS  /tmp/cctmlbV6.s 			page 44
+ARM GAS  /tmp/ccphlqUx.s 			page 44
 
 
  1900 000e 00BF     		.section	.text.SX1276FskGetTemp,"ax",%progbits
@@ -2622,102 +2622,102 @@ ARM GAS  /tmp/cctmlbV6.s 			page 1
  1935              		.file 6 "radio/sx1276-Hal.h"
  1936              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
  1937              		.file 8 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/math.h"
-ARM GAS  /tmp/cctmlbV6.s 			page 45
+ARM GAS  /tmp/ccphlqUx.s 			page 45
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sx1276-FskMisc.c
-     /tmp/cctmlbV6.s:26     .text.SX1276FskComputeRxBwMantExp:00000000 $t
-     /tmp/cctmlbV6.s:30     .text.SX1276FskComputeRxBwMantExp:00000000 SX1276FskComputeRxBwMantExp
-     /tmp/cctmlbV6.s:156    .text.SX1276FskComputeRxBwMantExp:000000a0 $d
-     /tmp/cctmlbV6.s:164    .text.SX1276FskComputeRxBw:00000000 $t
-     /tmp/cctmlbV6.s:168    .text.SX1276FskComputeRxBw:00000000 SX1276FskComputeRxBw
-     /tmp/cctmlbV6.s:216    .text.SX1276FskComputeRxBw:00000040 $d
-     /tmp/cctmlbV6.s:222    .text.SX1276FskSetRFFrequency:00000000 $t
-     /tmp/cctmlbV6.s:227    .text.SX1276FskSetRFFrequency:00000000 SX1276FskSetRFFrequency
-     /tmp/cctmlbV6.s:272    .text.SX1276FskSetRFFrequency:00000038 $d
-     /tmp/cctmlbV6.s:280    .text.SX1276FskGetRFFrequency:00000000 $t
-     /tmp/cctmlbV6.s:285    .text.SX1276FskGetRFFrequency:00000000 SX1276FskGetRFFrequency
-     /tmp/cctmlbV6.s:328    .text.SX1276FskGetRFFrequency:00000038 $d
-     /tmp/cctmlbV6.s:336    .text.SX1276FskRxCalibrate:00000000 $t
-     /tmp/cctmlbV6.s:341    .text.SX1276FskRxCalibrate:00000000 SX1276FskRxCalibrate
-     /tmp/cctmlbV6.s:437    .text.SX1276FskRxCalibrate:00000080 $d
-     /tmp/cctmlbV6.s:443    .text.SX1276FskSetBitrate:00000000 $t
-     /tmp/cctmlbV6.s:448    .text.SX1276FskSetBitrate:00000000 SX1276FskSetBitrate
-     /tmp/cctmlbV6.s:496    .text.SX1276FskSetBitrate:00000038 $d
-     /tmp/cctmlbV6.s:504    .text.SX1276FskGetBitrate:00000000 $t
-     /tmp/cctmlbV6.s:509    .text.SX1276FskGetBitrate:00000000 SX1276FskGetBitrate
-     /tmp/cctmlbV6.s:552    .text.SX1276FskGetBitrate:00000038 $d
-     /tmp/cctmlbV6.s:560    .text.SX1276FskSetFdev:00000000 $t
-     /tmp/cctmlbV6.s:565    .text.SX1276FskSetFdev:00000000 SX1276FskSetFdev
-     /tmp/cctmlbV6.s:623    .text.SX1276FskSetFdev:00000048 $d
-     /tmp/cctmlbV6.s:631    .text.SX1276FskGetFdev:00000000 $t
-     /tmp/cctmlbV6.s:636    .text.SX1276FskGetFdev:00000000 SX1276FskGetFdev
-     /tmp/cctmlbV6.s:677    .text.SX1276FskGetFdev:00000038 $d
-     /tmp/cctmlbV6.s:685    .text.SX1276FskSetRFPower:00000000 $t
-     /tmp/cctmlbV6.s:690    .text.SX1276FskSetRFPower:00000000 SX1276FskSetRFPower
-     /tmp/cctmlbV6.s:817    .text.SX1276FskSetRFPower:000000a4 $d
-     /tmp/cctmlbV6.s:823    .text.SX1276FskGetRFPower:00000000 $t
-     /tmp/cctmlbV6.s:828    .text.SX1276FskGetRFPower:00000000 SX1276FskGetRFPower
-     /tmp/cctmlbV6.s:889    .text.SX1276FskGetRFPower:00000058 $d
-     /tmp/cctmlbV6.s:895    .text.SX1276FskSetDccBw:00000000 $t
-     /tmp/cctmlbV6.s:900    .text.SX1276FskSetDccBw:00000000 SX1276FskSetDccBw
-     /tmp/cctmlbV6.s:1019   .text.SX1276FskSetDccBw:000000a4 $d
-     /tmp/cctmlbV6.s:1025   .text.SX1276FskGetBw:00000000 $t
-     /tmp/cctmlbV6.s:1030   .text.SX1276FskGetBw:00000000 SX1276FskGetBw
-     /tmp/cctmlbV6.s:1101   .text.SX1276FskGetBw:00000040 $d
-     /tmp/cctmlbV6.s:1107   .text.SX1276FskSetPacketCrcOn:00000000 $t
-     /tmp/cctmlbV6.s:1112   .text.SX1276FskSetPacketCrcOn:00000000 SX1276FskSetPacketCrcOn
-     /tmp/cctmlbV6.s:1153   .text.SX1276FskSetPacketCrcOn:00000030 $d
-     /tmp/cctmlbV6.s:1159   .text.SX1276FskGetPacketCrcOn:00000000 $t
-     /tmp/cctmlbV6.s:1164   .text.SX1276FskGetPacketCrcOn:00000000 SX1276FskGetPacketCrcOn
-     /tmp/cctmlbV6.s:1193   .text.SX1276FskGetPacketCrcOn:00000020 $d
-     /tmp/cctmlbV6.s:1199   .text.SX1276FskSetAfcOn:00000000 $t
-     /tmp/cctmlbV6.s:1204   .text.SX1276FskSetAfcOn:00000000 SX1276FskSetAfcOn
-     /tmp/cctmlbV6.s:1245   .text.SX1276FskSetAfcOn:0000002c $d
-     /tmp/cctmlbV6.s:1251   .text.SX1276FskGetAfcOn:00000000 $t
-     /tmp/cctmlbV6.s:1256   .text.SX1276FskGetAfcOn:00000000 SX1276FskGetAfcOn
-     /tmp/cctmlbV6.s:1285   .text.SX1276FskGetAfcOn:0000001c $d
-     /tmp/cctmlbV6.s:1291   .text.SX1276FskSetPayloadLength:00000000 $t
-     /tmp/cctmlbV6.s:1296   .text.SX1276FskSetPayloadLength:00000000 SX1276FskSetPayloadLength
-     /tmp/cctmlbV6.s:1326   .text.SX1276FskSetPayloadLength:0000001c $d
-     /tmp/cctmlbV6.s:1332   .text.SX1276FskGetPayloadLength:00000000 $t
-ARM GAS  /tmp/cctmlbV6.s 			page 46
+     /tmp/ccphlqUx.s:26     .text.SX1276FskComputeRxBwMantExp:00000000 $t
+     /tmp/ccphlqUx.s:30     .text.SX1276FskComputeRxBwMantExp:00000000 SX1276FskComputeRxBwMantExp
+     /tmp/ccphlqUx.s:156    .text.SX1276FskComputeRxBwMantExp:000000a0 $d
+     /tmp/ccphlqUx.s:164    .text.SX1276FskComputeRxBw:00000000 $t
+     /tmp/ccphlqUx.s:168    .text.SX1276FskComputeRxBw:00000000 SX1276FskComputeRxBw
+     /tmp/ccphlqUx.s:216    .text.SX1276FskComputeRxBw:00000040 $d
+     /tmp/ccphlqUx.s:222    .text.SX1276FskSetRFFrequency:00000000 $t
+     /tmp/ccphlqUx.s:227    .text.SX1276FskSetRFFrequency:00000000 SX1276FskSetRFFrequency
+     /tmp/ccphlqUx.s:272    .text.SX1276FskSetRFFrequency:00000038 $d
+     /tmp/ccphlqUx.s:280    .text.SX1276FskGetRFFrequency:00000000 $t
+     /tmp/ccphlqUx.s:285    .text.SX1276FskGetRFFrequency:00000000 SX1276FskGetRFFrequency
+     /tmp/ccphlqUx.s:328    .text.SX1276FskGetRFFrequency:00000038 $d
+     /tmp/ccphlqUx.s:336    .text.SX1276FskRxCalibrate:00000000 $t
+     /tmp/ccphlqUx.s:341    .text.SX1276FskRxCalibrate:00000000 SX1276FskRxCalibrate
+     /tmp/ccphlqUx.s:437    .text.SX1276FskRxCalibrate:00000080 $d
+     /tmp/ccphlqUx.s:443    .text.SX1276FskSetBitrate:00000000 $t
+     /tmp/ccphlqUx.s:448    .text.SX1276FskSetBitrate:00000000 SX1276FskSetBitrate
+     /tmp/ccphlqUx.s:496    .text.SX1276FskSetBitrate:00000038 $d
+     /tmp/ccphlqUx.s:504    .text.SX1276FskGetBitrate:00000000 $t
+     /tmp/ccphlqUx.s:509    .text.SX1276FskGetBitrate:00000000 SX1276FskGetBitrate
+     /tmp/ccphlqUx.s:552    .text.SX1276FskGetBitrate:00000038 $d
+     /tmp/ccphlqUx.s:560    .text.SX1276FskSetFdev:00000000 $t
+     /tmp/ccphlqUx.s:565    .text.SX1276FskSetFdev:00000000 SX1276FskSetFdev
+     /tmp/ccphlqUx.s:623    .text.SX1276FskSetFdev:00000048 $d
+     /tmp/ccphlqUx.s:631    .text.SX1276FskGetFdev:00000000 $t
+     /tmp/ccphlqUx.s:636    .text.SX1276FskGetFdev:00000000 SX1276FskGetFdev
+     /tmp/ccphlqUx.s:677    .text.SX1276FskGetFdev:00000038 $d
+     /tmp/ccphlqUx.s:685    .text.SX1276FskSetRFPower:00000000 $t
+     /tmp/ccphlqUx.s:690    .text.SX1276FskSetRFPower:00000000 SX1276FskSetRFPower
+     /tmp/ccphlqUx.s:817    .text.SX1276FskSetRFPower:000000a4 $d
+     /tmp/ccphlqUx.s:823    .text.SX1276FskGetRFPower:00000000 $t
+     /tmp/ccphlqUx.s:828    .text.SX1276FskGetRFPower:00000000 SX1276FskGetRFPower
+     /tmp/ccphlqUx.s:889    .text.SX1276FskGetRFPower:00000058 $d
+     /tmp/ccphlqUx.s:895    .text.SX1276FskSetDccBw:00000000 $t
+     /tmp/ccphlqUx.s:900    .text.SX1276FskSetDccBw:00000000 SX1276FskSetDccBw
+     /tmp/ccphlqUx.s:1019   .text.SX1276FskSetDccBw:000000a4 $d
+     /tmp/ccphlqUx.s:1025   .text.SX1276FskGetBw:00000000 $t
+     /tmp/ccphlqUx.s:1030   .text.SX1276FskGetBw:00000000 SX1276FskGetBw
+     /tmp/ccphlqUx.s:1101   .text.SX1276FskGetBw:00000040 $d
+     /tmp/ccphlqUx.s:1107   .text.SX1276FskSetPacketCrcOn:00000000 $t
+     /tmp/ccphlqUx.s:1112   .text.SX1276FskSetPacketCrcOn:00000000 SX1276FskSetPacketCrcOn
+     /tmp/ccphlqUx.s:1153   .text.SX1276FskSetPacketCrcOn:00000030 $d
+     /tmp/ccphlqUx.s:1159   .text.SX1276FskGetPacketCrcOn:00000000 $t
+     /tmp/ccphlqUx.s:1164   .text.SX1276FskGetPacketCrcOn:00000000 SX1276FskGetPacketCrcOn
+     /tmp/ccphlqUx.s:1193   .text.SX1276FskGetPacketCrcOn:00000020 $d
+     /tmp/ccphlqUx.s:1199   .text.SX1276FskSetAfcOn:00000000 $t
+     /tmp/ccphlqUx.s:1204   .text.SX1276FskSetAfcOn:00000000 SX1276FskSetAfcOn
+     /tmp/ccphlqUx.s:1245   .text.SX1276FskSetAfcOn:0000002c $d
+     /tmp/ccphlqUx.s:1251   .text.SX1276FskGetAfcOn:00000000 $t
+     /tmp/ccphlqUx.s:1256   .text.SX1276FskGetAfcOn:00000000 SX1276FskGetAfcOn
+     /tmp/ccphlqUx.s:1285   .text.SX1276FskGetAfcOn:0000001c $d
+     /tmp/ccphlqUx.s:1291   .text.SX1276FskSetPayloadLength:00000000 $t
+     /tmp/ccphlqUx.s:1296   .text.SX1276FskSetPayloadLength:00000000 SX1276FskSetPayloadLength
+     /tmp/ccphlqUx.s:1326   .text.SX1276FskSetPayloadLength:0000001c $d
+     /tmp/ccphlqUx.s:1332   .text.SX1276FskGetPayloadLength:00000000 $t
+ARM GAS  /tmp/ccphlqUx.s 			page 46
 
 
-     /tmp/cctmlbV6.s:1337   .text.SX1276FskGetPayloadLength:00000000 SX1276FskGetPayloadLength
-     /tmp/cctmlbV6.s:1365   .text.SX1276FskGetPayloadLength:0000001c $d
-     /tmp/cctmlbV6.s:1371   .text.SX1276FskSetPa20dBm:00000000 $t
-     /tmp/cctmlbV6.s:1376   .text.SX1276FskSetPa20dBm:00000000 SX1276FskSetPa20dBm
-     /tmp/cctmlbV6.s:1430   .text.SX1276FskSetPa20dBm:00000040 $d
-     /tmp/cctmlbV6.s:1435   .text.SX1276FskGetPa20dBm:00000000 $t
-     /tmp/cctmlbV6.s:1440   .text.SX1276FskGetPa20dBm:00000000 SX1276FskGetPa20dBm
-     /tmp/cctmlbV6.s:1471   .text.SX1276FskGetPa20dBm:00000024 $d
-     /tmp/cctmlbV6.s:1476   .text.SX1276FskSetPAOutput:00000000 $t
-     /tmp/cctmlbV6.s:1481   .text.SX1276FskSetPAOutput:00000000 SX1276FskSetPAOutput
-     /tmp/cctmlbV6.s:1518   .text.SX1276FskSetPAOutput:00000024 $d
-     /tmp/cctmlbV6.s:1523   .text.SX1276FskGetPAOutput:00000000 $t
-     /tmp/cctmlbV6.s:1528   .text.SX1276FskGetPAOutput:00000000 SX1276FskGetPAOutput
-     /tmp/cctmlbV6.s:1555   .text.SX1276FskGetPAOutput:00000018 $d
-     /tmp/cctmlbV6.s:1560   .text.SX1276FskSetPaRamp:00000000 $t
-     /tmp/cctmlbV6.s:1565   .text.SX1276FskSetPaRamp:00000000 SX1276FskSetPaRamp
-     /tmp/cctmlbV6.s:1603   .text.SX1276FskSetPaRamp:00000028 $d
-     /tmp/cctmlbV6.s:1608   .text.SX1276FskGetPaRamp:00000000 $t
-     /tmp/cctmlbV6.s:1613   .text.SX1276FskGetPaRamp:00000000 SX1276FskGetPaRamp
-     /tmp/cctmlbV6.s:1640   .text.SX1276FskGetPaRamp:00000018 $d
-     /tmp/cctmlbV6.s:1645   .text.SX1276FskSetRssiOffset:00000000 $t
-     /tmp/cctmlbV6.s:1650   .text.SX1276FskSetRssiOffset:00000000 SX1276FskSetRssiOffset
-     /tmp/cctmlbV6.s:1699   .text.SX1276FskSetRssiOffset:00000034 $d
-     /tmp/cctmlbV6.s:1704   .text.SX1276FskGetRssiOffset:00000000 $t
-     /tmp/cctmlbV6.s:1709   .text.SX1276FskGetRssiOffset:00000000 SX1276FskGetRssiOffset
-     /tmp/cctmlbV6.s:1750   .text.SX1276FskGetRssiOffset:00000028 $d
-     /tmp/cctmlbV6.s:1755   .text.SX1276FskGetRawTemp:00000000 $t
-     /tmp/cctmlbV6.s:1760   .text.SX1276FskGetRawTemp:00000000 SX1276FskGetRawTemp
-     /tmp/cctmlbV6.s:1867   .text.SX1276FskGetRawTemp:00000094 $d
-     /tmp/cctmlbV6.s:1872   .text.SX1276FskCalibreateTemp:00000000 $t
-     /tmp/cctmlbV6.s:1877   .text.SX1276FskCalibreateTemp:00000000 SX1276FskCalibreateTemp
-     /tmp/cctmlbV6.s:1901   .text.SX1276FskGetTemp:00000000 $t
-     /tmp/cctmlbV6.s:1906   .text.SX1276FskGetTemp:00000000 SX1276FskGetTemp
+     /tmp/ccphlqUx.s:1337   .text.SX1276FskGetPayloadLength:00000000 SX1276FskGetPayloadLength
+     /tmp/ccphlqUx.s:1365   .text.SX1276FskGetPayloadLength:0000001c $d
+     /tmp/ccphlqUx.s:1371   .text.SX1276FskSetPa20dBm:00000000 $t
+     /tmp/ccphlqUx.s:1376   .text.SX1276FskSetPa20dBm:00000000 SX1276FskSetPa20dBm
+     /tmp/ccphlqUx.s:1430   .text.SX1276FskSetPa20dBm:00000040 $d
+     /tmp/ccphlqUx.s:1435   .text.SX1276FskGetPa20dBm:00000000 $t
+     /tmp/ccphlqUx.s:1440   .text.SX1276FskGetPa20dBm:00000000 SX1276FskGetPa20dBm
+     /tmp/ccphlqUx.s:1471   .text.SX1276FskGetPa20dBm:00000024 $d
+     /tmp/ccphlqUx.s:1476   .text.SX1276FskSetPAOutput:00000000 $t
+     /tmp/ccphlqUx.s:1481   .text.SX1276FskSetPAOutput:00000000 SX1276FskSetPAOutput
+     /tmp/ccphlqUx.s:1518   .text.SX1276FskSetPAOutput:00000024 $d
+     /tmp/ccphlqUx.s:1523   .text.SX1276FskGetPAOutput:00000000 $t
+     /tmp/ccphlqUx.s:1528   .text.SX1276FskGetPAOutput:00000000 SX1276FskGetPAOutput
+     /tmp/ccphlqUx.s:1555   .text.SX1276FskGetPAOutput:00000018 $d
+     /tmp/ccphlqUx.s:1560   .text.SX1276FskSetPaRamp:00000000 $t
+     /tmp/ccphlqUx.s:1565   .text.SX1276FskSetPaRamp:00000000 SX1276FskSetPaRamp
+     /tmp/ccphlqUx.s:1603   .text.SX1276FskSetPaRamp:00000028 $d
+     /tmp/ccphlqUx.s:1608   .text.SX1276FskGetPaRamp:00000000 $t
+     /tmp/ccphlqUx.s:1613   .text.SX1276FskGetPaRamp:00000000 SX1276FskGetPaRamp
+     /tmp/ccphlqUx.s:1640   .text.SX1276FskGetPaRamp:00000018 $d
+     /tmp/ccphlqUx.s:1645   .text.SX1276FskSetRssiOffset:00000000 $t
+     /tmp/ccphlqUx.s:1650   .text.SX1276FskSetRssiOffset:00000000 SX1276FskSetRssiOffset
+     /tmp/ccphlqUx.s:1699   .text.SX1276FskSetRssiOffset:00000034 $d
+     /tmp/ccphlqUx.s:1704   .text.SX1276FskGetRssiOffset:00000000 $t
+     /tmp/ccphlqUx.s:1709   .text.SX1276FskGetRssiOffset:00000000 SX1276FskGetRssiOffset
+     /tmp/ccphlqUx.s:1750   .text.SX1276FskGetRssiOffset:00000028 $d
+     /tmp/ccphlqUx.s:1755   .text.SX1276FskGetRawTemp:00000000 $t
+     /tmp/ccphlqUx.s:1760   .text.SX1276FskGetRawTemp:00000000 SX1276FskGetRawTemp
+     /tmp/ccphlqUx.s:1867   .text.SX1276FskGetRawTemp:00000094 $d
+     /tmp/ccphlqUx.s:1872   .text.SX1276FskCalibreateTemp:00000000 $t
+     /tmp/ccphlqUx.s:1877   .text.SX1276FskCalibreateTemp:00000000 SX1276FskCalibreateTemp
+     /tmp/ccphlqUx.s:1901   .text.SX1276FskGetTemp:00000000 $t
+     /tmp/ccphlqUx.s:1906   .text.SX1276FskGetTemp:00000000 SX1276FskGetTemp
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

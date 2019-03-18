@@ -1,4 +1,4 @@
-ARM GAS  /tmp/ccv32xdU.s 			page 1
+ARM GAS  /tmp/ccvsngCg.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
   26:radio/sx1276-LoRaMisc.c ****  *
   27:radio/sx1276-LoRaMisc.c ****  * Last modified by Miguel Luis on Jun 19 2013
   28:radio/sx1276-LoRaMisc.c ****  */
-ARM GAS  /tmp/ccv32xdU.s 			page 2
+ARM GAS  /tmp/ccvsngCg.s 			page 2
 
 
   29:radio/sx1276-LoRaMisc.c **** #include "platform.h"
@@ -118,7 +118,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
   60 0026 CB71     		strb	r3, [r1, #7]
   54:radio/sx1276-LoRaMisc.c ****     SX1276LR->RegFrfLsb = ( uint8_t )( freq & 0xFF );
   61              		.loc 1 54 0
-ARM GAS  /tmp/ccv32xdU.s 			page 3
+ARM GAS  /tmp/ccvsngCg.s 			page 3
 
 
   62 0028 0872     		strb	r0, [r1, #8]
@@ -178,7 +178,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  111 0016 1B02     		lsls	r3, r3, #8
  112 0018 43EA0043 		orr	r3, r3, r0, lsl #16
  113 001c 107A     		ldrb	r0, [r2, #8]	@ zero_extendqisi2
-ARM GAS  /tmp/ccv32xdU.s 			page 4
+ARM GAS  /tmp/ccvsngCg.s 			page 4
 
 
   62:radio/sx1276-LoRaMisc.c ****     LoRaSettings.RFFrequency = ( uint32_t )( ( double )LoRaSettings.RFFrequency * ( double )FREQ_ST
@@ -238,7 +238,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  162 0008 0931     		adds	r1, r1, #9
  163 000a 0920     		movs	r0, #9
  164              	.LVL11:
-ARM GAS  /tmp/ccv32xdU.s 			page 5
+ARM GAS  /tmp/ccvsngCg.s 			page 5
 
 
  165 000c FFF7FEFF 		bl	SX1276Read
@@ -298,7 +298,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  203 004a 0B43     		orrs	r3, r3, r1
  204 004c 5372     		strb	r3, [r2, #9]
  205 004e 20E0     		b	.L14
-ARM GAS  /tmp/ccv32xdU.s 			page 6
+ARM GAS  /tmp/ccvsngCg.s 			page 6
 
 
  206              	.LVL16:
@@ -358,7 +358,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  106:radio/sx1276-LoRaMisc.c ****         }
  107:radio/sx1276-LoRaMisc.c ****         if( power > 14 )
  240              		.loc 1 107 0
-ARM GAS  /tmp/ccv32xdU.s 			page 7
+ARM GAS  /tmp/ccvsngCg.s 			page 7
 
 
  241 007a 0E2C     		cmp	r4, #14
@@ -418,7 +418,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  285              		.cfi_startproc
  286              		@ args = 0, pretend = 0, frame = 0
  287              		@ frame_needed = 0, uses_anonymous_args = 0
-ARM GAS  /tmp/ccv32xdU.s 			page 8
+ARM GAS  /tmp/ccvsngCg.s 			page 8
 
 
  288 0000 10B5     		push	{r4, lr}
@@ -478,7 +478,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  132:radio/sx1276-LoRaMisc.c ****         }
  133:radio/sx1276-LoRaMisc.c ****     }
  134:radio/sx1276-LoRaMisc.c ****     else
-ARM GAS  /tmp/ccv32xdU.s 			page 9
+ARM GAS  /tmp/ccvsngCg.s 			page 9
 
 
  135:radio/sx1276-LoRaMisc.c ****     {
@@ -538,7 +538,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  144:radio/sx1276-LoRaMisc.c ****     SX1276LR->RegModemConfig1 = ( SX1276LR->RegModemConfig1 & RFLR_MODEMCONFIG1_BW_MASK ) | ( bw <<
  377              		.loc 1 144 0
  378 0010 2B68     		ldr	r3, [r5]
-ARM GAS  /tmp/ccv32xdU.s 			page 10
+ARM GAS  /tmp/ccvsngCg.s 			page 10
 
 
  379 0012 597F     		ldrb	r1, [r3, #29]	@ zero_extendqisi2
@@ -598,7 +598,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  427 0012 0009     		lsrs	r0, r0, #4
  428 0014 024B     		ldr	r3, .L41+4
  429 0016 5871     		strb	r0, [r3, #5]
-ARM GAS  /tmp/ccv32xdU.s 			page 11
+ARM GAS  /tmp/ccvsngCg.s 			page 11
 
 
  153:radio/sx1276-LoRaMisc.c ****     return LoRaSettings.SignalBw;
@@ -658,7 +658,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  454              		.cfi_def_cfa_offset 8
  455              		.cfi_offset 4, -8
  456              		.cfi_offset 14, -4
-ARM GAS  /tmp/ccv32xdU.s 			page 12
+ARM GAS  /tmp/ccvsngCg.s 			page 12
 
 
  185:radio/sx1276-LoRaMisc.c ****     SX1276Read( REG_LR_MODEMCONFIG2, &SX1276LR->RegModemConfig2 );   
@@ -718,7 +718,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  505 000a 1D20     		movs	r0, #29
  506              	.LVL33:
  507 000c FFF7FEFF 		bl	SX1276Read
-ARM GAS  /tmp/ccv32xdU.s 			page 13
+ARM GAS  /tmp/ccvsngCg.s 			page 13
 
 
  508              	.LVL34:
@@ -778,7 +778,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  201:radio/sx1276-LoRaMisc.c ****     LoRaSettings.ErrorCoding = ( SX1276LR->RegModemConfig1 & ~RFLR_MODEMCONFIG1_CODINGRATE_MASK ) >
  556              		.loc 1 201 0
  557 000e 2368     		ldr	r3, [r4]
-ARM GAS  /tmp/ccv32xdU.s 			page 14
+ARM GAS  /tmp/ccvsngCg.s 			page 14
 
 
  558 0010 587F     		ldrb	r0, [r3, #29]	@ zero_extendqisi2
@@ -838,7 +838,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  607 001e 9977     		strb	r1, [r3, #30]
  209:radio/sx1276-LoRaMisc.c ****     SX1276Write( REG_LR_MODEMCONFIG2, SX1276LR->RegModemConfig2 );
  608              		.loc 1 209 0
-ARM GAS  /tmp/ccv32xdU.s 			page 15
+ARM GAS  /tmp/ccvsngCg.s 			page 15
 
 
  609 0020 1E20     		movs	r0, #30
@@ -898,7 +898,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  657 0016 81F82030 		strb	r3, [r1, #32]
  218:radio/sx1276-LoRaMisc.c ****     SX1276LR->RegPreambleLsb = value & 0xFF;
  658              		.loc 1 218 0
-ARM GAS  /tmp/ccv32xdU.s 			page 16
+ARM GAS  /tmp/ccvsngCg.s 			page 16
 
 
  659 001a 81F82140 		strb	r4, [r1, #33]
@@ -958,7 +958,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  707              		.align	2
  708              	.L65:
  709 0020 00000000 		.word	SX1276LR
-ARM GAS  /tmp/ccv32xdU.s 			page 17
+ARM GAS  /tmp/ccvsngCg.s 			page 17
 
 
  710              		.cfi_endproc
@@ -1018,7 +1018,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  234:radio/sx1276-LoRaMisc.c **** 
  235:radio/sx1276-LoRaMisc.c **** void SX1276LoRaSetImplicitHeaderOn( bool enable )
  236:radio/sx1276-LoRaMisc.c **** {
-ARM GAS  /tmp/ccv32xdU.s 			page 18
+ARM GAS  /tmp/ccvsngCg.s 			page 18
 
 
  761              		.loc 1 236 0
@@ -1078,7 +1078,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  242:radio/sx1276-LoRaMisc.c **** 
  243:radio/sx1276-LoRaMisc.c **** bool SX1276LoRaGetImplicitHeaderOn( void )
  244:radio/sx1276-LoRaMisc.c **** {
-ARM GAS  /tmp/ccv32xdU.s 			page 19
+ARM GAS  /tmp/ccvsngCg.s 			page 19
 
 
  812              		.loc 1 244 0
@@ -1138,7 +1138,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  860 0002 9872     		strb	r0, [r3, #10]
  861 0004 7047     		bx	lr
  862              	.L81:
-ARM GAS  /tmp/ccv32xdU.s 			page 20
+ARM GAS  /tmp/ccvsngCg.s 			page 20
 
 
  863 0006 00BF     		.align	2
@@ -1198,7 +1198,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  911              	.L87:
  912 0006 00BF     		.align	2
  913              	.L86:
-ARM GAS  /tmp/ccv32xdU.s 			page 21
+ARM GAS  /tmp/ccvsngCg.s 			page 21
 
 
  914 0008 00000000 		.word	LoRaSettings
@@ -1258,7 +1258,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  962 0004 054B     		ldr	r3, .L93
  963 0006 1B68     		ldr	r3, [r3]
  964 0008 83F82400 		strb	r0, [r3, #36]
-ARM GAS  /tmp/ccv32xdU.s 			page 22
+ARM GAS  /tmp/ccvsngCg.s 			page 22
 
 
  273:radio/sx1276-LoRaMisc.c ****     SX1276Write( REG_LR_HOPPERIOD, SX1276LR->RegHopPeriod );
@@ -1318,7 +1318,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  282:radio/sx1276-LoRaMisc.c **** }
  1012              		.loc 1 282 0
  1013 0018 10BD     		pop	{r4, pc}
-ARM GAS  /tmp/ccv32xdU.s 			page 23
+ARM GAS  /tmp/ccvsngCg.s 			page 23
 
 
  1014              	.L98:
@@ -1378,7 +1378,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1062 0002 1869     		ldr	r0, [r3, #16]
  1063 0004 7047     		bx	lr
  1064              	.L104:
-ARM GAS  /tmp/ccv32xdU.s 			page 24
+ARM GAS  /tmp/ccvsngCg.s 			page 24
 
 
  1065 0006 00BF     		.align	2
@@ -1438,7 +1438,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1113              	.L110:
  1114 0006 00BF     		.align	2
  1115              	.L109:
-ARM GAS  /tmp/ccv32xdU.s 			page 25
+ARM GAS  /tmp/ccvsngCg.s 			page 25
 
 
  1116 0008 00000000 		.word	LoRaSettings
@@ -1498,7 +1498,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1168              	.LFB91:
  309:radio/sx1276-LoRaMisc.c **** }
  310:radio/sx1276-LoRaMisc.c **** 
-ARM GAS  /tmp/ccv32xdU.s 			page 26
+ARM GAS  /tmp/ccvsngCg.s 			page 26
 
 
  311:radio/sx1276-LoRaMisc.c **** uint8_t SX1276LoRaGetPayloadLength( void )
@@ -1558,7 +1558,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1216              		.cfi_offset 3, -16
  1217              		.cfi_offset 4, -12
  1218              		.cfi_offset 5, -8
-ARM GAS  /tmp/ccv32xdU.s 			page 27
+ARM GAS  /tmp/ccvsngCg.s 			page 27
 
 
  1219              		.cfi_offset 14, -4
@@ -1618,7 +1618,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1258              		.align	2
  1259              	.L123:
  1260 0040 00000000 		.word	SX1276LR
-ARM GAS  /tmp/ccv32xdU.s 			page 28
+ARM GAS  /tmp/ccvsngCg.s 			page 28
 
 
  1261              		.cfi_endproc
@@ -1678,7 +1678,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1311              	SX1276LoRaSetPAOutput:
  1312              	.LFB94:
  343:radio/sx1276-LoRaMisc.c **** 
-ARM GAS  /tmp/ccv32xdU.s 			page 29
+ARM GAS  /tmp/ccvsngCg.s 			page 29
 
 
  344:radio/sx1276-LoRaMisc.c **** void SX1276LoRaSetPAOutput( uint8_t outputPin )
@@ -1738,7 +1738,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1360              		.loc 1 352 0
  1361              		.cfi_startproc
  1362              		@ args = 0, pretend = 0, frame = 0
-ARM GAS  /tmp/ccv32xdU.s 			page 30
+ARM GAS  /tmp/ccvsngCg.s 			page 30
 
 
  1363              		@ frame_needed = 0, uses_anonymous_args = 0
@@ -1798,7 +1798,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1412 0006 2968     		ldr	r1, [r5]
  1413 0008 0A31     		adds	r1, r1, #10
  1414 000a 0A20     		movs	r0, #10
-ARM GAS  /tmp/ccv32xdU.s 			page 31
+ARM GAS  /tmp/ccvsngCg.s 			page 31
 
 
  1415              	.LVL76:
@@ -1858,7 +1858,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1463 0010 987A     		ldrb	r0, [r3, #10]	@ zero_extendqisi2
  368:radio/sx1276-LoRaMisc.c **** }
  1464              		.loc 1 368 0
-ARM GAS  /tmp/ccv32xdU.s 			page 32
+ARM GAS  /tmp/ccvsngCg.s 			page 32
 
 
  1465 0012 00F00F00 		and	r0, r0, #15
@@ -1918,7 +1918,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1513              		.loc 1 376 0
  1514 0024 0222     		movs	r2, #2
  1515 0026 1E31     		adds	r1, r1, #30
-ARM GAS  /tmp/ccv32xdU.s 			page 33
+ARM GAS  /tmp/ccvsngCg.s 			page 33
 
 
  1516 0028 1E20     		movs	r0, #30
@@ -1978,7 +1978,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1565              		.cfi_endproc
  1566              	.LFE99:
  1568              		.section	.text.SX1276LoRaSetLowDatarateOptimize,"ax",%progbits
-ARM GAS  /tmp/ccv32xdU.s 			page 34
+ARM GAS  /tmp/ccvsngCg.s 			page 34
 
 
  1569              		.align	2
@@ -2038,7 +2038,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1619              		.thumb
  1620              		.thumb_func
  1622              	SX1276LoRaGetLowDatarateOptimize:
-ARM GAS  /tmp/ccv32xdU.s 			page 35
+ARM GAS  /tmp/ccvsngCg.s 			page 35
 
 
  1623              	.LFB101:
@@ -2098,7 +2098,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1669              		.cfi_offset 3, -16
  1670              		.cfi_offset 4, -12
  1671              		.cfi_offset 5, -8
-ARM GAS  /tmp/ccv32xdU.s 			page 36
+ARM GAS  /tmp/ccvsngCg.s 			page 36
 
 
  1672              		.cfi_offset 14, -4
@@ -2158,7 +2158,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1723 0006 0446     		mov	r4, r0
  163:radio/sx1276-LoRaMisc.c ****     {
  1724              		.loc 1 163 0
-ARM GAS  /tmp/ccv32xdU.s 			page 37
+ARM GAS  /tmp/ccvsngCg.s 			page 37
 
 
  1725 0008 0528     		cmp	r0, #5
@@ -2218,7 +2218,7 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1770 0048 024B     		ldr	r3, .L172+4
  1771 004a 9C71     		strb	r4, [r3, #6]
  1772 004c 38BD     		pop	{r3, r4, r5, pc}
-ARM GAS  /tmp/ccv32xdU.s 			page 38
+ARM GAS  /tmp/ccvsngCg.s 			page 38
 
 
  1773              	.LVL100:
@@ -2278,140 +2278,140 @@ ARM GAS  /tmp/ccv32xdU.s 			page 1
  1823              		.file 4 "radio/sx1276-LoRa.h"
  1824              		.file 5 "Drivers/CMSIS/Include/core_cm3.h"
  1825              		.file 6 "radio/sx1276-Hal.h"
-ARM GAS  /tmp/ccv32xdU.s 			page 39
+ARM GAS  /tmp/ccvsngCg.s 			page 39
 
 
-ARM GAS  /tmp/ccv32xdU.s 			page 40
+ARM GAS  /tmp/ccvsngCg.s 			page 40
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sx1276-LoRaMisc.c
-     /tmp/ccv32xdU.s:23     .text.SX1276LoRaSetRFFrequency:00000000 $t
-     /tmp/ccv32xdU.s:28     .text.SX1276LoRaSetRFFrequency:00000000 SX1276LoRaSetRFFrequency
-     /tmp/ccv32xdU.s:74     .text.SX1276LoRaSetRFFrequency:00000038 $d
-     /tmp/ccv32xdU.s:83     .text.SX1276LoRaGetRFFrequency:00000000 $t
-     /tmp/ccv32xdU.s:88     .text.SX1276LoRaGetRFFrequency:00000000 SX1276LoRaGetRFFrequency
-     /tmp/ccv32xdU.s:131    .text.SX1276LoRaGetRFFrequency:00000038 $d
-     /tmp/ccv32xdU.s:139    .text.SX1276LoRaSetRFPower:00000000 $t
-     /tmp/ccv32xdU.s:144    .text.SX1276LoRaSetRFPower:00000000 SX1276LoRaSetRFPower
-     /tmp/ccv32xdU.s:271    .text.SX1276LoRaSetRFPower:000000a4 $d
-     /tmp/ccv32xdU.s:277    .text.SX1276LoRaGetRFPower:00000000 $t
-     /tmp/ccv32xdU.s:282    .text.SX1276LoRaGetRFPower:00000000 SX1276LoRaGetRFPower
-     /tmp/ccv32xdU.s:343    .text.SX1276LoRaGetRFPower:00000058 $d
-     /tmp/ccv32xdU.s:349    .text.SX1276LoRaSetSignalBandwidth:00000000 $t
-     /tmp/ccv32xdU.s:354    .text.SX1276LoRaSetSignalBandwidth:00000000 SX1276LoRaSetSignalBandwidth
-     /tmp/ccv32xdU.s:395    .text.SX1276LoRaSetSignalBandwidth:0000002c $d
-     /tmp/ccv32xdU.s:401    .text.SX1276LoRaGetSignalBandwidth:00000000 $t
-     /tmp/ccv32xdU.s:406    .text.SX1276LoRaGetSignalBandwidth:00000000 SX1276LoRaGetSignalBandwidth
-     /tmp/ccv32xdU.s:435    .text.SX1276LoRaGetSignalBandwidth:0000001c $d
-     /tmp/ccv32xdU.s:441    .text.SX1276LoRaGetSpreadingFactor:00000000 $t
-     /tmp/ccv32xdU.s:446    .text.SX1276LoRaGetSpreadingFactor:00000000 SX1276LoRaGetSpreadingFactor
-     /tmp/ccv32xdU.s:475    .text.SX1276LoRaGetSpreadingFactor:0000001c $d
-     /tmp/ccv32xdU.s:481    .text.SX1276LoRaSetErrorCoding:00000000 $t
-     /tmp/ccv32xdU.s:486    .text.SX1276LoRaSetErrorCoding:00000000 SX1276LoRaSetErrorCoding
-     /tmp/ccv32xdU.s:527    .text.SX1276LoRaSetErrorCoding:0000002c $d
-     /tmp/ccv32xdU.s:533    .text.SX1276LoRaGetErrorCoding:00000000 $t
-     /tmp/ccv32xdU.s:538    .text.SX1276LoRaGetErrorCoding:00000000 SX1276LoRaGetErrorCoding
-     /tmp/ccv32xdU.s:567    .text.SX1276LoRaGetErrorCoding:0000001c $d
-     /tmp/ccv32xdU.s:573    .text.SX1276LoRaSetPacketCrcOn:00000000 $t
-     /tmp/ccv32xdU.s:578    .text.SX1276LoRaSetPacketCrcOn:00000000 SX1276LoRaSetPacketCrcOn
-     /tmp/ccv32xdU.s:619    .text.SX1276LoRaSetPacketCrcOn:0000002c $d
-     /tmp/ccv32xdU.s:625    .text.SX1276LoRaSetPreambleLength:00000000 $t
-     /tmp/ccv32xdU.s:630    .text.SX1276LoRaSetPreambleLength:00000000 SX1276LoRaSetPreambleLength
-     /tmp/ccv32xdU.s:670    .text.SX1276LoRaSetPreambleLength:0000002c $d
-     /tmp/ccv32xdU.s:675    .text.SX1276LoRaGetPreambleLength:00000000 $t
-     /tmp/ccv32xdU.s:680    .text.SX1276LoRaGetPreambleLength:00000000 SX1276LoRaGetPreambleLength
-     /tmp/ccv32xdU.s:709    .text.SX1276LoRaGetPreambleLength:00000020 $d
-     /tmp/ccv32xdU.s:714    .text.SX1276LoRaGetPacketCrcOn:00000000 $t
-     /tmp/ccv32xdU.s:719    .text.SX1276LoRaGetPacketCrcOn:00000000 SX1276LoRaGetPacketCrcOn
-     /tmp/ccv32xdU.s:748    .text.SX1276LoRaGetPacketCrcOn:0000001c $d
-     /tmp/ccv32xdU.s:754    .text.SX1276LoRaSetImplicitHeaderOn:00000000 $t
-     /tmp/ccv32xdU.s:759    .text.SX1276LoRaSetImplicitHeaderOn:00000000 SX1276LoRaSetImplicitHeaderOn
-     /tmp/ccv32xdU.s:799    .text.SX1276LoRaSetImplicitHeaderOn:00000028 $d
-     /tmp/ccv32xdU.s:805    .text.SX1276LoRaGetImplicitHeaderOn:00000000 $t
-     /tmp/ccv32xdU.s:810    .text.SX1276LoRaGetImplicitHeaderOn:00000000 SX1276LoRaGetImplicitHeaderOn
-     /tmp/ccv32xdU.s:839    .text.SX1276LoRaGetImplicitHeaderOn:0000001c $d
-     /tmp/ccv32xdU.s:845    .text.SX1276LoRaSetRxSingleOn:00000000 $t
-     /tmp/ccv32xdU.s:850    .text.SX1276LoRaSetRxSingleOn:00000000 SX1276LoRaSetRxSingleOn
-     /tmp/ccv32xdU.s:865    .text.SX1276LoRaSetRxSingleOn:00000008 $d
-     /tmp/ccv32xdU.s:870    .text.SX1276LoRaGetRxSingleOn:00000000 $t
-     /tmp/ccv32xdU.s:875    .text.SX1276LoRaGetRxSingleOn:00000000 SX1276LoRaGetRxSingleOn
-     /tmp/ccv32xdU.s:889    .text.SX1276LoRaGetRxSingleOn:00000008 $d
-     /tmp/ccv32xdU.s:894    .text.SX1276LoRaSetFreqHopOn:00000000 $t
-     /tmp/ccv32xdU.s:899    .text.SX1276LoRaSetFreqHopOn:00000000 SX1276LoRaSetFreqHopOn
-     /tmp/ccv32xdU.s:914    .text.SX1276LoRaSetFreqHopOn:00000008 $d
-     /tmp/ccv32xdU.s:919    .text.SX1276LoRaGetFreqHopOn:00000000 $t
-ARM GAS  /tmp/ccv32xdU.s 			page 41
+     /tmp/ccvsngCg.s:23     .text.SX1276LoRaSetRFFrequency:00000000 $t
+     /tmp/ccvsngCg.s:28     .text.SX1276LoRaSetRFFrequency:00000000 SX1276LoRaSetRFFrequency
+     /tmp/ccvsngCg.s:74     .text.SX1276LoRaSetRFFrequency:00000038 $d
+     /tmp/ccvsngCg.s:83     .text.SX1276LoRaGetRFFrequency:00000000 $t
+     /tmp/ccvsngCg.s:88     .text.SX1276LoRaGetRFFrequency:00000000 SX1276LoRaGetRFFrequency
+     /tmp/ccvsngCg.s:131    .text.SX1276LoRaGetRFFrequency:00000038 $d
+     /tmp/ccvsngCg.s:139    .text.SX1276LoRaSetRFPower:00000000 $t
+     /tmp/ccvsngCg.s:144    .text.SX1276LoRaSetRFPower:00000000 SX1276LoRaSetRFPower
+     /tmp/ccvsngCg.s:271    .text.SX1276LoRaSetRFPower:000000a4 $d
+     /tmp/ccvsngCg.s:277    .text.SX1276LoRaGetRFPower:00000000 $t
+     /tmp/ccvsngCg.s:282    .text.SX1276LoRaGetRFPower:00000000 SX1276LoRaGetRFPower
+     /tmp/ccvsngCg.s:343    .text.SX1276LoRaGetRFPower:00000058 $d
+     /tmp/ccvsngCg.s:349    .text.SX1276LoRaSetSignalBandwidth:00000000 $t
+     /tmp/ccvsngCg.s:354    .text.SX1276LoRaSetSignalBandwidth:00000000 SX1276LoRaSetSignalBandwidth
+     /tmp/ccvsngCg.s:395    .text.SX1276LoRaSetSignalBandwidth:0000002c $d
+     /tmp/ccvsngCg.s:401    .text.SX1276LoRaGetSignalBandwidth:00000000 $t
+     /tmp/ccvsngCg.s:406    .text.SX1276LoRaGetSignalBandwidth:00000000 SX1276LoRaGetSignalBandwidth
+     /tmp/ccvsngCg.s:435    .text.SX1276LoRaGetSignalBandwidth:0000001c $d
+     /tmp/ccvsngCg.s:441    .text.SX1276LoRaGetSpreadingFactor:00000000 $t
+     /tmp/ccvsngCg.s:446    .text.SX1276LoRaGetSpreadingFactor:00000000 SX1276LoRaGetSpreadingFactor
+     /tmp/ccvsngCg.s:475    .text.SX1276LoRaGetSpreadingFactor:0000001c $d
+     /tmp/ccvsngCg.s:481    .text.SX1276LoRaSetErrorCoding:00000000 $t
+     /tmp/ccvsngCg.s:486    .text.SX1276LoRaSetErrorCoding:00000000 SX1276LoRaSetErrorCoding
+     /tmp/ccvsngCg.s:527    .text.SX1276LoRaSetErrorCoding:0000002c $d
+     /tmp/ccvsngCg.s:533    .text.SX1276LoRaGetErrorCoding:00000000 $t
+     /tmp/ccvsngCg.s:538    .text.SX1276LoRaGetErrorCoding:00000000 SX1276LoRaGetErrorCoding
+     /tmp/ccvsngCg.s:567    .text.SX1276LoRaGetErrorCoding:0000001c $d
+     /tmp/ccvsngCg.s:573    .text.SX1276LoRaSetPacketCrcOn:00000000 $t
+     /tmp/ccvsngCg.s:578    .text.SX1276LoRaSetPacketCrcOn:00000000 SX1276LoRaSetPacketCrcOn
+     /tmp/ccvsngCg.s:619    .text.SX1276LoRaSetPacketCrcOn:0000002c $d
+     /tmp/ccvsngCg.s:625    .text.SX1276LoRaSetPreambleLength:00000000 $t
+     /tmp/ccvsngCg.s:630    .text.SX1276LoRaSetPreambleLength:00000000 SX1276LoRaSetPreambleLength
+     /tmp/ccvsngCg.s:670    .text.SX1276LoRaSetPreambleLength:0000002c $d
+     /tmp/ccvsngCg.s:675    .text.SX1276LoRaGetPreambleLength:00000000 $t
+     /tmp/ccvsngCg.s:680    .text.SX1276LoRaGetPreambleLength:00000000 SX1276LoRaGetPreambleLength
+     /tmp/ccvsngCg.s:709    .text.SX1276LoRaGetPreambleLength:00000020 $d
+     /tmp/ccvsngCg.s:714    .text.SX1276LoRaGetPacketCrcOn:00000000 $t
+     /tmp/ccvsngCg.s:719    .text.SX1276LoRaGetPacketCrcOn:00000000 SX1276LoRaGetPacketCrcOn
+     /tmp/ccvsngCg.s:748    .text.SX1276LoRaGetPacketCrcOn:0000001c $d
+     /tmp/ccvsngCg.s:754    .text.SX1276LoRaSetImplicitHeaderOn:00000000 $t
+     /tmp/ccvsngCg.s:759    .text.SX1276LoRaSetImplicitHeaderOn:00000000 SX1276LoRaSetImplicitHeaderOn
+     /tmp/ccvsngCg.s:799    .text.SX1276LoRaSetImplicitHeaderOn:00000028 $d
+     /tmp/ccvsngCg.s:805    .text.SX1276LoRaGetImplicitHeaderOn:00000000 $t
+     /tmp/ccvsngCg.s:810    .text.SX1276LoRaGetImplicitHeaderOn:00000000 SX1276LoRaGetImplicitHeaderOn
+     /tmp/ccvsngCg.s:839    .text.SX1276LoRaGetImplicitHeaderOn:0000001c $d
+     /tmp/ccvsngCg.s:845    .text.SX1276LoRaSetRxSingleOn:00000000 $t
+     /tmp/ccvsngCg.s:850    .text.SX1276LoRaSetRxSingleOn:00000000 SX1276LoRaSetRxSingleOn
+     /tmp/ccvsngCg.s:865    .text.SX1276LoRaSetRxSingleOn:00000008 $d
+     /tmp/ccvsngCg.s:870    .text.SX1276LoRaGetRxSingleOn:00000000 $t
+     /tmp/ccvsngCg.s:875    .text.SX1276LoRaGetRxSingleOn:00000000 SX1276LoRaGetRxSingleOn
+     /tmp/ccvsngCg.s:889    .text.SX1276LoRaGetRxSingleOn:00000008 $d
+     /tmp/ccvsngCg.s:894    .text.SX1276LoRaSetFreqHopOn:00000000 $t
+     /tmp/ccvsngCg.s:899    .text.SX1276LoRaSetFreqHopOn:00000000 SX1276LoRaSetFreqHopOn
+     /tmp/ccvsngCg.s:914    .text.SX1276LoRaSetFreqHopOn:00000008 $d
+     /tmp/ccvsngCg.s:919    .text.SX1276LoRaGetFreqHopOn:00000000 $t
+ARM GAS  /tmp/ccvsngCg.s 			page 41
 
 
-     /tmp/ccv32xdU.s:924    .text.SX1276LoRaGetFreqHopOn:00000000 SX1276LoRaGetFreqHopOn
-     /tmp/ccv32xdU.s:938    .text.SX1276LoRaGetFreqHopOn:00000008 $d
-     /tmp/ccv32xdU.s:943    .text.SX1276LoRaSetHopPeriod:00000000 $t
-     /tmp/ccv32xdU.s:948    .text.SX1276LoRaSetHopPeriod:00000000 SX1276LoRaSetHopPeriod
-     /tmp/ccv32xdU.s:978    .text.SX1276LoRaSetHopPeriod:0000001c $d
-     /tmp/ccv32xdU.s:984    .text.SX1276LoRaGetHopPeriod:00000000 $t
-     /tmp/ccv32xdU.s:989    .text.SX1276LoRaGetHopPeriod:00000000 SX1276LoRaGetHopPeriod
-     /tmp/ccv32xdU.s:1017   .text.SX1276LoRaGetHopPeriod:0000001c $d
-     /tmp/ccv32xdU.s:1023   .text.SX1276LoRaSetTxPacketTimeout:00000000 $t
-     /tmp/ccv32xdU.s:1028   .text.SX1276LoRaSetTxPacketTimeout:00000000 SX1276LoRaSetTxPacketTimeout
-     /tmp/ccv32xdU.s:1043   .text.SX1276LoRaSetTxPacketTimeout:00000008 $d
-     /tmp/ccv32xdU.s:1048   .text.SX1276LoRaGetTxPacketTimeout:00000000 $t
-     /tmp/ccv32xdU.s:1053   .text.SX1276LoRaGetTxPacketTimeout:00000000 SX1276LoRaGetTxPacketTimeout
-     /tmp/ccv32xdU.s:1067   .text.SX1276LoRaGetTxPacketTimeout:00000008 $d
-     /tmp/ccv32xdU.s:1072   .text.SX1276LoRaSetRxPacketTimeout:00000000 $t
-     /tmp/ccv32xdU.s:1077   .text.SX1276LoRaSetRxPacketTimeout:00000000 SX1276LoRaSetRxPacketTimeout
-     /tmp/ccv32xdU.s:1092   .text.SX1276LoRaSetRxPacketTimeout:00000008 $d
-     /tmp/ccv32xdU.s:1097   .text.SX1276LoRaGetRxPacketTimeout:00000000 $t
-     /tmp/ccv32xdU.s:1102   .text.SX1276LoRaGetRxPacketTimeout:00000000 SX1276LoRaGetRxPacketTimeout
-     /tmp/ccv32xdU.s:1116   .text.SX1276LoRaGetRxPacketTimeout:00000008 $d
-     /tmp/ccv32xdU.s:1121   .text.SX1276LoRaSetPayloadLength:00000000 $t
-     /tmp/ccv32xdU.s:1126   .text.SX1276LoRaSetPayloadLength:00000000 SX1276LoRaSetPayloadLength
-     /tmp/ccv32xdU.s:1156   .text.SX1276LoRaSetPayloadLength:0000001c $d
-     /tmp/ccv32xdU.s:1162   .text.SX1276LoRaGetPayloadLength:00000000 $t
-     /tmp/ccv32xdU.s:1167   .text.SX1276LoRaGetPayloadLength:00000000 SX1276LoRaGetPayloadLength
-     /tmp/ccv32xdU.s:1195   .text.SX1276LoRaGetPayloadLength:0000001c $d
-     /tmp/ccv32xdU.s:1201   .text.SX1276LoRaSetPa20dBm:00000000 $t
-     /tmp/ccv32xdU.s:1206   .text.SX1276LoRaSetPa20dBm:00000000 SX1276LoRaSetPa20dBm
-     /tmp/ccv32xdU.s:1260   .text.SX1276LoRaSetPa20dBm:00000040 $d
-     /tmp/ccv32xdU.s:1265   .text.SX1276LoRaGetPa20dBm:00000000 $t
-     /tmp/ccv32xdU.s:1270   .text.SX1276LoRaGetPa20dBm:00000000 SX1276LoRaGetPa20dBm
-     /tmp/ccv32xdU.s:1301   .text.SX1276LoRaGetPa20dBm:00000024 $d
-     /tmp/ccv32xdU.s:1306   .text.SX1276LoRaSetPAOutput:00000000 $t
-     /tmp/ccv32xdU.s:1311   .text.SX1276LoRaSetPAOutput:00000000 SX1276LoRaSetPAOutput
-     /tmp/ccv32xdU.s:1348   .text.SX1276LoRaSetPAOutput:00000024 $d
-     /tmp/ccv32xdU.s:1353   .text.SX1276LoRaGetPAOutput:00000000 $t
-     /tmp/ccv32xdU.s:1358   .text.SX1276LoRaGetPAOutput:00000000 SX1276LoRaGetPAOutput
-     /tmp/ccv32xdU.s:1385   .text.SX1276LoRaGetPAOutput:00000018 $d
-     /tmp/ccv32xdU.s:1390   .text.SX1276LoRaSetPaRamp:00000000 $t
-     /tmp/ccv32xdU.s:1395   .text.SX1276LoRaSetPaRamp:00000000 SX1276LoRaSetPaRamp
-     /tmp/ccv32xdU.s:1433   .text.SX1276LoRaSetPaRamp:00000028 $d
-     /tmp/ccv32xdU.s:1438   .text.SX1276LoRaGetPaRamp:00000000 $t
-     /tmp/ccv32xdU.s:1443   .text.SX1276LoRaGetPaRamp:00000000 SX1276LoRaGetPaRamp
-     /tmp/ccv32xdU.s:1470   .text.SX1276LoRaGetPaRamp:00000018 $d
-     /tmp/ccv32xdU.s:1475   .text.SX1276LoRaSetSymbTimeout:00000000 $t
-     /tmp/ccv32xdU.s:1480   .text.SX1276LoRaSetSymbTimeout:00000000 SX1276LoRaSetSymbTimeout
-     /tmp/ccv32xdU.s:1523   .text.SX1276LoRaSetSymbTimeout:00000030 $d
-     /tmp/ccv32xdU.s:1528   .text.SX1276LoRaGetSymbTimeout:00000000 $t
-     /tmp/ccv32xdU.s:1533   .text.SX1276LoRaGetSymbTimeout:00000000 SX1276LoRaGetSymbTimeout
-     /tmp/ccv32xdU.s:1564   .text.SX1276LoRaGetSymbTimeout:00000020 $d
-     /tmp/ccv32xdU.s:1569   .text.SX1276LoRaSetLowDatarateOptimize:00000000 $t
-     /tmp/ccv32xdU.s:1574   .text.SX1276LoRaSetLowDatarateOptimize:00000000 SX1276LoRaSetLowDatarateOptimize
-     /tmp/ccv32xdU.s:1612   .text.SX1276LoRaSetLowDatarateOptimize:0000002c $d
-     /tmp/ccv32xdU.s:1617   .text.SX1276LoRaGetLowDatarateOptimize:00000000 $t
-     /tmp/ccv32xdU.s:1622   .text.SX1276LoRaGetLowDatarateOptimize:00000000 SX1276LoRaGetLowDatarateOptimize
-     /tmp/ccv32xdU.s:1649   .text.SX1276LoRaGetLowDatarateOptimize:0000001c $d
-     /tmp/ccv32xdU.s:1654   .text.SX1276LoRaSetNbTrigPeaks:00000000 $t
-ARM GAS  /tmp/ccv32xdU.s 			page 42
+     /tmp/ccvsngCg.s:924    .text.SX1276LoRaGetFreqHopOn:00000000 SX1276LoRaGetFreqHopOn
+     /tmp/ccvsngCg.s:938    .text.SX1276LoRaGetFreqHopOn:00000008 $d
+     /tmp/ccvsngCg.s:943    .text.SX1276LoRaSetHopPeriod:00000000 $t
+     /tmp/ccvsngCg.s:948    .text.SX1276LoRaSetHopPeriod:00000000 SX1276LoRaSetHopPeriod
+     /tmp/ccvsngCg.s:978    .text.SX1276LoRaSetHopPeriod:0000001c $d
+     /tmp/ccvsngCg.s:984    .text.SX1276LoRaGetHopPeriod:00000000 $t
+     /tmp/ccvsngCg.s:989    .text.SX1276LoRaGetHopPeriod:00000000 SX1276LoRaGetHopPeriod
+     /tmp/ccvsngCg.s:1017   .text.SX1276LoRaGetHopPeriod:0000001c $d
+     /tmp/ccvsngCg.s:1023   .text.SX1276LoRaSetTxPacketTimeout:00000000 $t
+     /tmp/ccvsngCg.s:1028   .text.SX1276LoRaSetTxPacketTimeout:00000000 SX1276LoRaSetTxPacketTimeout
+     /tmp/ccvsngCg.s:1043   .text.SX1276LoRaSetTxPacketTimeout:00000008 $d
+     /tmp/ccvsngCg.s:1048   .text.SX1276LoRaGetTxPacketTimeout:00000000 $t
+     /tmp/ccvsngCg.s:1053   .text.SX1276LoRaGetTxPacketTimeout:00000000 SX1276LoRaGetTxPacketTimeout
+     /tmp/ccvsngCg.s:1067   .text.SX1276LoRaGetTxPacketTimeout:00000008 $d
+     /tmp/ccvsngCg.s:1072   .text.SX1276LoRaSetRxPacketTimeout:00000000 $t
+     /tmp/ccvsngCg.s:1077   .text.SX1276LoRaSetRxPacketTimeout:00000000 SX1276LoRaSetRxPacketTimeout
+     /tmp/ccvsngCg.s:1092   .text.SX1276LoRaSetRxPacketTimeout:00000008 $d
+     /tmp/ccvsngCg.s:1097   .text.SX1276LoRaGetRxPacketTimeout:00000000 $t
+     /tmp/ccvsngCg.s:1102   .text.SX1276LoRaGetRxPacketTimeout:00000000 SX1276LoRaGetRxPacketTimeout
+     /tmp/ccvsngCg.s:1116   .text.SX1276LoRaGetRxPacketTimeout:00000008 $d
+     /tmp/ccvsngCg.s:1121   .text.SX1276LoRaSetPayloadLength:00000000 $t
+     /tmp/ccvsngCg.s:1126   .text.SX1276LoRaSetPayloadLength:00000000 SX1276LoRaSetPayloadLength
+     /tmp/ccvsngCg.s:1156   .text.SX1276LoRaSetPayloadLength:0000001c $d
+     /tmp/ccvsngCg.s:1162   .text.SX1276LoRaGetPayloadLength:00000000 $t
+     /tmp/ccvsngCg.s:1167   .text.SX1276LoRaGetPayloadLength:00000000 SX1276LoRaGetPayloadLength
+     /tmp/ccvsngCg.s:1195   .text.SX1276LoRaGetPayloadLength:0000001c $d
+     /tmp/ccvsngCg.s:1201   .text.SX1276LoRaSetPa20dBm:00000000 $t
+     /tmp/ccvsngCg.s:1206   .text.SX1276LoRaSetPa20dBm:00000000 SX1276LoRaSetPa20dBm
+     /tmp/ccvsngCg.s:1260   .text.SX1276LoRaSetPa20dBm:00000040 $d
+     /tmp/ccvsngCg.s:1265   .text.SX1276LoRaGetPa20dBm:00000000 $t
+     /tmp/ccvsngCg.s:1270   .text.SX1276LoRaGetPa20dBm:00000000 SX1276LoRaGetPa20dBm
+     /tmp/ccvsngCg.s:1301   .text.SX1276LoRaGetPa20dBm:00000024 $d
+     /tmp/ccvsngCg.s:1306   .text.SX1276LoRaSetPAOutput:00000000 $t
+     /tmp/ccvsngCg.s:1311   .text.SX1276LoRaSetPAOutput:00000000 SX1276LoRaSetPAOutput
+     /tmp/ccvsngCg.s:1348   .text.SX1276LoRaSetPAOutput:00000024 $d
+     /tmp/ccvsngCg.s:1353   .text.SX1276LoRaGetPAOutput:00000000 $t
+     /tmp/ccvsngCg.s:1358   .text.SX1276LoRaGetPAOutput:00000000 SX1276LoRaGetPAOutput
+     /tmp/ccvsngCg.s:1385   .text.SX1276LoRaGetPAOutput:00000018 $d
+     /tmp/ccvsngCg.s:1390   .text.SX1276LoRaSetPaRamp:00000000 $t
+     /tmp/ccvsngCg.s:1395   .text.SX1276LoRaSetPaRamp:00000000 SX1276LoRaSetPaRamp
+     /tmp/ccvsngCg.s:1433   .text.SX1276LoRaSetPaRamp:00000028 $d
+     /tmp/ccvsngCg.s:1438   .text.SX1276LoRaGetPaRamp:00000000 $t
+     /tmp/ccvsngCg.s:1443   .text.SX1276LoRaGetPaRamp:00000000 SX1276LoRaGetPaRamp
+     /tmp/ccvsngCg.s:1470   .text.SX1276LoRaGetPaRamp:00000018 $d
+     /tmp/ccvsngCg.s:1475   .text.SX1276LoRaSetSymbTimeout:00000000 $t
+     /tmp/ccvsngCg.s:1480   .text.SX1276LoRaSetSymbTimeout:00000000 SX1276LoRaSetSymbTimeout
+     /tmp/ccvsngCg.s:1523   .text.SX1276LoRaSetSymbTimeout:00000030 $d
+     /tmp/ccvsngCg.s:1528   .text.SX1276LoRaGetSymbTimeout:00000000 $t
+     /tmp/ccvsngCg.s:1533   .text.SX1276LoRaGetSymbTimeout:00000000 SX1276LoRaGetSymbTimeout
+     /tmp/ccvsngCg.s:1564   .text.SX1276LoRaGetSymbTimeout:00000020 $d
+     /tmp/ccvsngCg.s:1569   .text.SX1276LoRaSetLowDatarateOptimize:00000000 $t
+     /tmp/ccvsngCg.s:1574   .text.SX1276LoRaSetLowDatarateOptimize:00000000 SX1276LoRaSetLowDatarateOptimize
+     /tmp/ccvsngCg.s:1612   .text.SX1276LoRaSetLowDatarateOptimize:0000002c $d
+     /tmp/ccvsngCg.s:1617   .text.SX1276LoRaGetLowDatarateOptimize:00000000 $t
+     /tmp/ccvsngCg.s:1622   .text.SX1276LoRaGetLowDatarateOptimize:00000000 SX1276LoRaGetLowDatarateOptimize
+     /tmp/ccvsngCg.s:1649   .text.SX1276LoRaGetLowDatarateOptimize:0000001c $d
+     /tmp/ccvsngCg.s:1654   .text.SX1276LoRaSetNbTrigPeaks:00000000 $t
+ARM GAS  /tmp/ccvsngCg.s 			page 42
 
 
-     /tmp/ccv32xdU.s:1659   .text.SX1276LoRaSetNbTrigPeaks:00000000 SX1276LoRaSetNbTrigPeaks
-     /tmp/ccv32xdU.s:1696   .text.SX1276LoRaSetNbTrigPeaks:00000028 $d
-     /tmp/ccv32xdU.s:1701   .text.SX1276LoRaSetSpreadingFactor:00000000 $t
-     /tmp/ccv32xdU.s:1706   .text.SX1276LoRaSetSpreadingFactor:00000000 SX1276LoRaSetSpreadingFactor
-     /tmp/ccv32xdU.s:1777   .text.SX1276LoRaSetSpreadingFactor:00000050 $d
-     /tmp/ccv32xdU.s:1783   .text.SX1276LoRaGetNbTrigPeaks:00000000 $t
-     /tmp/ccv32xdU.s:1788   .text.SX1276LoRaGetNbTrigPeaks:00000000 SX1276LoRaGetNbTrigPeaks
-     /tmp/ccv32xdU.s:1815   .text.SX1276LoRaGetNbTrigPeaks:0000001c $d
+     /tmp/ccvsngCg.s:1659   .text.SX1276LoRaSetNbTrigPeaks:00000000 SX1276LoRaSetNbTrigPeaks
+     /tmp/ccvsngCg.s:1696   .text.SX1276LoRaSetNbTrigPeaks:00000028 $d
+     /tmp/ccvsngCg.s:1701   .text.SX1276LoRaSetSpreadingFactor:00000000 $t
+     /tmp/ccvsngCg.s:1706   .text.SX1276LoRaSetSpreadingFactor:00000000 SX1276LoRaSetSpreadingFactor
+     /tmp/ccvsngCg.s:1777   .text.SX1276LoRaSetSpreadingFactor:00000050 $d
+     /tmp/ccvsngCg.s:1783   .text.SX1276LoRaGetNbTrigPeaks:00000000 $t
+     /tmp/ccvsngCg.s:1788   .text.SX1276LoRaGetNbTrigPeaks:00000000 SX1276LoRaGetNbTrigPeaks
+     /tmp/ccvsngCg.s:1815   .text.SX1276LoRaGetNbTrigPeaks:0000001c $d
                      .debug_frame:00000010 $d
 
 UNDEFINED SYMBOLS

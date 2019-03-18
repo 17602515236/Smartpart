@@ -3,18 +3,10 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "queue.h"
 tRadioDriver *mradio = NULL;
 static SemaphoreHandle_t wr_lock = NULL;
-int Lora_Init(void)
-{
-	mradio = RadioDriverInit();
-	wr_lock = xSemaphoreCreateMutex();
-	if (mradio == NULL)
-		return -1;
-	mradio->Init();
-	return 0;
-}
-
+static QueueSetHandle_t Qset = NULL;
 /**
  * @brief Transimit Lora Package
  * 
@@ -55,19 +47,9 @@ int Transmit_Package(uint8_t *Package, uint32_t len,uint32_t timeout,uint32_t Re
 
 int Lora_Wait_Package_nb(uint8_t *output)
 {
-	uint16_t recv_size=0;
-	xSemaphoreTake(wr_lock,portMAX_DELAY);
-	switch(mradio->Process())
-	{
-	case RF_RX_DONE:
-		mradio->GetRxPacket(output, &recv_size);
-		break;
-	case RF_RX_TIMEOUT:
-		mradio->StartRx();
-		break;
-	}
-	xSemaphoreGive(wr_lock);
-	return recv_size;
+	if (xQueueReceive(Qset, output, 0) == pdTRUE)
+		return output[0];
+	return 0;
 }
 
 int Lora_Wait_Package(uint8_t *output,uint32_t Timeout)
@@ -82,6 +64,44 @@ int Lora_Wait_Package(uint8_t *output,uint32_t Timeout)
 	}
 	return 0;
 }
+
+
+void Lora_Receive_Task(void *Param)
+{
+	uint8_t Buff[64];
+	uint16_t Bytes;
+	while(1)
+	{
+		xSemaphoreTake(wr_lock, portMAX_DELAY);
+		switch (mradio->Process())
+		{
+		case RF_RX_DONE:
+			mradio->GetRxPacket(&Buff[1], &Bytes);
+			Buff[0] = (uint8_t)Bytes;
+			xQueueSend(Qset, Buff, 0);
+			break;
+		case RF_RX_TIMEOUT:
+			mradio->StartRx();
+			break;
+		}
+		xSemaphoreGive(wr_lock);
+		vTaskDelay(50);
+	}
+}
+int Lora_Init(void)
+{
+	mradio = RadioDriverInit();
+	wr_lock = xSemaphoreCreateMutex();
+	Qset = xQueueCreate(5,64);
+	xTaskCreate(Lora_Receive_Task,"Lora_Receive_Task",64,NULL,8,NULL);
+	if (mradio == NULL)
+		return -1;
+	mradio->Init();
+	return 0;
+}
+
+
+
 ////************************************
 //// Method:    Wait_Package
 //// FullName:  Wait_Package

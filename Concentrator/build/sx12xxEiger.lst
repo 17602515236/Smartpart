@@ -1,4 +1,4 @@
-ARM GAS  /tmp/cc3yKaZx.s 			page 1
+ARM GAS  /tmp/ccm6ffm0.s 			page 1
 
 
    1              		.syntax unified
@@ -58,7 +58,7 @@ ARM GAS  /tmp/cc3yKaZx.s 			page 1
   29:platform/sx12xxEiger/sx12xxEiger.c **** 
   30:platform/sx12xxEiger/sx12xxEiger.c **** #include "usbd_cdc_core.h"
   31:platform/sx12xxEiger/sx12xxEiger.c **** #include "usbd_usr.h"
-ARM GAS  /tmp/cc3yKaZx.s 			page 2
+ARM GAS  /tmp/ccm6ffm0.s 			page 2
 
 
   32:platform/sx12xxEiger/sx12xxEiger.c **** #include "usbd_desc.h"
@@ -118,7 +118,7 @@ ARM GAS  /tmp/cc3yKaZx.s 			page 1
   86:platform/sx12xxEiger/sx12xxEiger.c **** //    IoePinOn( LED_1_PIN );
   87:platform/sx12xxEiger/sx12xxEiger.c **** //    IoePinOn( LED_2_PIN );
   88:platform/sx12xxEiger/sx12xxEiger.c **** //    IoePinOn( LED_3_PIN );
-ARM GAS  /tmp/cc3yKaZx.s 			page 3
+ARM GAS  /tmp/ccm6ffm0.s 			page 3
 
 
   89:platform/sx12xxEiger/sx12xxEiger.c **** //    
@@ -178,7 +178,7 @@ ARM GAS  /tmp/cc3yKaZx.s 			page 1
   52              	.LFE64:
   54              		.section	.text.LongDelay,"ax",%progbits
   55              		.align	2
-ARM GAS  /tmp/cc3yKaZx.s 			page 4
+ARM GAS  /tmp/ccm6ffm0.s 			page 4
 
 
   56              		.global	LongDelay
@@ -238,22 +238,22 @@ ARM GAS  /tmp/cc3yKaZx.s 			page 1
  102              		.file 2 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/machine/_default_types.h"
  103              		.file 3 "/opt/gcc-arm-none-eabi-5_4-2016q3/arm-none-eabi/include/sys/_stdint.h"
  104              		.file 4 "Drivers/CMSIS/Include/core_cm3.h"
-ARM GAS  /tmp/cc3yKaZx.s 			page 5
+ARM GAS  /tmp/ccm6ffm0.s 			page 5
 
 
-ARM GAS  /tmp/cc3yKaZx.s 			page 6
+ARM GAS  /tmp/ccm6ffm0.s 			page 6
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 sx12xxEiger.c
-     /tmp/cc3yKaZx.s:20     .text.Delay:00000000 $t
-     /tmp/cc3yKaZx.s:25     .text.Delay:00000000 Delay
-     /tmp/cc3yKaZx.s:50     .text.Delay:00000010 $d
-     /tmp/cc3yKaZx.s:55     .text.LongDelay:00000000 $t
-     /tmp/cc3yKaZx.s:60     .text.LongDelay:00000000 LongDelay
-     /tmp/cc3yKaZx.s:88     .text.LongDelay:00000018 $d
-     /tmp/cc3yKaZx.s:98     .bss.TickCounter:00000000 TickCounter
-     /tmp/cc3yKaZx.s:94     .bss.TickCounter:00000000 $d
+     /tmp/ccm6ffm0.s:20     .text.Delay:00000000 $t
+     /tmp/ccm6ffm0.s:25     .text.Delay:00000000 Delay
+     /tmp/ccm6ffm0.s:50     .text.Delay:00000010 $d
+     /tmp/ccm6ffm0.s:55     .text.LongDelay:00000000 $t
+     /tmp/ccm6ffm0.s:60     .text.LongDelay:00000000 LongDelay
+     /tmp/ccm6ffm0.s:88     .text.LongDelay:00000018 $d
+     /tmp/ccm6ffm0.s:98     .bss.TickCounter:00000000 TickCounter
+     /tmp/ccm6ffm0.s:94     .bss.TickCounter:00000000 $d
                      .debug_frame:00000010 $d
 
 NO UNDEFINED SYMBOLS
